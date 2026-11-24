@@ -6,11 +6,13 @@ import { FIELDS, guessMapping } from "@/lib/fields";
 import { buildRecords, parseFile, type ImportOptions, type ParsedFile } from "@/lib/importer";
 import type { Store } from "@/lib/useStore";
 import Dialog from "./Dialog";
+import { parseCountrySummary, type CountrySummary } from "@/lib/countrySummary";
 
 interface Props {
   store: Store;
   initialTarget?: CollectionName;
   onClose: () => void;
+  onSummaryImported?: () => Promise<void>;
 }
 
 const HINTS: Record<CollectionName, string> = {
@@ -20,9 +22,10 @@ const HINTS: Record<CollectionName, string> = {
   localities: "Nomenclatorul SIRUTA cu coordonate (cod, denumire, județ, lat, lng). Permite plasarea pe hartă a datelor care au doar localitatea sau codul SIRUTA.",
 };
 
-export default function ImportDialog({ store, initialTarget = "communities", onClose }: Props) {
+export default function ImportDialog({ store, initialTarget = "communities", onClose, onSummaryImported }: Props) {
   const [file, setFile] = useState<File | null>(null);
   const [parsed, setParsed] = useState<ParsedFile | null>(null);
+  const [summary, setSummary] = useState<CountrySummary | null>(null);
   const [target, setTarget] = useState<CollectionName>(initialTarget);
   const [mapping, setMapping] = useState<Record<string, string>>({});
   const [opts, setOpts] = useState<ImportOptions>({
@@ -38,7 +41,14 @@ export default function ImportDialog({ store, initialTarget = "communities", onC
   const load = async (f: File, sheet?: string) => {
     setError(null);
     setDone(null);
+    setParsed(null);
+    setSummary(null);
+    setFile(null);
     try {
+      if (f.name.toLowerCase().endsWith(".csv")) {
+        const report = parseCountrySummary(await f.text(), f.name);
+        if (report) { setSummary(report); setFile(f); return; }
+      }
       const p = await parseFile(f, sheet);
       if (!p.rows.length) throw new Error("Fișierul nu conține rânduri.");
       setFile(f);
@@ -61,10 +71,21 @@ export default function ImportDialog({ store, initialTarget = "communities", onC
   }, [parsed, target, mapping, opts, store.db]);
 
   const run = async () => {
-    if (!parsed) return;
+    if (!parsed && !summary) return;
     setBusy(true);
     setError(null);
     try {
+      if (summary && file) {
+        const form = new FormData();
+        form.set("file", file);
+        const response = await fetch("/api/summaries", { method: "POST", body: form });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error ?? "Importul sumarului a eșuat.");
+        setDone(result.duplicate ? "Acest fișier este deja importat. Nu au fost create duplicate." : `Sumar importat: ${result.countries} țări, ${result.localities.toLocaleString("ro-RO")} localități. Toate cifrele și notele au fost păstrate.`);
+        await onSummaryImported?.();
+        return;
+      }
+      if (!parsed) return;
       const res = buildRecords(target, parsed, mapping, opts, store.db);
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const items = res.items.map(({ id, ...rest }) => rest);
@@ -92,15 +113,16 @@ export default function ImportDialog({ store, initialTarget = "communities", onC
 
         <div className="row">
           <label>Ce importați?
-            <select value={target} onChange={(e) => changeTarget(e.target.value as CollectionName)}>
+            <select disabled={!!summary || busy} value={target} onChange={(e) => changeTarget(e.target.value as CollectionName)}>
               {(Object.keys(COLLECTION_LABELS) as CollectionName[]).map((c) => <option key={c} value={c}>{COLLECTION_LABELS[c]}</option>)}
             </select>
           </label>
           <label>Fișier (CSV, Excel, GeoJSON)
-            <input type="file" accept=".csv,.txt,.xlsx,.xls,.ods,.geojson,.json" onChange={(e) => e.target.files?.[0] && load(e.target.files[0])} />
+            <input type="file" disabled={busy} accept=".csv,.txt,.xlsx,.xls,.ods,.geojson,.json" onChange={(e) => e.target.files?.[0] && load(e.target.files[0])} />
           </label>
         </div>
-        <p className="muted small">{HINTS[target]}</p>
+        <p className="muted small">{summary ? "Sumar REDI detectat automat. Import separat de comunitățile geolocalizate, cu toate cifrele, observațiile și fișierul original." : HINTS[target]}</p>
+        {summary && <div className="preview"><h3>{summary.title}</h3><p>{summary.countries.length} țări · {summary.totals.localities.toLocaleString("ro-RO")} localități · {summary.notes.length} note și definiții</p><p>{summary.countries.map((row) => row.country).join(", ")}</p>{summary.warnings.map((warning) => <p key={warning} className="warn">{warning}</p>)}</div>}
 
         {parsed?.sheets && parsed.sheets.length > 1 && file && (
           <label>Foaie Excel
@@ -173,8 +195,8 @@ export default function ImportDialog({ store, initialTarget = "communities", onC
 
         <div className="actions">
           <button onClick={onClose}>{done ? "Închide" : "Renunță"}</button>
-          <button className="primary" disabled={!parsed || busy || !!done || (target === "clients" && !mapping.partner && !opts.partner.trim())} onClick={run}>
-            {busy ? "Se importă…" : `Importă ${rowsTotal || ""} rânduri`}
+          <button className="primary" disabled={(!parsed && !summary) || busy || !!done || (!summary && target === "clients" && !mapping.partner && !opts.partner.trim())} onClick={run}>
+            {busy ? "Se importă…" : summary ? "Importă sumarul" : `Importă ${rowsTotal || ""} rânduri`}
           </button>
         </div>
       </div>

@@ -20,6 +20,14 @@ npm run dev
 
 Datele se salvează în `data/db.json` (exclus din git – poate conține date personale).
 
+## Sumare REDI pe țări
+
+Fișierele CSV din foaia „Sumar” sunt recunoscute automat în dialogul de import, inclusiv titlul și notele de deasupra tabelului. Cifrele pe țări, totalul declarat, observațiile, definițiile și CSV-ul original se păstrează separat în `data/summaries.json` (exclus din git). Reimportul aceluiași conținut nu creează duplicate.
+
+Vizualizarea **Sumar** afișează toate datele și permite descărcarea sursei originale. Valorile N/D rămân indisponibile. Totalurile neconcordante sunt semnalate, fără a modifica sursa. Aceste agregate nu creează puncte pe hartă: pentru localitățile individuale sunt necesare foile detaliate cu poziții sau coduri de localitate.
+
+Verificarea parserului: `npm test` (Node.js 22.18+).
+
 ## Ordinea recomandată de import
 
 1. **Nomenclator SIRUTA** (cod, denumire, județ, lat, lng) – permite plasarea pe hartă a rândurilor care au doar localitatea sau codul SIRUTA.

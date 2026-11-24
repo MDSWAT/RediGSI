@@ -1,7 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Geometry } from "geojson";
 import { useStore } from "@/lib/useStore";
 import type { CollectionName, Community } from "@/lib/types";
@@ -15,12 +15,15 @@ import type { DrawShape, Focus } from "./MapView";
 import CommunityForm from "./CommunityForm";
 import ImportDialog from "./ImportDialog";
 import Icon, { type IconName } from "./Icon";
+import CountrySummaryView from "./CountrySummaryView";
+import type { ImportedCountrySummary } from "@/lib/countrySummary";
 
 const MapView = dynamic(() => import("./MapView"), { ssr: false, loading: () => <div className="map loading">Se încarcă harta…</div> });
 
-type Tab = "communities" | "entrepreneurs" | "clients" | "overlap" | "data";
+type Tab = "communities" | "entrepreneurs" | "clients" | "overlap" | "data" | "summary";
 const TABS: { id: Tab; label: string; short: string; icon: IconName; description: string }[] = [
   { id: "communities", label: "Comunități", short: "Comunități", icon: "map", description: "Explorează și completează harta comunităților." },
+  { id: "summary", label: "Sumar REDI", short: "Sumar", icon: "data", description: "Cifrele pe țări, definițiile și observațiile din sursă." },
   { id: "entrepreneurs", label: "Antreprenori", short: "Antreprenori", icon: "briefcase", description: "Conectează antreprenorii cu comunitățile lor." },
   { id: "clients", label: "Clienți parteneri", short: "Parteneri", icon: "people", description: "Gestionează portofoliile partenerilor." },
   { id: "overlap", label: "Suprapunere", short: "Analiză", icon: "overlap", description: "Compară acoperirea comunităților și a partenerilor." },
@@ -30,10 +33,36 @@ const LIST_LIMIT = 300;
 let seq = 0;
 const nextNonce = () => ++seq;
 
-export default function App() {
+async function fetchSummaries(): Promise<ImportedCountrySummary[]> {
+  const response = await fetch("/api/summaries");
+  if (!response.ok) throw new Error("Sumarele nu au putut fi încărcate. Reîncercați.");
+  return response.json();
+}
+
+export default function App({ initialTab = "communities" }: { initialTab?: "communities" | "summary" }) {
   const store = useStore();
   const { db } = store;
-  const [tab, setTab] = useState<Tab>("communities");
+  const [tab, setTab] = useState<Tab>(initialTab);
+  const [summaries, setSummaries] = useState<ImportedCountrySummary[]>([]);
+  const [summaryId, setSummaryId] = useState<string>();
+  const [summaryError, setSummaryError] = useState<string | null>(null);
+  const [summariesLoading, setSummariesLoading] = useState(true);
+  const reloadSummaries = useCallback(async () => {
+    setSummariesLoading(true);
+    try {
+      setSummaries(await fetchSummaries());
+      setSummaryError(null);
+    } catch (error) { setSummaryError((error as Error).message); }
+    finally { setSummariesLoading(false); }
+  }, []);
+  useEffect(() => {
+    let alive = true;
+    fetchSummaries().then((reports) => { if (alive) setSummaries(reports); })
+      .catch((error: Error) => { if (alive) setSummaryError(error.message); })
+      .finally(() => { if (alive) setSummariesLoading(false); });
+    return () => { alive = false; };
+  }, []);
+  const selectedSummary = summaries.find((report) => report.id === summaryId) ?? summaries.at(-1);
   const [selectedId, setSelectedId] = useState<string>();
   const [focus, setFocus] = useState<Focus>();
   const [drawRequest, setDrawRequest] = useState<{ shape: DrawShape; nonce: number }>();
@@ -132,7 +161,7 @@ export default function App() {
   const currentTab = TABS.find((t) => t.id === tab)!;
 
   return (
-    <div className="app">
+    <div className={`app${tab === "summary" ? " summary-mode" : ""}`}>
       <nav className="navigation" aria-label="Navigare principală">
         <Link className="rail-brand" href="/" aria-label="Roma Community Map — acasă"><Icon name="map" size={27} /></Link>
         <div className="nav-items">
@@ -156,6 +185,17 @@ export default function App() {
         <div className="panel">
           {store.error && <p className="error">{store.error}</p>}
           {store.loading && <p className="muted">Se încarcă datele…</p>}
+
+          {tab === "summary" && <>
+            <button className="primary" onClick={() => setImportTarget("communities")}><Icon name="upload" size={16} />Importă sumar CSV</button>
+            <p className="muted small">Selectează fișierul REDI cu tabelul pe țări. Sumarul este recunoscut automat.</p>
+            {summariesLoading && <p role="status" className="muted small">Se încarcă sumarele…</p>}
+            {summaryError && <div className="error"><p>{summaryError}</p><button onClick={reloadSummaries}>Reîncearcă</button></div>}
+            <h3>Fișiere importate</h3>
+            {!summaries.length && !summariesLoading && !summaryError && <p className="muted small">Niciun sumar importat încă.</p>}
+            <ul className="list">{summaries.map((report) => <li key={report.id} className={report.id === selectedSummary?.id ? "selected" : ""}><button className="record-select" aria-pressed={report.id === selectedSummary?.id} onClick={() => setSummaryId(report.id)}><b>{report.countries.length} țări · {report.totals.localities.toLocaleString("ro-RO")} localități</b><span className="small muted summary-filename">{report.sourceName}</span></button></li>)}</ul>
+            <div className="card"><h3>Despre datele de pe hartă</h3><p className="muted small">Localitățile individuale pot fi adăugate pe hartă din foile detaliate ale registrului, cu nume și coordonate sau coduri de localitate. Sumarul păstrează doar totalurile pe țări.</p></div>
+          </>}
 
           {tab === "communities" && (
             <>
@@ -367,7 +407,8 @@ export default function App() {
         </div>
       </aside>
 
-      <main aria-label="Harta comunităților">
+      <main aria-label={tab === "summary" ? "Sumar pe țări" : "Harta comunităților"}>
+        {tab === "summary" ? <CountrySummaryView report={selectedSummary} /> : <>
         <div className="map-toolbar"><span><Icon name="map" size={17} />Hartă interactivă</span><button onClick={fitAll}><Icon name="fit" size={17} />Vezi tot</button></div>
         <MapView
           db={db}
@@ -380,6 +421,7 @@ export default function App() {
           onSelectCommunity={onSelectCommunity}
         />
         <div className="map-key" aria-label="Legenda hărții"><span><i className="key-validated" />Validate</span><span><i className="key-proposed" />Propuse</span><span><i className="key-entrepreneur" />Antreprenori</span><span><i className="key-client" />Clienți</span></div>
+        </>}
         {msg && <div className="toast" role="status">{msg}</div>}
       </main>
 
@@ -392,7 +434,7 @@ export default function App() {
           onCancel={() => { setDraft(null); setEditing(null); }}
         />
       )}
-      {importTarget && <ImportDialog key={importTarget} store={store} initialTarget={importTarget} onClose={() => setImportTarget(null)} />}
+      {importTarget && <ImportDialog key={importTarget} store={store} initialTarget={importTarget} onSummaryImported={async () => { await reloadSummaries(); setSummaryId(undefined); setTab("summary"); }} onClose={() => setImportTarget(null)} />}
     </div>
   );
 }

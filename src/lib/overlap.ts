@@ -72,7 +72,7 @@ export function computeOverlap(db: DB, level: OverlapLevel, partner?: string): O
   };
 
   for (const c of db.communities) {
-    const row = touch(c, center(c.geometry));
+    const row = touch(c, c.geometry ? center(c.geometry) : undefined);
     if (row) row.communities++;
   }
   for (const e of db.entrepreneurs) {

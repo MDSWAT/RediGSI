@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-24T10:02:59.232Z",
+  "generatedAt": "2026-11-24T13:49:47.580Z",
   "title": "Design System: Roma Community Map",
   "extensions": {
     "colorMeta": {
@@ -437,6 +437,76 @@
           "oklch(84% 0.0145 286.02)",
           "oklch(95% 0.0145 286.02)"
         ]
+      },
+      "map-pending": {
+        "role": "secondary",
+        "displayName": "Map Pending",
+        "tonalRamp": [
+          "oklch(15% 0.1180 297.42)",
+          "oklch(26% 0.1180 297.42)",
+          "oklch(38% 0.1180 297.42)",
+          "oklch(49% 0.1180 297.42)",
+          "oklch(61% 0.1180 297.42)",
+          "oklch(72% 0.1180 297.42)",
+          "oklch(84% 0.1180 297.42)",
+          "oklch(95% 0.1180 297.42)"
+        ]
+      },
+      "badge-pending": {
+        "role": "secondary",
+        "displayName": "Badge Pending",
+        "tonalRamp": [
+          "oklch(15% 0.0320 300.46)",
+          "oklch(26% 0.0320 300.46)",
+          "oklch(38% 0.0320 300.46)",
+          "oklch(49% 0.0320 300.46)",
+          "oklch(61% 0.0320 300.46)",
+          "oklch(72% 0.0320 300.46)",
+          "oklch(84% 0.0320 300.46)",
+          "oklch(95% 0.0320 300.46)"
+        ]
+      },
+      "badge-pending-text": {
+        "role": "secondary",
+        "displayName": "Badge Pending Text",
+        "tonalRamp": [
+          "oklch(15% 0.0455 303.88)",
+          "oklch(26% 0.0455 303.88)",
+          "oklch(38% 0.0455 303.88)",
+          "oklch(49% 0.0455 303.88)",
+          "oklch(61% 0.0455 303.88)",
+          "oklch(72% 0.0455 303.88)",
+          "oklch(84% 0.0455 303.88)",
+          "oklch(95% 0.0455 303.88)"
+        ]
+      },
+      "badge-below": {
+        "role": "secondary",
+        "displayName": "Badge Below",
+        "tonalRamp": [
+          "oklch(15% 0.0187 258.37)",
+          "oklch(26% 0.0187 258.37)",
+          "oklch(38% 0.0187 258.37)",
+          "oklch(49% 0.0187 258.37)",
+          "oklch(61% 0.0187 258.37)",
+          "oklch(72% 0.0187 258.37)",
+          "oklch(84% 0.0187 258.37)",
+          "oklch(95% 0.0187 258.37)"
+        ]
+      },
+      "badge-below-text": {
+        "role": "secondary",
+        "displayName": "Badge Below Text",
+        "tonalRamp": [
+          "oklch(15% 0.0150 251.17)",
+          "oklch(26% 0.0150 251.17)",
+          "oklch(38% 0.0150 251.17)",
+          "oklch(49% 0.0150 251.17)",
+          "oklch(61% 0.0150 251.17)",
+          "oklch(72% 0.0150 251.17)",
+          "oklch(84% 0.0150 251.17)",
+          "oklch(95% 0.0150 251.17)"
+        ]
       }
     },
     "typographyMeta": {
@@ -570,6 +640,22 @@
       "description": "Flat data grouping separated by a divider.",
       "html": "<section class=\"ds-card\"><b>Export comunități</b><p>Coordonate, SIRUTA, WKT</p></section>",
       "css": ".ds-card{padding:0 0 22px;border-bottom:1px solid var(--border,#303036);color:var(--text,#faf8f9);font:14px/1.5 var(--font-host-grotesk,'Host Grotesk'),sans-serif;}.ds-card>b{font-size:14px;font-weight:650;}.ds-card p{margin:12px 0 0;color:var(--muted,#d6d6d5);font-size:12px;line-height:1.75;}"
+    },
+    {
+      "name": "Status De validat",
+      "kind": "chip",
+      "refersTo": "badge-pending",
+      "description": "Noninteractive community status label.",
+      "html": "<span class=\"ds-badge-pending\">De validat</span>",
+      "css": ".ds-badge-pending{font:10px/1.5 var(--font-host-grotesk,'Host Grotesk'),sans-serif;padding:2px 7px;border-radius:0;background:#292334;color:#e0d3f3;}"
+    },
+    {
+      "name": "Status Sub prag",
+      "kind": "chip",
+      "refersTo": "badge-below",
+      "description": "Noninteractive community status label.",
+      "html": "<span class=\"ds-badge-below\">Sub prag</span>",
+      "css": ".ds-badge-below{font:10px/1.5 var(--font-host-grotesk,'Host Grotesk'),sans-serif;padding:2px 7px;border-radius:0;background:#242a33;color:#d9e1ea;}"
     }
   ],
   "narrative": {

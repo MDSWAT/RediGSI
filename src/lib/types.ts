@@ -30,7 +30,7 @@ export interface Located {
 }
 
 export type CommunityKind = "punct" | "strada" | "cartier" | "zona";
-export type CommunityStatus = "validat" | "propus";
+export type CommunityStatus = "validat" | "propus" | "de_validat" | "sub_prag";
 export type CommunitySource = "catalog" | "manual" | "import";
 
 export interface Community extends BaseRecord {
@@ -38,7 +38,9 @@ export interface Community extends BaseRecord {
   kind: CommunityKind;
   status: CommunityStatus;
   source: CommunitySource;
-  geometry: Geometry;
+  geometry: Geometry | null;
+  /** Gazetteer reference; never a surveyed community boundary. */
+  locationAccuracy?: "locality" | "municipality" | "unresolved";
   siruta?: string;
   locality?: string;
   county?: string;
@@ -93,7 +95,11 @@ export const KIND_LABELS: Record<CommunityKind, string> = {
 export const STATUS_LABELS: Record<CommunityStatus, string> = {
   validat: "Validată",
   propus: "Propusă (nevalidată)",
+  de_validat: "De validat",
+  sub_prag: "Sub prag",
 };
+
+export const COUNTRY_LABELS: Record<string, string> = { RO: "România", MD: "Moldova", AL: "Albania", BA: "Bosnia și Herțegovina", XK: "Kosovo", MK: "Macedonia de Nord", ME: "Muntenegru", RS: "Serbia", TR: "Turcia" };
 
 export const SOURCE_LABELS: Record<CommunitySource, string> = {
   catalog: "Catalog",

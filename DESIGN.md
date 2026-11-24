@@ -33,6 +33,11 @@ colors:
   overlap-communities: "#64748b"
   control-border: "#6b6b75"
   state-border: "#9c9ca6"
+  map-pending: "#755ca8"
+  badge-pending: "#292334"
+  badge-pending-text: "#e0d3f3"
+  badge-below: "#242a33"
+  badge-below-text: "#d9e1ea"
 typography:
   headline:
     fontFamily: "var(--font-host-grotesk), sans-serif"
@@ -112,6 +117,16 @@ components:
     rounded: "{rounded.square}"
     padding: "28px"
     width: "min(540px, 100%)"
+  badge-pending:
+    backgroundColor: "{colors.badge-pending}"
+    textColor: "{colors.badge-pending-text}"
+    rounded: "{rounded.square}"
+    padding: "2px 7px"
+  badge-below:
+    backgroundColor: "{colors.badge-below}"
+    textColor: "{colors.badge-below-text}"
+    rounded: "{rounded.square}"
+    padding: "2px 7px"
 ---
 # Design System: Roma Community Map
 
@@ -141,9 +156,10 @@ The interface uses a near-black neutral palette. The frontmatter owns color valu
 
 ### Secondary
 - **Geographic green / amber:** validated and proposed communities on the map; selected geometry keeps its established dark green.
+- **Pending violet / below-threshold slate:** distinguish records awaiting validation and records below the REDI threshold. Below-threshold map points reuse the overlap-communities slate token.
 - **Entrepreneur blue / partner terracotta:** distinct point datasets.
 - **Overlap green / orange / slate:** communities with clients, clients only, and communities only.
-- **Pale green / pale amber:** readable status badge text over dark tinted backgrounds.
+- **Pale green / pale amber / pale violet / pale slate:** readable text over dark tinted badges for validated, proposed, pending-validation and below-threshold records.
 - **Pale rose:** destructive action and error text; warning text is light neutral.
 
 ### Neutral
@@ -174,6 +190,8 @@ At (1200px), the rail/index become (80px/350px). At (1000px), they become (76px/
 
 The summary uses a horizontally scrollable table with minimum width (660px), readable notes up to (75ch), and desktop padding (30px), reducing to (24px 20px) on mobile. Dialogs use widths (540px) or (840px), internal scrolling and padding (28px), reducing to (20px) on mobile.
 
+Catalog filters keep country and status selects in two equal columns with a (12px) gap; checkbox filters span both columns. Expanded record details stay within the index and wrap long source content. Source-sheet disclosures remain in the summary reading flow.
+
 ## Elevation & Depth
 
 Dark tonal layers and thin borders provide most separation. Black shadows lift map instruments, toasts and dialogs. A translucent black modal backdrop isolates forms. The main workspace has a restrained red shadow; exact values live in the sidecar.
@@ -200,11 +218,19 @@ Icon-and-label buttons sit on the deeper rail. Default text is light grey; hover
 
 ### Chips
 
-Status badges use compact text (10px), square corners and dark green or amber tinted surfaces with pale matching text. Segmented filters use a deeper ground; the selected segment gains the graphite action surface, a persistent state-border outline (1px) and a small black shadow. Inactive segments reserve transparent borders. Filter selection also uses aria-pressed.
+Status badges use compact text (10px), square corners and dark green, amber, violet or slate tinted surfaces with pale matching text. The four textual labels retain meaning alongside their color. Segmented filters use a deeper ground; the selected segment gains the graphite action surface, a persistent state-border outline (1px) and a small black shadow. Inactive segments reserve transparent borders. Filter selection also uses aria-pressed.
 
 ### Cards / Containers
 
 Data sections use bottom dividers and spacing. Selected list records gain the neutral selected surface. Record activation focuses matching map geometry and exposes actions. Summary tables use dark hover-tone headers, selected-tone totals, neutral borders and readable observation rows; notes remain flat.
+
+### Catalog filters and source details
+
+Country and four-status selects reuse the existing dark fields; health-campaign and unlocated-only filters use labeled checkboxes (16px) with the primary foreground as accent. The result count distinguishes listed records from mapped positions.
+
+Selecting a record expands a semantic definition list below its header. Detail text uses (12px) with line-height (1.65); muted term labels use (11px). Values preserve line breaks, long text wraps, and rows use neutral bottom dividers with vertical padding (8px). Location notes distinguish approximate locality centers from unresolved records.
+
+Original source sheets use native details/summary disclosures with keyboard focus inherited from the global controls. Summaries have vertical padding (12px); disclosed rows use (13px) text, line-height (1.7), neutral dividers and wrapping. Reference links stay readable in the normal document flow.
 
 ### Dialogs
 
@@ -212,7 +238,7 @@ Native modal dialogs contain square dark panels over a translucent black backdro
 
 ### Map instruments
 
-Dark neutral toolbars, legends, layer controls and popups surround the geographic imagery. The layer-toggle icon is inline SVG. Proposed boundaries remain dashed (6 5); validated boundaries remain solid. Selected geometry increases line weight (4px to 6px) or point radius (8px to 11px). External OpenStreetMap and Esri tiles keep their attribution. No generated raster or exploration mockup ships with this system.
+Dark neutral toolbars, legends, layer controls and popups surround the geographic imagery. The layer-toggle icon is inline SVG. Community map colors cover all four REDI statuses, and the six-item dataset legend wraps. Proposed boundaries remain dashed (6 5); validated boundaries remain solid. Selected geometry increases line weight (4px to 6px) or point radius (8px to 11px). External OpenStreetMap and Esri tiles keep their attribution. No generated raster or exploration mockup ships with this system.
 
 ## Do's and Don'ts
 

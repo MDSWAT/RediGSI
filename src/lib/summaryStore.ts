@@ -2,11 +2,13 @@ import "server-only";
 import { createHash } from "crypto";
 import { parseCountrySummary, type CountrySummary, type ImportedCountrySummary } from "./countrySummary";
 import { database, storageError } from "./database";
+import { ensureCatalog } from "./catalogSeed";
 
 interface SummaryRow { id: string; imported_at: string; report: CountrySummary }
 const reportOf = (row: SummaryRow): ImportedCountrySummary => ({ ...row.report, id: row.id, importedAt: row.imported_at });
 
 export async function readSummaries(): Promise<ImportedCountrySummary[]> {
+  await ensureCatalog();
   const result: ImportedCountrySummary[] = [];
   const client = database();
   for (let offset = 0; ; offset += 500) {

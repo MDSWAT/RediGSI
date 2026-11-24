@@ -141,8 +141,10 @@ export function buildRecords(
         id: "",
         name: str(get("name")) ?? e.locality ?? `Comunitate ${i + 1}`,
         kind: kindTxt.includes("strad") ? "strada" : kindTxt.includes("cartier") ? "cartier" : kindTxt.includes("zon") ? "zona" : kindTxt.includes("punct") ? "punct" : kindForGeometry(geometry),
-        status: statusTxt.includes("prop") || statusTxt.includes("nevalid") || statusTxt === "nu" ? "propus"
-          : statusTxt.includes("valid") || statusTxt === "da" ? "validat" : opts.defaultStatus,
+        status: statusTxt.includes("sub prag") || statusTxt === "sub_prag" ? "sub_prag"
+          : statusTxt.includes("de validat") || statusTxt === "de_validat" ? "de_validat"
+          : statusTxt.includes("prop") || statusTxt.includes("nevalid") || statusTxt === "nu" ? "propus"
+          : statusTxt.includes("confirm") || statusTxt.includes("valid") || statusTxt === "da" ? "validat" : opts.defaultStatus,
         source: opts.source,
         geometry,
         siruta: e.siruta,

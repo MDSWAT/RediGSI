@@ -98,3 +98,16 @@ Fișiere exemplu (date fictive) în `public/samples/`. Codurile SIRUTA din exemp
 - Autentificare și roluri (cine poate valida comunități).
 - Editarea geometriei comunităților existente.
 - Granițe administrative (UAT) pentru suprapunere pe poligoane, nu doar pe cod.
+
+
+### Registrul HTML REDI 2026
+
+Cele 11 exporturi HTML furnizate sunt păstrate ca text, referințe și valori originale în `src/data/catalog-2026.json`. Acesta este un pachet de import static, inclus numai în codul serverului; aplicația nu citește și nu scrie fișiere de date la rulare. La prima citire a datelor după deploy, `catalogSeed.ts` importă cele 628 de rânduri și sumarul cu toate foile sursă în Supabase, folosind schema deja existentă. Este necesară cheia server Supabase din mediul de hosting.
+
+ID-urile stabile după foaie și rând și inserările fără suprascriere permit reluarea importului după întreruperi. Marcajul de finalizare este scris ultimul în `redi_summaries`. După finalizare, importul nu reface înregistrările șterse și nu suprascrie editările. Marcajul este comun tuturor instanțelor serverului.
+
+Sunt disponibile 628 de rânduri: Albania 61, Bosnia 90, Kosovo 38, Macedonia N 80, Muntenegru 25, Serbia 166, Turcia 42, Moldova 15, România 111. Sumarul conține 4.580 de localități; exporturile filtrate nu includ toate rândurile, în special în România și Moldova. Rândurile absente nu sunt generate.
+
+610 rânduri au poziții orientative asociate după nume și regiune din GeoNames (CC BY 4.0, https://www.geonames.org/). Sunt centre de localitate sau municipalitate, nu limite sau adrese ale comunităților. Cele 18 rânduri ambigue/fără nume rămân în listă cu geometrie nulă. Duplicate precum Ege și Örnekköy sunt păstrate ca rânduri distincte ale sursei. Cifrele de recensământ și cele din alte surse rămân separate; nu sunt însumate.
+
+Filtrele de țară, cele patru statusuri REDI, campania health și localizarea se aplică și hărții. Selectarea unei înregistrări afișează toate coloanele originale. În Sumar REDI se pot consulta acoperirea, toate foile originale și referințele bibliografice. Exporturile păstrează și înregistrările fără geometrie.

@@ -16,17 +16,17 @@ interface Props {
 }
 
 export default function CommunityForm({ db, geometry, existing, onSave, onCancel }: Props) {
-  const geom = existing?.geometry ?? geometry!;
+  const geom = existing ? existing.geometry : geometry!;
   const idx = useMemo(() => buildLocalityIndex(db), [db]);
   const suggestion = useMemo(() => {
-    if (existing) return undefined;
+    if (existing || !geom) return undefined;
     const c = center(geom);
     return nearestLocality(idx, c.lat, c.lng, 15);
   }, [existing, geom, idx]);
 
   const [f, setF] = useState({
     name: existing?.name ?? "",
-    kind: existing?.kind ?? kindForGeometry(geom),
+    kind: existing?.kind ?? (geom ? kindForGeometry(geom) : "punct"),
     status: existing?.status ?? ("propus" as CommunityStatus),
     siruta: existing?.siruta ?? suggestion?.siruta ?? "",
     locality: existing?.locality ?? suggestion?.name ?? "",
@@ -60,6 +60,7 @@ export default function CommunityForm({ db, geometry, existing, onSave, onCancel
         status: f.status,
         source: existing?.source ?? "manual",
         geometry: geom,
+        locationAccuracy: existing?.locationAccuracy,
         siruta: normSiruta(f.siruta),
         locality: f.locality.trim() || undefined,
         county: f.county.trim() || undefined,

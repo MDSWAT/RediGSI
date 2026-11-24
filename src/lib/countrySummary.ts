@@ -10,6 +10,8 @@ export interface CountrySummaryRow extends SummaryCounts {
   originalValues: string[];
 }
 export interface CountrySummary {
+  sourceSheets?: { sheet: string; rows: { sourceRow: number | null; cells: { text: string; links: string[]; colspan: number }[] }[] }[];
+  coverage?: Record<string, number>;
   title: string;
   sourceName: string;
   headers: string[];

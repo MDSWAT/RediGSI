@@ -182,7 +182,7 @@ export function buildLocalityIndex(db: Partial<DB>): LocalityIndex {
 
   for (const l of db.localities ?? []) add({ ...l });
   for (const c of db.communities ?? []) {
-    if (!c.siruta && !c.locality) continue;
+    if (!c.geometry || (!c.siruta && !c.locality)) continue;
     add({ siruta: c.siruta, name: c.locality, county: c.county, country: c.country, ...center(c.geometry) });
   }
   for (const r of [...(db.entrepreneurs ?? []), ...(db.clients ?? [])]) {
@@ -257,6 +257,7 @@ export function communityAt(lat: number, lng: number, communities: Community[]):
   let bestD = Infinity;
   for (const c of communities) {
     const g = c.geometry;
+    if (!g || c.locationAccuracy) continue;
     if (g.type === "Polygon" || g.type === "MultiPolygon") {
       if (turf.booleanPointInPolygon(pt, g)) return c;
       continue;

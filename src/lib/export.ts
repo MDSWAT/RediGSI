@@ -1,5 +1,5 @@
 import * as XLSX from "xlsx";
-import type { FeatureCollection } from "geojson";
+import type { FeatureCollection, Geometry } from "geojson";
 import type { Community, DB, Entrepreneur, PartnerClient } from "./types";
 import type { OverlapRow } from "./overlap";
 import { center, toWKT } from "./geo";
@@ -25,12 +25,12 @@ function withExtra<T extends { extra?: Record<string, string> }>(r: T, base: Fla
 
 export function communityRows(db: DB): Flat[] {
   return db.communities.map((c) => {
-    const ctr = center(c.geometry);
+    const ctr = c.geometry ? center(c.geometry) : undefined;
     return withExtra(c, {
       id: c.id, nume: c.name, tip: c.kind, status: c.status, sursa: c.source,
       siruta: c.siruta, localitate: c.locality, judet: c.county, tara: c.country,
-      lat: +ctr.lat.toFixed(7), lng: +ctr.lng.toFixed(7), tip_geometrie: c.geometry.type,
-      wkt: toWKT(c.geometry), populatie: c.population, observatii: c.notes,
+      lat: ctr ? +ctr.lat.toFixed(7) : undefined, lng: ctr ? +ctr.lng.toFixed(7) : undefined, tip_geometrie: c.geometry?.type,
+      wkt: c.geometry ? toWKT(c.geometry) : undefined, precizie: c.locationAccuracy, populatie: c.population, observatii: c.notes,
       antreprenori: db.entrepreneurs.filter((e) => e.communityId === c.id).length,
     });
   });
@@ -87,8 +87,8 @@ export function exportXLSX(name: string, rows: Flat[]) {
   download(`${name}_${stamp()}.xlsx`, out, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 }
 
-export function exportCommunitiesGeoJSON(db: DB, communities: Community[] = db.communities) {
-  const fc: FeatureCollection = {
+export function communityGeoJSON(communities: Community[]): FeatureCollection<Geometry | null> {
+  const fc: FeatureCollection<Geometry | null> = {
     type: "FeatureCollection",
     features: communities.map((c) => ({
       type: "Feature",
@@ -97,11 +97,15 @@ export function exportCommunitiesGeoJSON(db: DB, communities: Community[] = db.c
       properties: {
         id: c.id, nume: c.name, tip: c.kind, status: c.status, sursa: c.source, siruta: c.siruta ?? null,
         localitate: c.locality ?? null, judet: c.county ?? null, tara: c.country,
-        populatie: c.population ?? null, observatii: c.notes ?? null, ...(c.extra ?? {}),
+        precizie: c.locationAccuracy ?? null, populatie: c.population ?? null, observatii: c.notes ?? null, ...(c.extra ?? {}),
       },
     })),
   };
-  download(`comunitati_${stamp()}.geojson`, JSON.stringify(fc, null, 2), "application/geo+json");
+  return fc;
+}
+
+export function exportCommunitiesGeoJSON(db: DB, communities: Community[] = db.communities) {
+  download(`comunitati_${stamp()}.geojson`, JSON.stringify(communityGeoJSON(communities), null, 2), "application/geo+json");
 }
 
 export function exportPointsGeoJSON(name: string, rows: Flat[]) {

@@ -31,6 +31,8 @@ const esc = (s: unknown) =>
 const COLORS = {
   validat: "#206457",
   propus: "#b07821",
+  de_validat: "#755ca8",
+  sub_prag: "#64748b",
   selected: "#193c34",
   entrepreneur: "#397ca5",
   client: "#b85b43",
@@ -77,9 +79,18 @@ function FocusControl({ focus }: { focus?: Focus }) {
   const map = useMap();
   useEffect(() => {
     if (!focus) return;
-    if (focus.bounds) map.fitBounds(focus.bounds, { maxZoom: 17, padding: [40, 40] });
-    else if (focus.lat !== undefined && focus.lng !== undefined) map.setView([focus.lat, focus.lng], focus.zoom ?? 15);
+    if (focus.bounds) map.fitBounds(focus.bounds, { maxZoom: focus.zoom ?? 17, padding: [40, 40], animate: false });
+    else if (focus.lat !== undefined && focus.lng !== undefined) map.setView([focus.lat, focus.lng], focus.zoom ?? 15, { animate: false });
   }, [map, focus]);
+  return null;
+}
+
+function DataExtent({ communities }: { communities: Community[] }) {
+  const map = useMap();
+  useEffect(() => {
+    const features = communities.filter((c) => c.geometry).map((c) => ({ type: "Feature" as const, geometry: c.geometry!, properties: {} }));
+    if (features.length) map.fitBounds(L.geoJSON({ type: "FeatureCollection", features } as FeatureCollection).getBounds(), { padding: [35, 35], maxZoom: 11, animate: false });
+  }, [map, communities]);
   return null;
 }
 
@@ -92,7 +103,9 @@ function communityPopup(c: Community, entrepreneurs: number) {
     ${c.population ? `<div>Populație estimată: ${esc(c.population)}</div>` : ""}
     <div>Antreprenori: ${entrepreneurs}</div>
     <div class="muted">Sursa: ${esc(SOURCE_LABELS[c.source])}</div>
-    ${c.notes ? `<div class="muted">${esc(c.notes)}</div>` : ""}
+    ${c.locationAccuracy ? '<div class="muted">Centre orientativ, nu limite ale comunității.</div>' : ""}
+    ${["Pop. totala", "Romi recens.", "Romi alte surse", "Prag REDI", "campanie REDI health"].filter((k) => c.extra?.[k]).map((k) => `<div>${esc(k)}: ${esc(c.extra![k])}</div>`).join("")}
+    <div class="muted">Toate detaliile sunt disponibile în panoul comunității.</div>
   </div>`;
 }
 
@@ -109,7 +122,7 @@ export default function MapView(props: Props) {
 
   const communityFC = useMemo<FeatureCollection>(() => ({
     type: "FeatureCollection",
-    features: db.communities.map((c) => ({ type: "Feature", id: c.id, geometry: c.geometry, properties: { id: c.id } })),
+    features: db.communities.filter((c) => c.geometry).map((c) => ({ type: "Feature", id: c.id, geometry: c.geometry!, properties: { id: c.id } })),
   }), [db.communities]);
   const byId = useMemo(() => new Map(db.communities.map((c) => [c.id, c])), [db.communities]);
   const communityName = (id?: string) => (id ? byId.get(id)?.name : undefined);
@@ -120,7 +133,7 @@ export default function MapView(props: Props) {
     <MapContainer center={[45.9432, 24.9668]} zoom={7} preferCanvas className="map" zoomControl>
       <LayersControl position="topright">
         <LayersControl.BaseLayer checked name="Hartă (OpenStreetMap)">
-          <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" maxZoom={19} />
+          <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · Localizări: <a href="https://www.geonames.org/">GeoNames CC BY 4.0</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" maxZoom={19} />
         </LayersControl.BaseLayer>
         <LayersControl.BaseLayer name="Satelit (Esri)">
           <TileLayer attribution="Tiles &copy; Esri" url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxZoom={19} />
@@ -128,12 +141,12 @@ export default function MapView(props: Props) {
 
         <LayersControl.Overlay checked name="Comunități">
           <GeoJSON
-            key={`c-${version}-${selectedId ?? ""}`}
+            key={`c-${version}-${selectedId ?? ""}-${db.communities.map((c) => c.id).join(",")}`}
             data={communityFC}
             style={(f) => {
               const c = byId.get(f?.properties?.id);
               const sel = c?.id === selectedId;
-              const color = sel ? COLORS.selected : c?.status === "propus" ? COLORS.propus : COLORS.validat;
+              const color = sel ? COLORS.selected : COLORS[c?.status ?? "validat"];
               return { color, weight: sel ? 6 : 4, opacity: 0.9, fillOpacity: 0.2, dashArray: c?.status === "propus" ? "6 5" : undefined };
             }}
             pointToLayer={(f, latlng) => {
@@ -141,7 +154,7 @@ export default function MapView(props: Props) {
               const sel = c?.id === selectedId;
               return L.circleMarker(latlng, {
                 radius: sel ? 11 : 8, weight: 2, color: "#fff",
-                fillColor: sel ? COLORS.selected : c?.status === "propus" ? COLORS.propus : COLORS.validat, fillOpacity: 0.9,
+                fillColor: sel ? COLORS.selected : COLORS[c?.status ?? "validat"], fillOpacity: 0.9,
               });
             }}
             onEachFeature={(f, layer) => {
@@ -213,6 +226,7 @@ export default function MapView(props: Props) {
       </LayersControl>
 
       <DrawControl onCreate={props.onCreateShape} request={props.drawRequest} />
+      <DataExtent communities={db.communities} />
       <FocusControl focus={props.focus} />
     </MapContainer>
   );

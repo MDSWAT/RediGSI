@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Geometry } from "geojson";
 import { useStore } from "@/lib/useStore";
-import type { CollectionName, Community } from "@/lib/types";
-import { COLLECTION_LABELS, KIND_LABELS, SOURCE_LABELS } from "@/lib/types";
+import type { CollectionName, Community, CommunityStatus } from "@/lib/types";
+import { COLLECTION_LABELS, KIND_LABELS, SOURCE_LABELS, STATUS_LABELS, COUNTRY_LABELS } from "@/lib/types";
 import { assignCommunity, boundsOf, norm, validLatLng } from "@/lib/geo";
 import { computeOverlap, type OverlapLevel } from "@/lib/overlap";
 import {
@@ -13,6 +13,7 @@ import {
 } from "@/lib/export";
 import type { DrawShape, Focus } from "./MapView";
 import CommunityForm from "./CommunityForm";
+import CommunityDetails from "./CommunityDetails";
 import ImportDialog from "./ImportDialog";
 import Icon, { type IconName } from "./Icon";
 import CountrySummaryView from "./CountrySummaryView";
@@ -72,13 +73,16 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
   const [importTarget, setImportTarget] = useState<CollectionName | null>(null);
   const [manualTarget, setManualTarget] = useState<ManualTarget | null>(null);
   const [q, setQ] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"" | "validat" | "propus">("");
+  const [statusFilter, setStatusFilter] = useState<"" | CommunityStatus>("");
+  const [countryFilter, setCountryFilter] = useState("");
+  const [unlocatedOnly, setUnlocatedOnly] = useState(false);
+  const [healthOnly, setHealthOnly] = useState(false);
   const [level, setLevel] = useState<OverlapLevel>("locality");
   const [partner, setPartner] = useState("");
   const [msg, setMsg] = useState<string | null>(null);
 
   const flash = (m: string) => { setMsg(m); setTimeout(() => setMsg(null), 4000); };
-  const focusGeom = (g: Geometry) => setFocus({ bounds: boundsOf(g), nonce: nextNonce() });
+  const focusGeom = (g: Geometry | null, approximate = false) => { if (g) setFocus({ bounds: boundsOf(g), zoom: approximate ? 12 : 17, nonce: nextNonce() }); };
   const focusPoint = (lat: number, lng: number) => setFocus({ lat, lng, zoom: 16, nonce: nextNonce() });
   const draw = (shape: DrawShape) => {
     setDrawRequest({ shape, nonce: nextNonce() });
@@ -103,8 +107,11 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
   const nq = norm(q);
   const communities = useMemo(() => db.communities.filter((c) =>
     (!statusFilter || c.status === statusFilter) &&
+    (!countryFilter || c.country === countryFilter) &&
+    (!unlocatedOnly || !c.geometry) &&
+    (!healthOnly || c.extra?.["campanie REDI health"]?.toLowerCase() === "da") &&
     (!nq || norm([c.name, c.locality, c.county, c.siruta].join(" ")).includes(nq)),
-  ), [db.communities, statusFilter, nq]);
+  ), [db.communities, statusFilter, countryFilter, unlocatedOnly, healthOnly, nq]);
   const entrepreneurs = useMemo(() => db.entrepreneurs.filter((e) =>
     !nq || norm([e.name, e.business, e.sector, e.locality, e.county].join(" ")).includes(nq),
   ), [db.entrepreneurs, nq]);
@@ -152,14 +159,14 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
 
   const fitAll = () => {
     const pts: [number, number][] = [];
-    db.communities.forEach((c) => { const [[s, w], [n, e]] = boundsOf(c.geometry); pts.push([s, w], [n, e]); });
+    communities.forEach((c) => { if (!c.geometry) return; const [[s, w], [n, e]] = boundsOf(c.geometry); pts.push([s, w], [n, e]); });
     db.entrepreneurs.forEach((e) => validLatLng(e.lat, e.lng) && pts.push([e.lat!, e.lng!]));
     if (!pts.length) { setFocus({ bounds: [[43.6, 20.2], [48.3, 29.8]], nonce: nextNonce() }); return; }
     const lats = pts.map((p) => p[0]); const lngs = pts.map((p) => p[1]);
     setFocus({ bounds: [[Math.min(...lats), Math.min(...lngs)], [Math.max(...lats), Math.max(...lngs)]], nonce: nextNonce() });
   };
 
-  const validated = db.communities.filter((c) => c.status === "validat").length;
+  const countries = [...new Set(db.communities.map((c) => c.country))].sort();
   const currentTab = TABS.find((t) => t.id === tab)!;
   const manualDefault: ManualTarget = tab === "summary" ? "summary" : tab === "entrepreneurs" ? "entrepreneurs" : tab === "clients" ? "clients" : "communities";
 
@@ -214,25 +221,29 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
                 <details className="drawing-help"><summary>Cum desenez o comunitate?</summary><p>Stradă: click pe fiecare punct, apoi pe ultimul pentru a termina. Cartier: închideți poligonul pe primul punct. Apăsați Esc pentru a anula desenarea.</p></details>
               </div>
               <div className="search-field"><Icon name="search" size={18} /><input aria-label="Caută comunități" placeholder="Nume, localitate sau SIRUTA" value={q} onChange={(e) => setQ(e.target.value)} /></div>
-              <div className="status-filters" role="group" aria-label="Filtrează după status">
-                {([['', 'Toate', db.communities.length], ['validat', 'Validate', validated], ['propus', 'Propuse', db.communities.length - validated]] as const).map(([value, label, count]) => <button key={value} aria-pressed={statusFilter === value} className={statusFilter === value ? "active" : ""} onClick={() => setStatusFilter(value)}>{label}<span>{count}</span></button>)}
+              <div className="catalog-filters">
+                <label>Țară<select aria-label="Țară" value={countryFilter} onChange={(e) => setCountryFilter(e.target.value)}><option value="">Toate țările ({countries.length})</option>{countries.map((code) => <option key={code} value={code}>{COUNTRY_LABELS[code] ?? code} ({db.communities.filter((c) => c.country === code).length})</option>)}</select></label>
+                <label>Status REDI<select aria-label="Status REDI" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as CommunityStatus | "")}><option value="">Toate statusurile</option>{Object.entries(STATUS_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
+                <label className="check-filter"><input type="checkbox" checked={healthOnly} onChange={(e) => setHealthOnly(e.target.checked)} />Campanie REDI health</label>
+                <label className="check-filter"><input type="checkbox" checked={unlocatedOnly} onChange={(e) => setUnlocatedOnly(e.target.checked)} />Doar fără localizare</label>
               </div>
-              {!!db.communities.length && <p className="results-label">{communities.length} comunități găsite</p>}
+              {!!db.communities.length && <p className="results-label">{communities.length} înregistrări · {communities.filter((c) => c.geometry).length} pe hartă</p>}
               <ul className="list">
-                {communities.slice(0, LIST_LIMIT).map((c) => {
+                {communities.map((c) => {
                   const n = db.entrepreneurs.filter((e) => e.communityId === c.id).length;
                   return (
                     <li key={c.id} className={c.id === selectedId ? "selected" : ""}>
-                      <button className="record-select" aria-expanded={c.id === selectedId} onClick={() => { setSelectedId(c.id); focusGeom(c.geometry); }}>
+                      <button className="record-select" aria-expanded={c.id === selectedId} onClick={() => { setSelectedId(c.id); focusGeom(c.geometry, !!c.locationAccuracy); }}>
                       <div className="li-main">
                         <b>{c.name}</b>
-                        <span className={`badge ${c.status}`}>{c.status === "validat" ? "validată" : "propusă"}</span>
+                        <span className={`badge ${c.status}`}>{STATUS_LABELS[c.status]}</span>
                         <span className="badge">{KIND_LABELS[c.kind]}</span>
                       </div>
                       <div className="muted small">
                         {[c.locality, c.county, c.country].filter(Boolean).join(", ") || "—"}{c.siruta ? ` · SIRUTA ${c.siruta}` : ""} · {SOURCE_LABELS[c.source]}{n ? ` · ${n} antreprenori` : ""}
                       </div>
                       </button>
+                      {c.id === selectedId && <CommunityDetails community={c} />}
                       {c.id === selectedId && (
                         <div className="li-actions" onClick={(e) => e.stopPropagation()}>
                           <button onClick={() => setEditing(c)}>Editează</button>
@@ -246,7 +257,7 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
                   );
                 })}
               </ul>
-              {communities.length > LIST_LIMIT && <p className="muted small">Se afișează primele {LIST_LIMIT} din {communities.length}. Restrângeți căutarea.</p>}
+
               {!store.loading && !db.communities.length && (
                 <div className="empty">
                   <Icon name="map" size={36} />
@@ -256,7 +267,7 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
                   <span className="file-formats">CSV, Excel sau GeoJSON</span>
                 </div>
               )}
-              {!store.loading && !!db.communities.length && !communities.length && <div className="empty"><Icon name="search" size={30} /><h3>Nicio comunitate găsită</h3><p>Încearcă alt nume sau schimbă filtrul de status.</p><button onClick={() => { setQ(""); setStatusFilter(""); }}>Resetează filtrele</button></div>}
+              {!store.loading && !!db.communities.length && !communities.length && <div className="empty"><Icon name="search" size={30} /><h3>Nicio comunitate găsită</h3><p>Încearcă alt nume sau schimbă filtrul de status.</p><button onClick={() => { setQ(""); setStatusFilter(""); setCountryFilter(""); setUnlocatedOnly(false); setHealthOnly(false); }}>Resetează filtrele</button></div>}
             </>
           )}
 
@@ -413,9 +424,9 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
 
       <main aria-label={tab === "summary" ? "Sumar pe țări" : "Harta comunităților"}>
         {tab === "summary" ? <CountrySummaryView report={selectedSummary} /> : <>
-        <div className="map-toolbar"><span><Icon name="map" size={17} />Hartă interactivă</span><button onClick={fitAll}><Icon name="fit" size={17} />Vezi tot</button></div>
+        <div className="map-toolbar"><span><Icon name="map" size={17} />Hartă interactivă · {communities.filter((c) => c.geometry).length} poziții</span><button onClick={fitAll}><Icon name="fit" size={17} />Vezi tot</button></div>
         <MapView
-          db={db}
+          db={tab === "communities" ? { ...db, communities } : db}
           version={store.version}
           selectedId={selectedId}
           focus={focus}
@@ -424,7 +435,7 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
           onCreateShape={onCreateShape}
           onSelectCommunity={onSelectCommunity}
         />
-        <div className="map-key" aria-label="Legenda hărții"><span><i className="key-validated" />Validate</span><span><i className="key-proposed" />Propuse</span><span><i className="key-entrepreneur" />Antreprenori</span><span><i className="key-client" />Clienți</span></div>
+        <div className="map-key" aria-label="Legenda hărții"><span><i className="key-validated" />Validate</span><span><i className="key-proposed" />Propuse</span><span><i className="key-pending" />De validat</span><span><i className="key-below" />Sub prag</span><span><i className="key-entrepreneur" />Antreprenori</span><span><i className="key-client" />Clienți</span></div>
         </>}
         {msg && <div className="toast" role="status">{msg}</div>}
       </main>
@@ -441,7 +452,7 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
       {importTarget && <ImportDialog key={importTarget} store={store} initialTarget={importTarget} onSummaryImported={async () => { await reloadSummaries(); setSummaryId(undefined); setTab("summary"); }} onClose={() => setImportTarget(null)} />}
       {manualTarget && <ManualEntryDialog key={manualTarget} store={store} initialTarget={manualTarget} onClose={() => setManualTarget(null)} onSaved={async (target) => {
         if (target === "summary") { await reloadSummaries(); setSummaryId(undefined); setTab("summary"); }
-        else { setTab(target === "localities" ? "data" : target); setQ(""); setStatusFilter(""); }
+        else { setTab(target === "localities" ? "data" : target); setQ(""); setStatusFilter(""); setCountryFilter(""); setUnlocatedOnly(false); setHealthOnly(false); }
         flash("Înregistrare salvată în baza de date.");
       }} />}
     </div>

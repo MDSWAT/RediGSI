@@ -1,5 +1,6 @@
 "use client";
 import dynamic from "next/dynamic";
+import Link from "next/link";
 import { useCallback, useMemo, useState } from "react";
 import type { Geometry } from "geojson";
 import { useStore } from "@/lib/useStore";
@@ -13,16 +14,17 @@ import {
 import type { DrawShape, Focus } from "./MapView";
 import CommunityForm from "./CommunityForm";
 import ImportDialog from "./ImportDialog";
+import Icon, { type IconName } from "./Icon";
 
 const MapView = dynamic(() => import("./MapView"), { ssr: false, loading: () => <div className="map loading">Se încarcă harta…</div> });
 
 type Tab = "communities" | "entrepreneurs" | "clients" | "overlap" | "data";
-const TABS: { id: Tab; label: string }[] = [
-  { id: "communities", label: "Comunități" },
-  { id: "entrepreneurs", label: "Antreprenori" },
-  { id: "clients", label: "Clienți parteneri" },
-  { id: "overlap", label: "Suprapunere" },
-  { id: "data", label: "Import / Export" },
+const TABS: { id: Tab; label: string; short: string; icon: IconName; description: string }[] = [
+  { id: "communities", label: "Comunități", short: "Comunități", icon: "map", description: "Explorează și completează harta comunităților." },
+  { id: "entrepreneurs", label: "Antreprenori", short: "Antreprenori", icon: "briefcase", description: "Conectează antreprenorii cu comunitățile lor." },
+  { id: "clients", label: "Clienți parteneri", short: "Parteneri", icon: "people", description: "Gestionează portofoliile partenerilor." },
+  { id: "overlap", label: "Suprapunere", short: "Analiză", icon: "overlap", description: "Compară acoperirea comunităților și a partenerilor." },
+  { id: "data", label: "Import / Export", short: "Date", icon: "data", description: "Adaugă, exportă și organizează datele hărții." },
 ];
 const LIST_LIMIT = 300;
 let seq = 0;
@@ -47,7 +49,12 @@ export default function App() {
   const flash = (m: string) => { setMsg(m); setTimeout(() => setMsg(null), 4000); };
   const focusGeom = (g: Geometry) => setFocus({ bounds: boundsOf(g), nonce: nextNonce() });
   const focusPoint = (lat: number, lng: number) => setFocus({ lat, lng, zoom: 16, nonce: nextNonce() });
-  const draw = (shape: DrawShape) => setDrawRequest({ shape, nonce: nextNonce() });
+  const draw = (shape: DrawShape) => {
+    setDrawRequest({ shape, nonce: nextNonce() });
+    if (window.matchMedia("(max-width: 760px)").matches) {
+      document.querySelector("main")?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
+    }
+  };
 
   const communityById = useMemo(() => new Map(db.communities.map((c) => [c.id, c])), [db.communities]);
   const partners = useMemo(() => {
@@ -116,60 +123,63 @@ export default function App() {
     const pts: [number, number][] = [];
     db.communities.forEach((c) => { const [[s, w], [n, e]] = boundsOf(c.geometry); pts.push([s, w], [n, e]); });
     db.entrepreneurs.forEach((e) => validLatLng(e.lat, e.lng) && pts.push([e.lat!, e.lng!]));
-    if (!pts.length) return;
+    if (!pts.length) { setFocus({ bounds: [[43.6, 20.2], [48.3, 29.8]], nonce: nextNonce() }); return; }
     const lats = pts.map((p) => p[0]); const lngs = pts.map((p) => p[1]);
     setFocus({ bounds: [[Math.min(...lats), Math.min(...lngs)], [Math.max(...lats), Math.max(...lngs)]], nonce: nextNonce() });
   };
 
   const validated = db.communities.filter((c) => c.status === "validat").length;
+  const currentTab = TABS.find((t) => t.id === tab)!;
 
   return (
     <div className="app">
+      <nav className="navigation" aria-label="Navigare principală">
+        <Link className="rail-brand" href="/" aria-label="Roma Community Map — acasă"><Icon name="map" size={27} /></Link>
+        <div className="nav-items">
+          {TABS.map((t) => <button key={t.id} className={tab === t.id ? "active" : ""} aria-current={tab === t.id ? "page" : undefined} onClick={() => setTab(t.id)} title={t.label}><Icon name={t.icon} size={22} /><span>{t.short}</span></button>)}
+        </div>
+        <span className="rail-signature">RediGSI</span>
+      </nav>
       <header>
         <div className="brand">
-          <span className="logo" aria-hidden>◎</span>
           <div>
             <h1>Roma Community Map</h1>
-            <p className="muted small">{validated} comunități validate · {db.communities.length - validated} propuse · {db.entrepreneurs.length} antreprenori · {db.clients.length} clienți parteneri</p>
+            <p className="muted small">Comunități conectate. Perspective comune.</p>
           </div>
         </div>
-        <button onClick={fitAll}>Vezi tot</button>
+        <div className="header-summary" aria-label="Rezumat date"><span><b>{db.communities.length}</b> comunități</span><span><b>{db.entrepreneurs.length}</b> antreprenori</span><span><b>{db.clients.length}</b> clienți</span></div>
+        <button className="primary header-import" aria-label="Importă date" onClick={() => setImportTarget(tab === "entrepreneurs" ? "entrepreneurs" : tab === "clients" ? "clients" : "communities")}><Icon name="upload" size={17} /><span>Importă date</span></button>
       </header>
 
-      <aside>
-        <nav className="tabs">
-          {TABS.map((t) => (
-            <button key={t.id} className={tab === t.id ? "active" : ""} onClick={() => setTab(t.id)}>{t.label}</button>
-          ))}
-        </nav>
-
+      <aside aria-label={currentTab.label}>
+        <div className="panel-heading"><h2>{currentTab.label}{tab === "communities" && <span className="count">{db.communities.length}</span>}</h2><p>{currentTab.description}</p></div>
         <div className="panel">
           {store.error && <p className="error">{store.error}</p>}
           {store.loading && <p className="muted">Se încarcă datele…</p>}
 
           {tab === "communities" && (
             <>
-              <div className="card">
-                <b>Marchează o comunitate nouă</b>
-                <div className="btn-grid">
-                  <button onClick={() => draw("CircleMarker")}>● Punct</button>
-                  <button onClick={() => draw("Line")}>╱ Stradă</button>
-                  <button onClick={() => draw("Polygon")}>⬠ Cartier</button>
-                  <button onClick={() => draw("Rectangle")}>▭ Zonă</button>
+              <div className="draw-tools">
+                <h3>Adaugă pe hartă</h3>
+                <div className="draw-grid">
+                  <button onClick={() => draw("CircleMarker")}><Icon name="point" /><span>Punct</span></button>
+                  <button onClick={() => draw("Line")}><Icon name="line" /><span>Stradă</span></button>
+                  <button onClick={() => draw("Polygon")}><Icon name="polygon" /><span>Cartier</span></button>
+                  <button onClick={() => draw("Rectangle")}><Icon name="rectangle" /><span>Zonă</span></button>
                 </div>
-                <p className="muted small">Stradă: click pe fiecare punct al străzii, click pe ultimul punct pentru a termina. Cartier: închideți poligonul pe primul punct.</p>
+                <details className="drawing-help"><summary>Cum desenez o comunitate?</summary><p>Stradă: click pe fiecare punct, apoi pe ultimul pentru a termina. Cartier: închideți poligonul pe primul punct. Apăsați Esc pentru a anula desenarea.</p></details>
               </div>
-              <div className="row">
-                <input placeholder="Caută (nume, localitate, SIRUTA)…" value={q} onChange={(e) => setQ(e.target.value)} />
-                <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}>
-                  <option value="">Toate</option><option value="validat">Validate</option><option value="propus">Propuse</option>
-                </select>
+              <div className="search-field"><Icon name="search" size={18} /><input aria-label="Caută comunități" placeholder="Nume, localitate sau SIRUTA" value={q} onChange={(e) => setQ(e.target.value)} /></div>
+              <div className="status-filters" role="group" aria-label="Filtrează după status">
+                {([['', 'Toate', db.communities.length], ['validat', 'Validate', validated], ['propus', 'Propuse', db.communities.length - validated]] as const).map(([value, label, count]) => <button key={value} aria-pressed={statusFilter === value} className={statusFilter === value ? "active" : ""} onClick={() => setStatusFilter(value)}>{label}<span>{count}</span></button>)}
               </div>
+              {!!db.communities.length && <p className="results-label">{communities.length} comunități găsite</p>}
               <ul className="list">
                 {communities.slice(0, LIST_LIMIT).map((c) => {
                   const n = db.entrepreneurs.filter((e) => e.communityId === c.id).length;
                   return (
-                    <li key={c.id} className={c.id === selectedId ? "selected" : ""} onClick={() => { setSelectedId(c.id); focusGeom(c.geometry); }}>
+                    <li key={c.id} className={c.id === selectedId ? "selected" : ""}>
+                      <button className="record-select" aria-expanded={c.id === selectedId} onClick={() => { setSelectedId(c.id); focusGeom(c.geometry); }}>
                       <div className="li-main">
                         <b>{c.name}</b>
                         <span className={`badge ${c.status}`}>{c.status === "validat" ? "validată" : "propusă"}</span>
@@ -178,6 +188,7 @@ export default function App() {
                       <div className="muted small">
                         {[c.locality, c.county, c.country].filter(Boolean).join(", ") || "—"}{c.siruta ? ` · SIRUTA ${c.siruta}` : ""} · {SOURCE_LABELS[c.source]}{n ? ` · ${n} antreprenori` : ""}
                       </div>
+                      </button>
                       {c.id === selectedId && (
                         <div className="li-actions" onClick={(e) => e.stopPropagation()}>
                           <button onClick={() => setEditing(c)}>Editează</button>
@@ -194,10 +205,14 @@ export default function App() {
               {communities.length > LIST_LIMIT && <p className="muted small">Se afișează primele {LIST_LIMIT} din {communities.length}. Restrângeți căutarea.</p>}
               {!store.loading && !db.communities.length && (
                 <div className="empty">
-                  <p>Nicio comunitate încă.</p>
-                  <button className="primary" onClick={() => setImportTarget("communities")}>Importă catalogul</button>
+                  <Icon name="map" size={36} />
+                  <h3>Harta începe cu o comunitate</h3>
+                  <p>Importă catalogul existent sau marchează prima comunitate direct pe hartă.</p>
+                  <button className="primary" onClick={() => setImportTarget("communities")}><Icon name="upload" size={16} />Importă catalogul</button>
+                  <span className="file-formats">CSV, Excel sau GeoJSON</span>
                 </div>
               )}
+              {!store.loading && !!db.communities.length && !communities.length && <div className="empty"><Icon name="search" size={30} /><h3>Nicio comunitate găsită</h3><p>Încearcă alt nume sau schimbă filtrul de status.</p><button onClick={() => { setQ(""); setStatusFilter(""); }}>Resetează filtrele</button></div>}
             </>
           )}
 
@@ -207,17 +222,18 @@ export default function App() {
                 <button className="primary" onClick={() => setImportTarget("entrepreneurs")}>Importă antreprenori</button>
                 <button onClick={relinkAll} disabled={!db.entrepreneurs.length}>Recalculează comunitățile</button>
               </div>
-              <input placeholder="Caută (nume, firmă, domeniu, localitate)…" value={q} onChange={(e) => setQ(e.target.value)} />
+              <input aria-label="Caută antreprenori" placeholder="Caută nume, firmă sau localitate…" value={q} onChange={(e) => setQ(e.target.value)} />
+              {!store.loading && !entrepreneurs.length && <div className="empty"><Icon name="briefcase" size={32} /><h3>{db.entrepreneurs.length ? "Niciun rezultat" : "Antreprenorii, pe aceeași hartă"}</h3><p>{db.entrepreneurs.length ? "Încearcă un alt termen de căutare." : "Importă lista pentru a vedea legăturile cu comunitățile."}</p></div>}
               <ul className="list">
                 {entrepreneurs.slice(0, LIST_LIMIT).map((e) => (
-                  <li key={e.id} onClick={() => validLatLng(e.lat, e.lng) && focusPoint(e.lat!, e.lng!)}>
+                  <li key={e.id}><button className="record-select" disabled={!validLatLng(e.lat, e.lng)} onClick={() => validLatLng(e.lat, e.lng) && focusPoint(e.lat!, e.lng!)}>
                     <div className="li-main"><b>{e.name}</b>{e.business && <span className="muted">{e.business}</span>}</div>
                     <div className="muted small">
                       {[e.sector, e.locality, e.county].filter(Boolean).join(" · ") || "—"}
                       {" · "}{e.communityId ? `comunitate: ${communityById.get(e.communityId)?.name ?? "?"}` : "fără comunitate"}
                       {!validLatLng(e.lat, e.lng) && <span className="warn"> · fără coordonate</span>}
                     </div>
-                  </li>
+                  </button></li>
                 ))}
               </ul>
               {entrepreneurs.length > LIST_LIMIT && <p className="muted small">Se afișează primii {LIST_LIMIT} din {entrepreneurs.length}.</p>}
@@ -351,7 +367,8 @@ export default function App() {
         </div>
       </aside>
 
-      <main>
+      <main aria-label="Harta comunităților">
+        <div className="map-toolbar"><span><Icon name="map" size={17} />Hartă interactivă</span><button onClick={fitAll}><Icon name="fit" size={17} />Vezi tot</button></div>
         <MapView
           db={db}
           version={store.version}
@@ -362,7 +379,8 @@ export default function App() {
           onCreateShape={onCreateShape}
           onSelectCommunity={onSelectCommunity}
         />
-        {msg && <div className="toast">{msg}</div>}
+        <div className="map-key" aria-label="Legenda hărții"><span><i className="key-validated" />Validate</span><span><i className="key-proposed" />Propuse</span><span><i className="key-entrepreneur" />Antreprenori</span><span><i className="key-client" />Clienți</span></div>
+        {msg && <div className="toast" role="status">{msg}</div>}
       </main>
 
       {(draft || editing) && (

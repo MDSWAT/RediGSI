@@ -29,11 +29,11 @@ const esc = (s: unknown) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
 const COLORS = {
-  validat: "#1d4ed8",
-  propus: "#9333ea",
-  selected: "#f59e0b",
-  entrepreneur: "#059669",
-  client: "#ea580c",
+  validat: "#206457",
+  propus: "#b07821",
+  selected: "#193c34",
+  entrepreneur: "#397ca5",
+  client: "#b85b43",
   both: "#16a34a",
   clientsOnly: "#ea580c",
   communitiesOnly: "#64748b",

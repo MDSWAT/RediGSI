@@ -4,6 +4,7 @@ import type { Geometry } from "geojson";
 import type { Community, CommunityKind, CommunityStatus, DB } from "@/lib/types";
 import { KIND_LABELS, STATUS_LABELS } from "@/lib/types";
 import { buildLocalityIndex, center, kindForGeometry, lookupLocality, nearestLocality, normCountry, normSiruta, parseNum } from "@/lib/geo";
+import Dialog from "./Dialog";
 
 interface Props {
   db: DB;
@@ -74,9 +75,9 @@ export default function CommunityForm({ db, geometry, existing, onSave, onCancel
   };
 
   return (
-    <div className="modal-backdrop" onClick={onCancel}>
+    <Dialog labelledBy="community-dialog-title" onClose={onCancel}>
       <form className="modal" onClick={(e) => e.stopPropagation()} onSubmit={submit}>
-        <h2>{existing ? "Editează comunitatea" : "Comunitate nouă"}</h2>
+        <h2 id="community-dialog-title">{existing ? "Editează comunitatea" : "Comunitate nouă"}</h2>
         {!existing && suggestion && (
           <p className="muted small">Localitate sugerată după poziție: <b>{suggestion.name}</b>{suggestion.county ? `, ${suggestion.county}` : ""}</p>
         )}
@@ -108,6 +109,6 @@ export default function CommunityForm({ db, geometry, existing, onSave, onCancel
           <button type="submit" className="primary" disabled={saving || !f.name.trim()}>{saving ? "Se salvează…" : "Salvează"}</button>
         </div>
       </form>
-    </div>
+    </Dialog>
   );
 }

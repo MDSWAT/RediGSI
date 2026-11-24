@@ -5,6 +5,7 @@ import { COLLECTION_LABELS } from "@/lib/types";
 import { FIELDS, guessMapping } from "@/lib/fields";
 import { buildRecords, parseFile, type ImportOptions, type ParsedFile } from "@/lib/importer";
 import type { Store } from "@/lib/useStore";
+import Dialog from "./Dialog";
 
 interface Props {
   store: Store;
@@ -85,9 +86,9 @@ export default function ImportDialog({ store, initialTarget = "communities", onC
   const previewNote = rowsTotal > 200 ? " (estimare pe primele 200 de rânduri)" : "";
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
+    <Dialog labelledBy="import-dialog-title" onClose={onClose}>
       <div className="modal wide" onClick={(e) => e.stopPropagation()}>
-        <h2>Import date</h2>
+        <h2 id="import-dialog-title">Import date</h2>
 
         <div className="row">
           <label>Ce importați?
@@ -177,6 +178,6 @@ export default function ImportDialog({ store, initialTarget = "communities", onC
           </button>
         </div>
       </div>
-    </div>
+    </Dialog>
   );
 }

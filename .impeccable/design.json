@@ -1,0 +1,497 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-24T07:12:43.292607+00:00",
+  "title": "Design System: Roma Community Map",
+  "extensions": {
+    "colorMeta": {
+      "primary": {
+        "role": "primary",
+        "displayName": "Primary",
+        "tonalRamp": [
+          "oklch(15% 0.0708 177.84)",
+          "oklch(26% 0.0708 177.84)",
+          "oklch(38% 0.0708 177.84)",
+          "oklch(49% 0.0708 177.84)",
+          "oklch(61% 0.0708 177.84)",
+          "oklch(72% 0.0708 177.84)",
+          "oklch(84% 0.0708 177.84)",
+          "oklch(95% 0.0708 177.84)"
+        ]
+      },
+      "primary-hover": {
+        "role": "primary",
+        "displayName": "Primary Hover",
+        "tonalRamp": [
+          "oklch(15% 0.0593 176.86)",
+          "oklch(26% 0.0593 176.86)",
+          "oklch(38% 0.0593 176.86)",
+          "oklch(49% 0.0593 176.86)",
+          "oklch(61% 0.0593 176.86)",
+          "oklch(72% 0.0593 176.86)",
+          "oklch(84% 0.0593 176.86)",
+          "oklch(95% 0.0593 176.86)"
+        ]
+      },
+      "primary-text": {
+        "role": "neutral",
+        "displayName": "Primary Text",
+        "tonalRamp": [
+          "oklch(15% 0.0000 0.00)",
+          "oklch(26% 0.0000 0.00)",
+          "oklch(38% 0.0000 0.00)",
+          "oklch(49% 0.0000 0.00)",
+          "oklch(61% 0.0000 0.00)",
+          "oklch(72% 0.0000 0.00)",
+          "oklch(84% 0.0000 0.00)",
+          "oklch(95% 0.0000 0.00)"
+        ]
+      },
+      "bg": {
+        "role": "neutral",
+        "displayName": "Bg",
+        "tonalRamp": [
+          "oklch(15% 0.0034 145.55)",
+          "oklch(26% 0.0034 145.55)",
+          "oklch(38% 0.0034 145.55)",
+          "oklch(49% 0.0034 145.55)",
+          "oklch(61% 0.0034 145.55)",
+          "oklch(72% 0.0034 145.55)",
+          "oklch(84% 0.0034 145.55)",
+          "oklch(95% 0.0034 145.55)"
+        ]
+      },
+      "panel": {
+        "role": "neutral",
+        "displayName": "Panel",
+        "tonalRamp": [
+          "oklch(15% 0.0000 0.00)",
+          "oklch(26% 0.0000 0.00)",
+          "oklch(38% 0.0000 0.00)",
+          "oklch(49% 0.0000 0.00)",
+          "oklch(61% 0.0000 0.00)",
+          "oklch(72% 0.0000 0.00)",
+          "oklch(84% 0.0000 0.00)",
+          "oklch(95% 0.0000 0.00)"
+        ]
+      },
+      "text": {
+        "role": "neutral",
+        "displayName": "Text",
+        "tonalRamp": [
+          "oklch(15% 0.0339 177.84)",
+          "oklch(26% 0.0339 177.84)",
+          "oklch(38% 0.0339 177.84)",
+          "oklch(49% 0.0339 177.84)",
+          "oklch(61% 0.0339 177.84)",
+          "oklch(72% 0.0339 177.84)",
+          "oklch(84% 0.0339 177.84)",
+          "oklch(95% 0.0339 177.84)"
+        ]
+      },
+      "muted": {
+        "role": "neutral",
+        "displayName": "Muted",
+        "tonalRamp": [
+          "oklch(15% 0.0189 177.77)",
+          "oklch(26% 0.0189 177.77)",
+          "oklch(38% 0.0189 177.77)",
+          "oklch(49% 0.0189 177.77)",
+          "oklch(61% 0.0189 177.77)",
+          "oklch(72% 0.0189 177.77)",
+          "oklch(84% 0.0189 177.77)",
+          "oklch(95% 0.0189 177.77)"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Border",
+        "tonalRamp": [
+          "oklch(15% 0.0084 157.08)",
+          "oklch(26% 0.0084 157.08)",
+          "oklch(38% 0.0084 157.08)",
+          "oklch(49% 0.0084 157.08)",
+          "oklch(61% 0.0084 157.08)",
+          "oklch(72% 0.0084 157.08)",
+          "oklch(84% 0.0084 157.08)",
+          "oklch(95% 0.0084 157.08)"
+        ]
+      },
+      "hover": {
+        "role": "neutral",
+        "displayName": "Hover",
+        "tonalRamp": [
+          "oklch(15% 0.0066 160.08)",
+          "oklch(26% 0.0066 160.08)",
+          "oklch(38% 0.0066 160.08)",
+          "oklch(49% 0.0066 160.08)",
+          "oklch(61% 0.0066 160.08)",
+          "oklch(72% 0.0066 160.08)",
+          "oklch(84% 0.0066 160.08)",
+          "oklch(95% 0.0066 160.08)"
+        ]
+      },
+      "selected": {
+        "role": "neutral",
+        "displayName": "Selected",
+        "tonalRamp": [
+          "oklch(15% 0.0132 159.91)",
+          "oklch(26% 0.0132 159.91)",
+          "oklch(38% 0.0132 159.91)",
+          "oklch(49% 0.0132 159.91)",
+          "oklch(61% 0.0132 159.91)",
+          "oklch(72% 0.0132 159.91)",
+          "oklch(84% 0.0132 159.91)",
+          "oklch(95% 0.0132 159.91)"
+        ]
+      },
+      "rail": {
+        "role": "neutral",
+        "displayName": "Rail",
+        "tonalRamp": [
+          "oklch(15% 0.0434 176.51)",
+          "oklch(26% 0.0434 176.51)",
+          "oklch(38% 0.0434 176.51)",
+          "oklch(49% 0.0434 176.51)",
+          "oklch(61% 0.0434 176.51)",
+          "oklch(72% 0.0434 176.51)",
+          "oklch(84% 0.0434 176.51)",
+          "oklch(95% 0.0434 176.51)"
+        ]
+      },
+      "accent": {
+        "role": "secondary",
+        "displayName": "Accent",
+        "tonalRamp": [
+          "oklch(15% 0.1194 72.90)",
+          "oklch(26% 0.1194 72.90)",
+          "oklch(38% 0.1194 72.90)",
+          "oklch(49% 0.1194 72.90)",
+          "oklch(61% 0.1194 72.90)",
+          "oklch(72% 0.1194 72.90)",
+          "oklch(84% 0.1194 72.90)",
+          "oklch(95% 0.1194 72.90)"
+        ]
+      },
+      "danger": {
+        "role": "secondary",
+        "displayName": "Danger",
+        "tonalRamp": [
+          "oklch(15% 0.1532 26.23)",
+          "oklch(26% 0.1532 26.23)",
+          "oklch(38% 0.1532 26.23)",
+          "oklch(49% 0.1532 26.23)",
+          "oklch(61% 0.1532 26.23)",
+          "oklch(72% 0.1532 26.23)",
+          "oklch(84% 0.1532 26.23)",
+          "oklch(95% 0.1532 26.23)"
+        ]
+      },
+      "warn": {
+        "role": "secondary",
+        "displayName": "Warn",
+        "tonalRamp": [
+          "oklch(15% 0.1041 70.05)",
+          "oklch(26% 0.1041 70.05)",
+          "oklch(38% 0.1041 70.05)",
+          "oklch(49% 0.1041 70.05)",
+          "oklch(61% 0.1041 70.05)",
+          "oklch(72% 0.1041 70.05)",
+          "oklch(84% 0.1041 70.05)",
+          "oklch(95% 0.1041 70.05)"
+        ]
+      },
+      "entrepreneur": {
+        "role": "secondary",
+        "displayName": "Entrepreneur",
+        "tonalRamp": [
+          "oklch(15% 0.0929 238.41)",
+          "oklch(26% 0.0929 238.41)",
+          "oklch(38% 0.0929 238.41)",
+          "oklch(49% 0.0929 238.41)",
+          "oklch(61% 0.0929 238.41)",
+          "oklch(72% 0.0929 238.41)",
+          "oklch(84% 0.0929 238.41)",
+          "oklch(95% 0.0929 238.41)"
+        ]
+      },
+      "client": {
+        "role": "secondary",
+        "displayName": "Client",
+        "tonalRamp": [
+          "oklch(15% 0.1262 35.53)",
+          "oklch(26% 0.1262 35.53)",
+          "oklch(38% 0.1262 35.53)",
+          "oklch(49% 0.1262 35.53)",
+          "oklch(61% 0.1262 35.53)",
+          "oklch(72% 0.1262 35.53)",
+          "oklch(84% 0.1262 35.53)",
+          "oklch(95% 0.1262 35.53)"
+        ]
+      },
+      "overlap-both": {
+        "role": "secondary",
+        "displayName": "Overlap Both",
+        "tonalRamp": [
+          "oklch(15% 0.1699 149.21)",
+          "oklch(26% 0.1699 149.21)",
+          "oklch(38% 0.1699 149.21)",
+          "oklch(49% 0.1699 149.21)",
+          "oklch(61% 0.1699 149.21)",
+          "oklch(72% 0.1699 149.21)",
+          "oklch(84% 0.1699 149.21)",
+          "oklch(95% 0.1699 149.21)"
+        ]
+      },
+      "overlap-clients": {
+        "role": "secondary",
+        "displayName": "Overlap Clients",
+        "tonalRamp": [
+          "oklch(15% 0.1943 41.12)",
+          "oklch(26% 0.1943 41.12)",
+          "oklch(38% 0.1943 41.12)",
+          "oklch(49% 0.1943 41.12)",
+          "oklch(61% 0.1943 41.12)",
+          "oklch(72% 0.1943 41.12)",
+          "oklch(84% 0.1943 41.12)",
+          "oklch(95% 0.1943 41.12)"
+        ]
+      },
+      "overlap-communities": {
+        "role": "secondary",
+        "displayName": "Overlap Communities",
+        "tonalRamp": [
+          "oklch(15% 0.0407 257.42)",
+          "oklch(26% 0.0407 257.42)",
+          "oklch(38% 0.0407 257.42)",
+          "oklch(49% 0.0407 257.42)",
+          "oklch(61% 0.0407 257.42)",
+          "oklch(72% 0.0407 257.42)",
+          "oklch(84% 0.0407 257.42)",
+          "oklch(95% 0.0407 257.42)"
+        ]
+      },
+      "focus": {
+        "role": "neutral",
+        "displayName": "Focus",
+        "tonalRamp": [
+          "oklch(15% 0.0653 170.27)",
+          "oklch(26% 0.0653 170.27)",
+          "oklch(38% 0.0653 170.27)",
+          "oklch(49% 0.0653 170.27)",
+          "oklch(61% 0.0653 170.27)",
+          "oklch(72% 0.0653 170.27)",
+          "oklch(84% 0.0653 170.27)",
+          "oklch(95% 0.0653 170.27)"
+        ]
+      },
+      "nav-active": {
+        "role": "neutral",
+        "displayName": "Nav Active",
+        "tonalRamp": [
+          "oklch(15% 0.0249 156.70)",
+          "oklch(26% 0.0249 156.70)",
+          "oklch(38% 0.0249 156.70)",
+          "oklch(49% 0.0249 156.70)",
+          "oklch(61% 0.0249 156.70)",
+          "oklch(72% 0.0249 156.70)",
+          "oklch(84% 0.0249 156.70)",
+          "oklch(95% 0.0249 156.70)"
+        ]
+      },
+      "badge-valid": {
+        "role": "neutral",
+        "displayName": "Badge Valid",
+        "tonalRamp": [
+          "oklch(15% 0.0174 159.11)",
+          "oklch(26% 0.0174 159.11)",
+          "oklch(38% 0.0174 159.11)",
+          "oklch(49% 0.0174 159.11)",
+          "oklch(61% 0.0174 159.11)",
+          "oklch(72% 0.0174 159.11)",
+          "oklch(84% 0.0174 159.11)",
+          "oklch(95% 0.0174 159.11)"
+        ]
+      },
+      "badge-proposed": {
+        "role": "neutral",
+        "displayName": "Badge Proposed",
+        "tonalRamp": [
+          "oklch(15% 0.0306 81.76)",
+          "oklch(26% 0.0306 81.76)",
+          "oklch(38% 0.0306 81.76)",
+          "oklch(49% 0.0306 81.76)",
+          "oklch(61% 0.0306 81.76)",
+          "oklch(72% 0.0306 81.76)",
+          "oklch(84% 0.0306 81.76)",
+          "oklch(95% 0.0306 81.76)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "headline": {
+        "displayName": "Panel headline",
+        "purpose": "Index heading."
+      },
+      "title": {
+        "displayName": "Product title",
+        "purpose": "Header identity."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Default records and form text."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Form labels and secondary text."
+      }
+    },
+    "shadows": [
+      {
+        "name": "filter",
+        "value": "0 2px 5px #193c340d",
+        "purpose": "Selected filter segment."
+      },
+      {
+        "name": "map-tool",
+        "value": "0 3px 14px #193c3414",
+        "purpose": "Toolbar and legend."
+      },
+      {
+        "name": "map-control",
+        "value": "0 3px 14px #193c3424",
+        "purpose": "Leaflet controls."
+      },
+      {
+        "name": "dialog",
+        "value": "0 24px 70px #102b2a33",
+        "purpose": "Modal surface."
+      },
+      {
+        "name": "toast",
+        "value": "0 6px 20px #15352e30",
+        "purpose": "Transient status message."
+      }
+    ],
+    "motion": [
+      {
+        "name": "control-transition",
+        "value": "background-color 160ms, border-color 160ms, color 160ms",
+        "purpose": "Button feedback; disabled under prefers-reduced-motion: reduce."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "compact-desktop",
+        "value": "1200px"
+      },
+      {
+        "name": "narrow-desktop",
+        "value": "1000px"
+      },
+      {
+        "name": "mobile",
+        "value": "760px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Implemented action variant.",
+      "html": "<button class=\"ds-button-secondary\">Export CSV</button>",
+      "css": ".ds-button-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 12px;border:1px solid var(--border,#e0e6e2);background:var(--panel,#ffffff);color:var(--text,#233d37);border-radius:8px;cursor:pointer;font:550 14px/1.4 'Segoe UI',system-ui,sans-serif;transition:background-color 160ms,border-color 160ms,color 160ms;}.ds-button-secondary:hover:not(:disabled){background:var(--hover,#f0f5f2);border-color:#b5c7bc;}.ds-button-secondary:focus-visible{outline:3px solid #83bba7;outline-offset:3px;}.ds-button-secondary:disabled{opacity:.55;cursor:default;}@media(prefers-reduced-motion:reduce){.ds-button-secondary{transition:none;}}"
+    },
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Implemented action variant.",
+      "html": "<button class=\"ds-button-primary\">Importă catalogul</button>",
+      "css": ".ds-button-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 12px;border:1px solid var(--border,#e0e6e2);background:var(--panel,#ffffff);color:var(--text,#233d37);border-radius:8px;cursor:pointer;font:550 14px/1.4 'Segoe UI',system-ui,sans-serif;transition:background-color 160ms,border-color 160ms,color 160ms;background:var(--primary,#206457);color:var(--primary-text,#fff);border-color:var(--primary,#206457);}.ds-button-primary:hover:not(:disabled){background:#174d42;border-color:#174d42;}.ds-button-primary:focus-visible{outline:3px solid #83bba7;outline-offset:3px;}.ds-button-primary:disabled{opacity:.55;cursor:default;}@media(prefers-reduced-motion:reduce){.ds-button-primary{transition:none;}}"
+    },
+    {
+      "name": "Destructive Button",
+      "kind": "button",
+      "refersTo": "button-danger",
+      "description": "Implemented action variant.",
+      "html": "<button class=\"ds-button-danger\">Șterge</button>",
+      "css": ".ds-button-danger{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 12px;border:1px solid var(--border,#e0e6e2);background:var(--panel,#ffffff);color:var(--text,#233d37);border-radius:8px;cursor:pointer;font:550 14px/1.4 'Segoe UI',system-ui,sans-serif;transition:background-color 160ms,border-color 160ms,color 160ms;color:var(--danger,#b23d38);}.ds-button-danger:hover:not(:disabled){background:var(--hover,#f0f5f2);border-color:#b5c7bc;}.ds-button-danger:focus-visible{outline:3px solid #83bba7;outline-offset:3px;}.ds-button-danger:disabled{opacity:.55;cursor:default;}@media(prefers-reduced-motion:reduce){.ds-button-danger{transition:none;}}"
+    },
+    {
+      "name": "Community Search",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "Compact record search with inset stroke icon.",
+      "html": "<label class=\"ds-search\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m21 21-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z\"/></svg><input aria-label=\"Caută comunități\" placeholder=\"Nume, localitate sau SIRUTA\"></label>",
+      "css": ".ds-search{position:relative;display:flex;align-items:center;color:var(--muted,#687773);}.ds-search>svg{position:absolute;left:13px;pointer-events:none;}.ds-search input{width:100%;min-width:0;height:42px;padding:9px 11px 9px 40px;border:1px solid var(--border,#e0e6e2);border-radius:8px;background:var(--panel,#ffffff);color:var(--text,#233d37);font:12px 'Segoe UI',system-ui,sans-serif;caret-color:var(--primary,#206457);}.ds-search input::placeholder{color:#6b7973;opacity:1;}.ds-search input:focus-visible{outline:3px solid #83bba7;outline-offset:3px;}"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "refersTo": "nav-active",
+      "description": "Forest rail with pale active route.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Secțiuni\"><button class=\"ds-route\" aria-current=\"page\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15\"/></svg><span>Comunități</span></button><button class=\"ds-route\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15\"/></svg><span>Date</span></button></nav>",
+      "css": ".ds-nav{display:flex;flex-direction:column;gap:12px;width:74px;padding:23px 7px;background:var(--rail,#193c34);}.ds-route{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:100%;min-height:66px;padding:10px 1px;border:0;background:transparent;color:#bfd0c7;border-radius:10px;font:500 10px/1.4 'Segoe UI',system-ui,sans-serif;cursor:pointer;transition:background-color 160ms,color 160ms;}.ds-route:hover{color:white;background:#2a5045;}.ds-route[aria-current=page]{background:#d9ebdf;color:#193c34;}.ds-route:focus-visible{outline:3px solid #83bba7;outline-offset:3px;}@media(prefers-reduced-motion:reduce){.ds-route{transition:none;}}"
+    },
+    {
+      "name": "Status validată",
+      "kind": "chip",
+      "refersTo": "badge-valid",
+      "description": "Noninteractive community status label.",
+      "html": "<span class=\"ds-badge-valid\">validată</span>",
+      "css": ".ds-badge-valid{font:10px/1.5 'Segoe UI',system-ui,sans-serif;padding:2px 7px;border-radius:5px;background:#e3f0e8;color:#206457;}"
+    },
+    {
+      "name": "Status propusă",
+      "kind": "chip",
+      "refersTo": "badge-proposed",
+      "description": "Noninteractive community status label.",
+      "html": "<span class=\"ds-badge-proposed\">propusă</span>",
+      "css": ".ds-badge-proposed{font:10px/1.5 'Segoe UI',system-ui,sans-serif;padding:2px 7px;border-radius:5px;background:#fbefda;color:#92601a;}"
+    },
+    {
+      "name": "Data Section",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Flat data grouping separated by a divider.",
+      "html": "<section class=\"ds-card\"><b>Export comunități</b><p>Coordonate, SIRUTA, WKT</p></section>",
+      "css": ".ds-card{padding:0 0 22px;border-bottom:1px solid var(--border,#e0e6e2);color:var(--text,#233d37);font:14px/1.5 'Segoe UI',system-ui,sans-serif;}.ds-card>b{font-size:14px;font-weight:650;}.ds-card p{margin:12px 0 0;color:var(--muted,#687773);font-size:12px;line-height:1.75;}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Fieldwork Atlas",
+    "overview": "Restrained mineral whites, forest navigation and petrol-green actions frame a readable daytime workspace. System typography and precise stroke icons give Romanian records and geographic evidence priority.\n\nThe fieldwork atlas direction uses calm tonal surfaces for dense work. Borders separate records; shadows lift tools over the map and isolate dialogs.",
+    "keyCharacteristics": [
+      "Mineral white surfaces with a forest navigation spine.",
+      "Compact, readable system typography and tabular counts.",
+      "Petrol actions and stable geographic status colors.",
+      "Precise stroke icons and restrained depth."
+    ],
+    "rules": [
+      {
+        "name": "The Status Continuity Rule",
+        "body": "Keep community status colors consistent across badges, legends and map geometry.",
+        "section": "colors"
+      },
+      {
+        "name": "The Working Surface Rule",
+        "body": "Use borders and tonal layering for records; reserve lift for controls above the map and modal content.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use labeled status colors consistently in lists, legends and map geometry.",
+      "Do keep keyboard focus visible on controls and record selection.",
+      "Do use tabular numerals for counts, statistics and tables.",
+      "Do preserve Romanian diacritics and readable compact labels."
+    ],
+    "donts": [
+      "Don't turn ordinary record sections into floating shadow cards.",
+      "Don't use the proposed-community amber as a general action accent.",
+      "Don't add decorative raster imagery to the working map interface.",
+      "Don't animate controls when reduced motion is requested."
+    ]
+  }
+}

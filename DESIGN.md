@@ -1,61 +1,65 @@
 ---
-name: Roma Community Map
-description: A precise daylight atlas for community and partner data.
+name: "Roma Community Map"
+description: "A dark, precise workspace for community maps and source summaries."
 colors:
-  primary: "#206457"
-  primary-hover: "#174d42"
-  primary-text: "#fff"
-  bg: "#f3f5f3"
-  panel: "#ffffff"
-  text: "#233d37"
-  muted: "#687773"
-  border: "#e0e6e2"
-  hover: "#f0f5f2"
-  selected: "#e9f3ed"
-  rail: "#193c34"
-  accent: "#b07821"
-  danger: "#b23d38"
-  warn: "#92601a"
+  bg: "#0a0a0c"
+  panel: "#121315"
+  text: "#faf8f9"
+  muted: "#d6d6d5"
+  border: "#303036"
+  primary: "#faf8f9"
+  primary-text: "#fcfcfd"
+  button-primary: "#16161a"
+  button-primary-border: "#55555f"
+  button-primary-hover: "#25252b"
+  hover: "#222325"
+  selected: "#232429"
+  rail: "#0d0d10"
+  accent: "#c8303a"
+  danger: "#f4d9db"
+  warn: "#e5e5e4"
+  nav-active: "#24242b"
+  badge-valid: "#232a27"
+  badge-valid-text: "#cde6d5"
+  badge-proposed: "#2a2721"
+  badge-proposed-text: "#eee4d0"
+  map-validated: "#206457"
+  map-proposed: "#b07821"
+  map-selected: "#193c34"
   entrepreneur: "#397ca5"
   client: "#b85b43"
   overlap-both: "#16a34a"
   overlap-clients: "#ea580c"
   overlap-communities: "#64748b"
-  focus: "#83bba7"
-  nav-active: "#d9ebdf"
-  badge-valid: "#e3f0e8"
-  badge-proposed: "#fbefda"
+  control-border: "#6b6b75"
+  state-border: "#9c9ca6"
 typography:
   headline:
-    fontFamily: "'Segoe UI', system-ui, sans-serif"
-    fontSize: "25px"
-    fontWeight: 650
+    fontFamily: "var(--font-host-grotesk), sans-serif"
+    fontSize: "28px"
+    fontWeight: 500
     lineHeight: 1.3
     letterSpacing: "-.03em"
   title:
-    fontFamily: "'Segoe UI', system-ui, sans-serif"
+    fontFamily: "var(--font-host-grotesk), sans-serif"
     fontSize: "19px"
     fontWeight: 650
     lineHeight: 1.4
     letterSpacing: "-.025em"
   body:
-    fontFamily: "'Segoe UI', system-ui, sans-serif"
+    fontFamily: "var(--font-host-grotesk), sans-serif"
     fontSize: "14px"
     fontWeight: 400
     lineHeight: 1.5
     letterSpacing: "normal"
   label:
-    fontFamily: "'Segoe UI', system-ui, sans-serif"
+    fontFamily: "var(--font-host-grotesk), sans-serif"
     fontSize: "12px"
     fontWeight: 400
     lineHeight: 1.5
     letterSpacing: "normal"
 rounded:
-  badge: "5px"
-  control: "8px"
-  nav: "10px"
-  panel: "12px"
-  dialog: "16px"
+  square: "0px"
 spacing:
   compact: "4px"
   control: "8px"
@@ -67,45 +71,45 @@ components:
   button-secondary:
     backgroundColor: "{colors.panel}"
     textColor: "{colors.text}"
-    rounded: "{rounded.control}"
+    rounded: "{rounded.square}"
     padding: "8px 12px"
   button-primary:
-    backgroundColor: "{colors.primary}"
+    backgroundColor: "{colors.button-primary}"
     textColor: "{colors.primary-text}"
-    rounded: "{rounded.control}"
+    rounded: "{rounded.square}"
     padding: "8px 12px"
   button-primary-hover:
-    backgroundColor: "{colors.primary-hover}"
+    backgroundColor: "{colors.button-primary-hover}"
   button-danger:
     backgroundColor: "{colors.panel}"
     textColor: "{colors.danger}"
-    rounded: "{rounded.control}"
+    rounded: "{rounded.square}"
     padding: "8px 12px"
   input:
     backgroundColor: "{colors.panel}"
     textColor: "{colors.text}"
-    rounded: "{rounded.control}"
+    rounded: "{rounded.square}"
     padding: "9px 11px"
   nav-active:
     backgroundColor: "{colors.nav-active}"
-    textColor: "{colors.rail}"
-    rounded: "{rounded.nav}"
+    textColor: "{colors.text}"
+    rounded: "{rounded.square}"
     padding: "10px 1px"
   badge-valid:
     backgroundColor: "{colors.badge-valid}"
-    textColor: "{colors.primary}"
-    rounded: "{rounded.badge}"
+    textColor: "{colors.badge-valid-text}"
+    rounded: "{rounded.square}"
     padding: "2px 7px"
   badge-proposed:
     backgroundColor: "{colors.badge-proposed}"
-    textColor: "{colors.warn}"
-    rounded: "{rounded.badge}"
+    textColor: "{colors.badge-proposed-text}"
+    rounded: "{rounded.square}"
     padding: "2px 7px"
   card:
     padding: "0 0 22px"
   dialog:
     backgroundColor: "{colors.panel}"
-    rounded: "{rounded.dialog}"
+    rounded: "{rounded.square}"
     padding: "28px"
     width: "min(540px, 100%)"
 ---
@@ -113,108 +117,115 @@ components:
 
 ## Overview
 
-**Creative North Star: "Fieldwork Atlas"**
+**Creative North Star: "Dark Fieldwork Atlas"**
 
-Restrained mineral whites, forest navigation and petrol-green actions frame a readable daytime workspace. System typography and precise stroke icons give Romanian records and geographic evidence priority.
+Near-black surfaces, white typography and sharp neutral controls bring the supplied dark reference into the existing operating platform. Host Grotesk carries Romanian interface labels, geographic records and source summaries.
 
-The fieldwork atlas direction uses calm tonal surfaces for dense work. Borders separate records; shadows lift tools over the map and isolate dialogs.
+Thin neutral borders and tonal changes organize dense information. A restrained red glow sits behind the main working surface; geographic dataset colors retain their established meanings.
 
 **Key Characteristics:**
-- Mineral white surfaces with a forest navigation spine.
-- Compact, readable system typography and tabular counts.
-- Petrol actions and stable geographic status colors.
-- Precise stroke icons and restrained depth.
+
+- Near-black ground with distinct dark panels.
+- Host Grotesk, white text and tabular counts.
+- Square neutral controls with visible keyboard focus.
+- Restrained red workspace glow and stable map semantics.
 
 ## Colors
 
-The palette pairs mineral neutrals with forest and petrol greens. Frontmatter is the normative token list; the roles below explain usage.
+The interface uses a near-black neutral palette. The frontmatter owns color values; the roles below explain their use.
 
 ### Primary
-- **Petrol green:** primary actions and validated communities; its deeper hover shade confirms pointer interaction.
-- **Forest:** persistent navigation, selected map geometry and toast surfaces.
+- **Soft white:** links, primary interface text and numeric emphasis. The CSS primary token is a foreground color, not a button background.
+- **Graphite action surface:** primary buttons and floating map instruments, with a lighter hover tone and distinct border.
+- **Restrained red:** the translucent glow behind the main working surface.
 
 ### Secondary
-- **Survey amber:** proposed communities and unfinished boundaries, with a darker warning tone for text.
-- **Entrepreneur blue / partner terracotta:** separate point datasets.
-- **Overlap green / orange / slate:** communities with clients, clients only, and communities only in analysis.
-- **Brick red:** destructive action text and error messages.
+- **Geographic green / amber:** validated and proposed communities on the map; selected geometry keeps its established dark green.
+- **Entrepreneur blue / partner terracotta:** distinct point datasets.
+- **Overlap green / orange / slate:** communities with clients, clients only, and communities only.
+- **Pale green / pale amber:** readable status badge text over dark tinted backgrounds.
+- **Pale rose:** destructive action and error text; warning text is light neutral.
 
 ### Neutral
-- **Mineral background / paper panel:** application ground and working surfaces.
-- **Forest ink / muted grey-green:** primary and secondary text.
-- **Pale border / hover wash / selected wash:** separation, hover feedback and selected records.
-- **Sage focus / navigation active / status washes:** keyboard focus, active routes and readable badges.
+- **Near-black ground / dark panel / deeper rail:** application layers.
+- **Soft white / light grey:** primary and secondary reading levels.
+- **Graphite borders / hover / selection:** structural separation and state feedback.
+- **Control border / active-state border:** stronger neutral edges distinguish fields and persistently selected controls.
 
-**The Status Continuity Rule.** Keep community status colors consistent across badges, legends and map geometry.
+**The Glow Boundary Rule.** Keep the red accent behind the main working surface; actions and navigation remain neutral.
+
+**The Geographic Continuity Rule.** Preserve map dataset colors independently of neutral interface action colors.
 
 ## Typography
 
-Use Segoe UI with system-ui and sans-serif fallbacks throughout. No display or decorative font is implemented. Hierarchy comes from size, moderate weight and restrained negative tracking.
+Use Host Grotesk through the root layout's font variable, with sans-serif fallback. Next.js self-hosts the Google font with Latin and Latin Extended subsets and swap display. Keep the variable reference so component previews inherit the loaded family.
 
-- **Headline:** panel heading; the mobile size is (24px).
-- **Title:** product identity; the mobile size is (17px).
-- **Body:** default records and form text; secondary copy commonly uses (12px).
-- **Label:** form labels; compact navigation, badges and helper text use (9–12px) according to context.
-- Record names use (14px, 650); statistics use (24px, 600). Counts and tables use tabular numerals.
+- **Headline:** panel headings use the frontmatter headline role; mobile headings reduce to (24px).
+- **Title:** product identity uses the title role; mobile size is (17px).
+- **Body / label:** default text is (14px); secondary copy and form labels commonly use (12px).
+- Record names use (14px, 650); statistics use (24px, 600). Counts, statistics and tables use tabular numerals.
+- Summary headings use (23px), reducing to (21px) on mobile; summary values and prose use (13px), with observations at (12px).
 
 ## Layout
 
-The implemented map workspace fills the viewport with a fixed navigation spine (88px), index (380px), header (84px) and flexible map. The index scrolls independently; panels use grouped gaps (16px) and desktop side padding (24px).
+The existing GIS workspace keeps its navigation spine (88px), index (380px), header (84px) and flexible main surface. The index scrolls independently. Panel gaps are (16px) with desktop side padding (24px). The main surface is inset by (18px 24px 24px 18px) and carries the subtle glow.
 
-At (1200px) the rail/index become (80px/350px). At (1000px) they become (76px/320px) and header counts disappear. At (760px), the page stacks a header (76px), sticky horizontal navigation (72px), map (46dvh), then the index; the page scrolls naturally. These dimensions describe this workspace, not a required template for every future screen.
+At (1200px), the rail/index become (80px/350px). At (1000px), they become (76px/320px) and header counts disappear. At (760px), the map view stacks header (76px), sticky horizontal navigation (72px), map (46dvh), then index; main margins reduce to (12px). Summary mode places the index before the report and allows natural page scrolling. These are current workspace dimensions, not a fixed template for every future surface.
 
-Forms wrap paired fields when space is tight. Dialogs use a standard width (540px), wide width (840px), and internal vertical scrolling. Mobile dialog padding reduces to (20px).
+The summary uses a horizontally scrollable table with minimum width (660px), readable notes up to (75ch), and desktop padding (30px), reducing to (24px 20px) on mobile. Dialogs use widths (540px) or (840px), internal scrolling and padding (28px), reducing to (20px) on mobile.
 
 ## Elevation & Depth
 
-Most surfaces are flat and separated by tonal shifts or thin borders. Floating map tools use a light structural shadow; dialogs use the strongest shadow over a translucent forest backdrop. Toasts use an intermediate lift. Exact shadow values live in the sidecar.
+Dark tonal layers and thin borders provide most separation. Black shadows lift map instruments, toasts and dialogs. A translucent black modal backdrop isolates forms. The main workspace has a restrained red shadow; exact values live in the sidecar.
 
-**The Working Surface Rule.** Use borders and tonal layering for records; reserve lift for controls above the map and modal content.
+**The Working Surface Rule.** Separate ordinary records with borders and tonal changes; reserve shadows for floating tools, dialogs and the main workspace glow.
 
 ## Shapes
 
-Controls have gently curved corners; tool groups are softer and dialogs are rounder. Compact badges use the smallest radius. Navigation uses its own middle radius; on mobile it reduces to (7px). Circular legend dots and map markers communicate point data. Icons use a (24px) viewBox, unfilled paths, rounded caps and joins, and a (1.7px) stroke; default rendered size is (20px).
+Application buttons, inputs, navigation, badges, selected records, summary frames and dialogs use square corners. Circular map markers and legend dots retain their data meaning. Stroke icons use an unfilled (24px) viewBox, rounded caps and joins, and a (1.7px) stroke; their default rendered size is (20px).
 
 ## Components
 
 ### Buttons
 
-Primary buttons use petrol with white text; secondary buttons use paper with a thin border. Destructive buttons retain the secondary surface and use brick text. Minimum height is (38px), weight (550), and line-height (1.4). Hover changes the background and border; primary hover darkens. Disabled controls use opacity (.55). State transitions take (160ms); reduced motion disables them.
+Primary buttons use graphite with near-white text and a stronger neutral border. Secondary buttons use the dark panel surface; destructive variants use pale rose text. Minimum height is (38px), weight (550), line-height (1.4), and padding is (8px 12px). Hover changes background and border. Disabled buttons use opacity (.55). Color transitions take (160ms); reduced motion removes them.
 
 ### Inputs / Fields
 
-White bordered fields use the control radius and compact padding. Labels sit above controls with a (6px) gap. The search field includes an inset stroke icon and reserves left padding (40px), with height (42px). Keyboard focus uses a sage outline (3px) offset by (3px).
+Dark panel fields use the stronger control-border token at (1px), square corners and compact padding. Labels sit above controls with a (6px) gap. Search reserves left padding (40px) for a stroke icon and uses height (42px). Control focus is a white outline (2px) with offset (3px); the focusable summary table region uses a (3px) outline.
 
 ### Navigation
 
-Icon-and-label buttons sit on forest. Default labels are muted sage; hover lightens the text and adds a forest tint. Active navigation uses a pale sage surface with forest text. Desktop items stack vertically; mobile items share one horizontal row.
+Icon-and-label buttons sit on the deeper rail. Default text is light grey; hover adds a dark neutral fill and white text. Active navigation uses a distinct graphite surface, white text and a persistent state-border outline (1px); inactive buttons reserve that border with transparency. Desktop items stack; mobile items share a horizontal row.
 
 ### Chips
 
-Status badges use compact type (10px), small rounded corners, green validated washes and amber proposed washes. Dataset filters form a segmented strip; the active segment is white with a small shadow. Selected filter state is also exposed with aria-pressed.
+Status badges use compact text (10px), square corners and dark green or amber tinted surfaces with pale matching text. Segmented filters use a deeper ground; the selected segment gains the graphite action surface, a persistent state-border outline (1px) and a small black shadow. Inactive segments reserve transparent borders. Filter selection also uses aria-pressed.
 
 ### Cards / Containers
 
-Data sections use a bottom divider and bottom padding rather than a standalone raised card. Selected list records gain the selected wash and control radius. Record activation focuses the matching map geometry and exposes record actions.
+Data sections use bottom dividers and spacing. Selected list records gain the neutral selected surface. Record activation focuses matching map geometry and exposes actions. Summary tables use dark hover-tone headers, selected-tone totals, neutral borders and readable observation rows; notes remain flat.
 
 ### Dialogs
 
-A native modal dialog contains the paper form surface, uses forest backdrop tint, supports Escape and backdrop dismissal, and returns focus to its opener. Actions align to the end and wrap when needed.
+Native modal dialogs contain square dark panels over a translucent black backdrop, support Escape and backdrop dismissal, and return focus to their opener. Actions align to the end and wrap as needed.
 
 ### Map instruments
 
-White map toolbar and legend surfaces float above external map tiles. Proposed boundaries are dashed (6 5); validated boundaries are solid. Selected geometry increases line weight (4px to 6px) or point radius (8px to 11px). Map tiles remain external OpenStreetMap / Esri content with their existing attribution; no new shipping raster assets belong to this system.
+Dark neutral toolbars, legends, layer controls and popups surround the geographic imagery. The layer-toggle icon is inline SVG. Proposed boundaries remain dashed (6 5); validated boundaries remain solid. Selected geometry increases line weight (4px to 6px) or point radius (8px to 11px). External OpenStreetMap and Esri tiles keep their attribution. No generated raster or exploration mockup ships with this system.
 
 ## Do's and Don'ts
 
 ### Do:
-- Do use labeled status colors consistently in lists, legends and map geometry.
-- Do keep keyboard focus visible on controls and record selection.
-- Do use tabular numerals for counts, statistics and tables.
-- Do preserve Romanian diacritics and readable compact labels.
+
+- Do use the Host Grotesk variable supplied by the root layout.
+- Do keep controls square and actions neutral.
+- Do keep keyboard focus visible and numeric columns tabular.
+- Do preserve labeled map colors and Romanian diacritics.
 
 ### Don't:
-- Don't turn ordinary record sections into floating shadow cards.
-- Don't use the proposed-community amber as a general action accent.
-- Don't add decorative raster imagery to the working map interface.
+
+- Don't apply the red glow as a primary-button fill.
+- Don't replace the geographic status palette with interface neutrals.
+- Don't introduce pale panels or rounded cards into the dark workspace.
 - Don't animate controls when reduced motion is requested.

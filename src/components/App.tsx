@@ -17,6 +17,7 @@ import ImportDialog from "./ImportDialog";
 import Icon, { type IconName } from "./Icon";
 import CountrySummaryView from "./CountrySummaryView";
 import type { ImportedCountrySummary } from "@/lib/countrySummary";
+import ManualEntryDialog, { type ManualTarget } from "./ManualEntryDialog";
 
 const MapView = dynamic(() => import("./MapView"), { ssr: false, loading: () => <div className="map loading">Se încarcă harta…</div> });
 
@@ -69,6 +70,7 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
   const [draft, setDraft] = useState<Geometry | null>(null);
   const [editing, setEditing] = useState<Community | null>(null);
   const [importTarget, setImportTarget] = useState<CollectionName | null>(null);
+  const [manualTarget, setManualTarget] = useState<ManualTarget | null>(null);
   const [q, setQ] = useState("");
   const [statusFilter, setStatusFilter] = useState<"" | "validat" | "propus">("");
   const [level, setLevel] = useState<OverlapLevel>("locality");
@@ -159,6 +161,7 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
 
   const validated = db.communities.filter((c) => c.status === "validat").length;
   const currentTab = TABS.find((t) => t.id === tab)!;
+  const manualDefault: ManualTarget = tab === "summary" ? "summary" : tab === "entrepreneurs" ? "entrepreneurs" : tab === "clients" ? "clients" : "communities";
 
   return (
     <div className={`app${tab === "summary" ? " summary-mode" : ""}`}>
@@ -185,6 +188,7 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
         <div className="panel">
           {store.error && <p className="error">{store.error}</p>}
           {store.loading && <p className="muted">Se încarcă datele…</p>}
+          <button className="manual-action" onClick={() => setManualTarget(manualDefault)}><Icon name="plus" size={17} />Adaugă manual</button>
 
           {tab === "summary" && <>
             <button className="primary" onClick={() => setImportTarget("communities")}><Icon name="upload" size={16} />Importă sumar CSV</button>
@@ -435,6 +439,11 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
         />
       )}
       {importTarget && <ImportDialog key={importTarget} store={store} initialTarget={importTarget} onSummaryImported={async () => { await reloadSummaries(); setSummaryId(undefined); setTab("summary"); }} onClose={() => setImportTarget(null)} />}
+      {manualTarget && <ManualEntryDialog key={manualTarget} store={store} initialTarget={manualTarget} onClose={() => setManualTarget(null)} onSaved={async (target) => {
+        if (target === "summary") { await reloadSummaries(); setSummaryId(undefined); setTab("summary"); }
+        else { setTab(target === "localities" ? "data" : target); setQ(""); setStatusFilter(""); }
+        flash("Înregistrare salvată în baza de date.");
+      }} />}
     </div>
   );
 }

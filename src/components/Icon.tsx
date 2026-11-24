@@ -1,8 +1,9 @@
 import type { CSSProperties } from "react";
 
-export type IconName = "map" | "people" | "briefcase" | "overlap" | "data" | "upload" | "fit" | "search" | "point" | "line" | "polygon" | "rectangle" | "arrow";
+export type IconName = "map" | "people" | "briefcase" | "overlap" | "data" | "upload" | "fit" | "search" | "point" | "line" | "polygon" | "rectangle" | "arrow" | "plus";
 
 const paths: Record<IconName, string> = {
+  plus: "M12 5v14M5 12h14",
   map: "m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15",
   people: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2m20 0v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z",
   briefcase: "M9 7V4h6v3M3 7h18v14H3V7Zm0 6a25 25 0 0 0 18 0m-9-2v4",

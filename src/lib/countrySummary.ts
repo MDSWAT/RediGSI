@@ -24,6 +24,25 @@ export interface ImportedCountrySummary extends CountrySummary {
   importedAt: string;
 }
 
+/** A manual country entry uses the same validated, source-preserving report format. */
+export function manualSummaryCSV(input: Record<string, unknown>): string {
+  const text = (key: string) => typeof input[key] === "string" || typeof input[key] === "number" ? String(input[key]).trim() : "";
+  const country = text("country");
+  if (!country) throw new Error("Completați țara.");
+  const categories = ["confirmed", "proposed", "toValidate", "belowThreshold"].map((key) => count(text(key), key));
+  const localities = categories.reduce((sum, value) => sum + value, 0);
+  if (!Number.isSafeInteger(localities)) throw new Error("Totalul localităților este prea mare.");
+  const population = text("romaPopulation") ? String(count(text("romaPopulation"), "populație Roma")) : "N/D";
+  return Papa.unparse([
+    ["REDI | Sumar introdus manual", "", "", "", "", "", "", ""],
+    ["Date introduse manual; sumarele importate rămân nemodificate.", "", "", "", "", "", "", ""],
+    ["Tara", "Romi - sursa principala*", "Confirmate", "Propuse", "De validat", "Sub prag", "Localitati", "Observatia esentiala"],
+    [country, population, ...categories.map(String), String(localities), text("notes")],
+    ["TOTAL localitati", "", ...categories.map(String), String(localities), ""],
+    ...(text("sourceNote") ? [[`Sursă: ${text("sourceNote")}`, "", "", "", "", "", "", ""]] : []),
+  ]);
+}
+
 const normalize = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
 const expected = ["tara", "romi - sursa principala*", "confirmate", "propuse", "de validat", "sub prag", "localitati", "observatia esentiala"];
 

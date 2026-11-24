@@ -67,6 +67,10 @@ Verificarea parserului: `npm test` (Node.js 22.18+).
 
 ## Ordinea recomandată de import
 
+Butonul **Adaugă manual**, disponibil în fiecare panou, permite salvarea unei comunități punctuale (coordonate sau nomenclator), a unui antreprenor, a unui client de partener sau a unei localități SIRUTA. Selectați tipul de înregistrare în formular. Comunitățile cu limite de stradă/cartier se desenează în continuare direct pe hartă. Un eșec de salvare păstrează formularul completat și afișează eroarea.
+
+Opțiunea **Sumar REDI pe țară** creează un sumar manual separat, cu sursă și observații, fără a modifica fișierele deja importate. Totalul localităților se calculează din cele patru categorii; populația necompletată rămâne N/D. Atât introducerea manuală, cât și importul folosesc aceeași stocare Supabase.
+
 1. **Nomenclator SIRUTA** (cod, denumire, județ, lat, lng) – permite plasarea pe hartă a rândurilor care au doar localitatea sau codul SIRUTA.
 2. **Catalogul de comunități**.
 3. **Antreprenori** – sunt legați automat de comunități (în poligon / la ≤300 m de stradă / ≤500 m de punct / aceeași localitate dacă e singura comunitate acolo).

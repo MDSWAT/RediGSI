@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { parseCountrySummary } from "../src/lib/countrySummary.ts";
+import { parseCountrySummary, manualSummaryCSV } from "../src/lib/countrySummary.ts";
 
 const csv = [
   "Sumar demonstrativ,,,,,,,",
@@ -38,4 +38,16 @@ test("rejects invalid counts, duplicate countries and absent totals", () => {
 
 test("leaves ordinary imports to the existing importer", () => {
   assert.equal(parseCountrySummary("nume,lat,lng\nTest,45,25", "points.csv"), null);
+});
+
+test("manual country entries preserve quoted notes, unknown population and derived totals", () => {
+  const input = { country: "Țară de test", romaPopulation: "", confirmed: "2", proposed: "3", toValidate: "4", belowThreshold: "5", notes: 'O notă, cu "ghilimele"\nși două rânduri', sourceNote: "Sursă manuală" };
+  const report = parseCountrySummary(manualSummaryCSV(input), "Introducere manuală");
+  assert.equal(report.countries[0].romaPopulation, null);
+  assert.equal(report.countries[0].notes, input.notes);
+  assert.equal(report.totals.localities, 14);
+  assert.equal(report.warnings.length, 0);
+  assert.ok(report.notes.includes("Sursă: Sursă manuală"));
+  assert.throws(() => manualSummaryCSV({ ...input, confirmed: "-1" }), /numerică invalidă/);
+  assert.throws(() => manualSummaryCSV({ ...input, country: "" }), /țara/);
 });

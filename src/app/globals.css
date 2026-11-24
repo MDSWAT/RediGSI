@@ -148,6 +148,8 @@ tbody tr:hover { background: var(--hover); }tr.hit { background: #232429; }
 .modal.wide { width: min(840px, 100%); }
 .actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
 .mapping { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.manual-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; border: 0; padding: 0; margin: 0; min-width: 0; }
+.manual-action { width: 100%; justify-content: flex-start; border-color: var(--control-border); }
 .mapping label.mapped span { color: var(--ok); }
 .preview { background: var(--hover); border-radius: 0; padding: 14px; font-size: 12px; }.preview ul { margin: 5px 0 0; padding-left: 18px; }
 .toast { position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%); max-width: calc(100% - 32px); background: var(--rail); color: #fff; padding: 12px 18px; border-radius: 0; z-index: 1000; font-size: 13px; box-shadow: 0 6px 20px #00000066; }
@@ -156,6 +158,7 @@ tbody tr:hover { background: var(--hover); }tr.hit { background: #232429; }
 @media (max-width: 1200px) { .header-summary { gap: 14px; }.header-summary span:last-child { display: none; }header { padding: 0 24px; gap: 20px; }.app { grid-template-columns: 80px 350px minmax(0, 1fr); }.panel { padding-inline: 20px; }.panel-heading { padding-inline: 21px; } }
 @media (max-width: 1000px) { .header-summary { display: none; }.header-import { margin-left: auto; }.app { grid-template-columns: 76px 320px minmax(0, 1fr); }.map-key { gap: 10px; padding: 10px 12px; right: 20px; }.panel { padding-inline: 16px; }.panel-heading { padding-inline: 17px; } }
 @media (max-width: 760px) {
+  .manual-fields { grid-template-columns: minmax(0, 1fr); }
   main { scroll-margin-top: 72px; }
   .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: 76px 72px 46dvh auto; grid-template-areas: 'header' 'nav' 'main' 'aside'; height: auto; min-height: 100dvh; }
   header { padding: 0 18px; gap: 12px; }h1 { font-size: 17px; }.brand p { font-size: 10px; }.header-import { padding: 10px; min-width: 40px; }.header-import span { display: none; }

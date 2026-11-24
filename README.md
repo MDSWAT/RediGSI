@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# RediGSI
 
-## Getting Started
+Roma Community Map
 
-First, run the development server:
+Aplicație GIS (Next.js + Leaflet) pentru:
+
+1. **Harta comunităților** – importul catalogului de comunități validate și afișarea lor geolocalizată.
+2. **Marcarea de comunități noi** – punct, stradă (linie), cartier (poligon) sau zonă (dreptunghi), desenate direct pe hartă. Intră ca „propuse” și pot fi validate ulterior.
+3. **Antreprenori** – import din CSV/Excel, afișare pe hartă cu detalii, legare automată de comunitatea în care se află.
+4. **Export** – comunități în GeoJSON / CSV / Excel, cu coordonate (centroid), geometrie WKT și cod SIRUTA, pentru import în alte baze de date sau QGIS/ArcGIS.
+5. **Suprapunere cu partenerii** – import liste de clienți finanțați de un partener și comparare pe localitate (SIRUTA), județ sau țară.
+
+## Pornire
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Datele se salvează în `data/db.json` (exclus din git – poate conține date personale).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Ordinea recomandată de import
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Nomenclator SIRUTA** (cod, denumire, județ, lat, lng) – permite plasarea pe hartă a rândurilor care au doar localitatea sau codul SIRUTA.
+2. **Catalogul de comunități**.
+3. **Antreprenori** – sunt legați automat de comunități (în poligon / la ≤300 m de stradă / ≤500 m de punct / aceeași localitate dacă e singura comunitate acolo).
+4. **Clienți parteneri**.
 
-## Learn More
+Formate acceptate: CSV (separator `,` `;` sau tab), XLSX/XLS/ODS, GeoJSON. Coloanele sunt potrivite automat după nume (RO/EN) și pot fi corectate manual; coloanele necunoscute se păstrează și apar la export.
 
-To learn more about Next.js, take a look at the following resources:
+Poziția se ia, în ordine, din: coloana WKT/GeoJSON → lat/lng → coloana „lat, lng” → nomenclator (cod SIRUTA sau localitate + județ). Rândurile plasate la centrul localității sunt marcate `approx` și nu intră în calculul „în perimetrul comunității”.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Fișiere exemplu (date fictive) în `public/samples/`. Codurile SIRUTA din exemple sunt orientative – folosiți nomenclatorul oficial INS.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Structură
 
-## Deploy on Vercel
+- `src/components/App.tsx` – interfața (tab-uri, liste, statistici)
+- `src/components/MapView.tsx` – harta, straturi, desenare (Geoman)
+- `src/components/ImportDialog.tsx` – import cu potrivire de coloane
+- `src/lib/geo.ts` – normalizare, SIRUTA, WKT, apartenență spațială
+- `src/lib/overlap.ts` – calculul suprapunerii
+- `src/lib/export.ts` – exporturi
+- `src/app/api/data/…` – API pentru stocare
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Pași următori pentru producție
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Bază de date reală (PostgreSQL + PostGIS) în locul fișierului JSON.
+- Autentificare și roluri (cine poate valida comunități).
+- Editarea geometriei comunităților existente.
+- Granițe administrative (UAT) pentru suprapunere pe poligoane, nu doar pe cod.

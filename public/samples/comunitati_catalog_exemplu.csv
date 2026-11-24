@@ -1,0 +1,7 @@
+Nume comunitate,Tip,Status,Cod SIRUTA,Localitate,Judet,Latitudine,Longitudine,WKT,Nr persoane,Observatii,Cod intern
+Comunitate demo A,cartier,validat,179132,București,București,,,"POLYGON ((26.070 44.405, 26.090 44.405, 26.090 44.392, 26.070 44.392, 26.070 44.405))",1200,Date fictive pentru test,R-001
+Comunitate demo B,punct,validat,54975,Cluj-Napoca,Cluj,46.7930,23.6490,,800,Date fictive pentru test,R-002
+Comunitate demo C,strada,validat,95060,Iași,Iași,,,"LINESTRING (27.580 47.170, 27.590 47.172, 27.600 47.173)",350,Date fictive pentru test,R-003
+Comunitate demo D,,validat,155243,Timișoara,Timiș,,,,500,Doar cod SIRUTA – poziționată din nomenclator,R-004
+Comunitate demo E,,validat,,Craiova,Dolj,,,,420,Doar nume localitate – poziționată din nomenclator,R-005
+Comunitate demo F,punct,validat,143450,Sibiu,Sibiu,45.8100,24.1400,,260,Date fictive pentru test,R-006

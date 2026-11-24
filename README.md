@@ -20,6 +20,27 @@ npm run dev
 
 Datele se salvează în `data/db.json` (exclus din git – poate conține date personale).
 
+## Supabase
+
+Configurați `NEXT_PUBLIC_SUPABASE_URL` și `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` în `.env.local`, după modelul `.env.example`. Fișierul local este exclus din Git; pentru găzduire, setați aceleași variabile în mediul de deployment.
+
+- `src/utils/supabase/client.ts`: client pentru componentele din browser.
+- `src/utils/supabase/server.ts`: client nou pentru fiecare cerere pe server, folosind `await cookies()`.
+- `src/utils/supabase/middleware.ts`: verifică și reîmprospătează sesiunea cu `auth.getClaims()`, transmite cookie-urile actualizate către server și browser și păstrează antetele care împiedică memorarea în cache a răspunsurilor cu sesiuni.
+- `src/proxy.ts`: conectează reîmprospătarea sesiunii la convenția Next.js 16; exclude resursele statice și fișierele exemplu.
+
+Exemplu pentru o componentă server sau un Route Handler:
+
+```ts
+import { cookies } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
+
+const supabase = createClient(await cookies());
+// Interogați aici tabelele și politicile RLS definite în proiectul Supabase.
+```
+
+Integrarea pregătește clienții și sesiunile. Pagina GIS și stocarea existentă în `data/db.json` și `data/summaries.json` rămân funcționale; datele nu sunt migrate automat și nu este necesar un tabel demonstrativ `todos`. Rutele existente rămân publice; protejarea lor și interfața de autentificare se configurează separat.
+
 ## Sumare REDI pe țări
 
 Fișierele CSV din foaia „Sumar” sunt recunoscute automat în dialogul de import, inclusiv titlul și notele de deasupra tabelului. Cifrele pe țări, totalul declarat, observațiile, definițiile și CSV-ul original se păstrează separat în `data/summaries.json` (exclus din git). Reimportul aceluiași conținut nu creează duplicate.

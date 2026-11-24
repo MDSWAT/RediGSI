@@ -18,7 +18,23 @@ npm run dev
 # http://localhost:3000
 ```
 
-Datele se salvează în `data/db.json` (exclus din git – poate conține date personale).
+Datele aplicației se salvează exclusiv în baza de date Supabase. Serverul nu creează și nu scrie fișiere de date.
+
+## Configurarea bazei de date
+
+1. Rulați integral `supabase/migrations/202611240001_database_storage.sql` în SQL Editor al proiectului Supabase. Migrarea creează tabelele `redi_records` și `redi_summaries`, plus funcțiile de citire, actualizare și ștergere. Poate fi rulată din nou fără a elimina datele existente.
+2. Setați `SUPABASE_SECRET_KEY` în `.env.local` și în variabilele serverului de găzduire. Este acceptată și vechea variabilă `SUPABASE_SERVICE_ROLE_KEY`. Această cheie nu trebuie să aibă prefixul `NEXT_PUBLIC_`. URL-ul public și cheia publicabilă existente sunt utilizate în continuare de clienții de autentificare.
+3. Reporniți serverul local sau faceți redeploy după configurarea mediului.
+
+Tabelele au RLS activat și nu permit acces direct cu cheia publică. API-urile serverului folosesc cheia secretă. Actualizările se aplică atomic în PostgreSQL, iar citirea completă nu este limitată la 1.000 de înregistrări. API-urile păstrează comportamentul anterior de acces; autentificarea obligatorie a utilizatorilor se configurează separat.
+
+Pentru datele deja existente în vechile fișiere locale, după configurarea schemei și a cheii, rulați o singură dată:
+
+```bash
+npm run migrate:local
+```
+
+Comanda citește vechile `data/db.json` și `data/summaries.json` numai pentru transfer, verifică ID-urile și originalele, nu suprascrie ID-urile deja existente în bază și nu modifică fișierele sursă. Rutele aplicației nu citesc aceste fișiere. Dacă schema sau cheia lipsesc, API-ul răspunde cu o eroare JSON 503 și instrucțiuni de configurare; nu există stocare de rezervă pe disc.
 
 ## Supabase
 
@@ -39,11 +55,11 @@ const supabase = createClient(await cookies());
 // Interogați aici tabelele și politicile RLS definite în proiectul Supabase.
 ```
 
-Integrarea pregătește clienții și sesiunile. Pagina GIS și stocarea existentă în `data/db.json` și `data/summaries.json` rămân funcționale; datele nu sunt migrate automat și nu este necesar un tabel demonstrativ `todos`. Rutele existente rămân publice; protejarea lor și interfața de autentificare se configurează separat.
+Clienții și sesiunile folosesc cheia publicabilă; stocarea datelor folosește separat clientul server din `src/lib/database.ts`. Nu este necesar un tabel demonstrativ `todos`. Rutele existente rămân publice; protejarea lor și interfața de autentificare se configurează separat.
 
 ## Sumare REDI pe țări
 
-Fișierele CSV din foaia „Sumar” sunt recunoscute automat în dialogul de import, inclusiv titlul și notele de deasupra tabelului. Cifrele pe țări, totalul declarat, observațiile, definițiile și CSV-ul original se păstrează separat în `data/summaries.json` (exclus din git). Reimportul aceluiași conținut nu creează duplicate.
+Fișierele CSV din foaia „Sumar” sunt recunoscute automat în dialogul de import, inclusiv titlul și notele de deasupra tabelului. Cifrele pe țări, totalul declarat, observațiile și definițiile se păstrează în `redi_summaries.report`, iar CSV-ul original în coloana text `original_csv`. Nu se creează fișiere sau obiecte în Storage. Cheia unică bazată pe conținut împiedică duplicatele, inclusiv la importuri simultane.
 
 Vizualizarea **Sumar** afișează toate datele și permite descărcarea sursei originale. Valorile N/D rămân indisponibile. Totalurile neconcordante sunt semnalate, fără a modifica sursa. Aceste agregate nu creează puncte pe hartă: pentru localitățile individuale sunt necesare foile detaliate cu poziții sau coduri de localitate.
 
@@ -74,7 +90,7 @@ Fișiere exemplu (date fictive) în `public/samples/`. Codurile SIRUTA din exemp
 
 ## Pași următori pentru producție
 
-- Bază de date reală (PostgreSQL + PostGIS) în locul fișierului JSON.
+- Indexare și funcții PostGIS pentru interogări geografice la volume mari.
 - Autentificare și roluri (cine poate valida comunități).
 - Editarea geometriei comunităților existente.
 - Granițe administrative (UAT) pentru suprapunere pe poligoane, nu doar pe cod.

@@ -1,33 +1,41 @@
 import "server-only";
-import { promises as fs } from "fs";
-import path from "path";
 import { createHash } from "crypto";
-import { parseCountrySummary, type ImportedCountrySummary } from "./countrySummary";
+import { parseCountrySummary, type CountrySummary, type ImportedCountrySummary } from "./countrySummary";
+import { database, storageError } from "./database";
 
-interface StoredSummary extends ImportedCountrySummary { originalCSV: string }
-const file = path.join(process.cwd(), "data", "summaries.json");
-let queue: Promise<unknown> = Promise.resolve();
+interface SummaryRow { id: string; imported_at: string; report: CountrySummary }
+const reportOf = (row: SummaryRow): ImportedCountrySummary => ({ ...row.report, id: row.id, importedAt: row.imported_at });
 
-export async function readSummaries(): Promise<StoredSummary[]> {
-  try { return JSON.parse(await fs.readFile(file, "utf8")); }
-  catch (error) { if ((error as NodeJS.ErrnoException).code === "ENOENT") return []; throw error; }
+export async function readSummaries(): Promise<ImportedCountrySummary[]> {
+  const result: ImportedCountrySummary[] = [];
+  const client = database();
+  for (let offset = 0; ; offset += 500) {
+    const { data, error } = await client.from("redi_summaries").select("id,imported_at,report").order("imported_at").order("id").range(offset, offset + 499);
+    if (error) storageError(error);
+    const rows = data as SummaryRow[];
+    result.push(...rows.map(reportOf));
+    if (rows.length < 500) return result;
+  }
 }
 
-export function importSummary(originalCSV: string, sourceName: string) {
+export async function readSummarySource(id: string): Promise<string | null> {
+  const { data, error } = await database().from("redi_summaries").select("original_csv").eq("id", id).maybeSingle();
+  if (error) storageError(error);
+  return data?.original_csv ?? null;
+}
+
+export async function importSummary(originalCSV: string, sourceName: string) {
   const report = parseCountrySummary(originalCSV, sourceName);
   if (!report) throw new Error("Fișierul nu conține un sumar REDI recunoscut.");
   const id = createHash("sha256").update(originalCSV, "utf8").digest("hex");
-  const run = queue.then(async () => {
-    const reports = await readSummaries();
-    const existing = reports.find((entry) => entry.id === id);
-    if (existing) return { report: existing, duplicate: true };
-    const entry: StoredSummary = { ...report, id, importedAt: new Date().toISOString(), originalCSV };
-    reports.push(entry);
-    await fs.mkdir(path.dirname(file), { recursive: true });
-    await fs.writeFile(`${file}.tmp`, JSON.stringify(reports), "utf8");
-    await fs.rename(`${file}.tmp`, file);
-    return { report: entry, duplicate: false };
-  });
-  queue = run.catch(() => undefined);
-  return run;
+  const client = database();
+  const { data, error } = await client.from("redi_summaries").insert({ id, report, original_csv: originalCSV }).select("id,imported_at,report").single();
+  // A unique database key handles simultaneous imports across serverless instances.
+  if (error?.code === "23505") {
+    const existing = await client.from("redi_summaries").select("id,imported_at,report").eq("id", id).single();
+    if (existing.error) storageError(existing.error);
+    return { report: reportOf(existing.data as SummaryRow), duplicate: true };
+  }
+  if (error) storageError(error);
+  return { report: reportOf(data as SummaryRow), duplicate: false };
 }

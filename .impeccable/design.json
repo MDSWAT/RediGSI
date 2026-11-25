@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-25T06:19:12.350Z",
+  "generatedAt": "2026-11-25T07:08:42.844Z",
   "title": "Design System: Roma Community Map",
   "extensions": {
     "colorMeta": {
@@ -8,196 +8,154 @@
         "role": "neutral",
         "displayName": "Bg",
         "tonalRamp": [
-          "oklch(15% 0.0043 285.86)",
-          "oklch(26% 0.0043 285.86)",
-          "oklch(38% 0.0043 285.86)",
-          "oklch(49% 0.0043 285.86)",
-          "oklch(61% 0.0043 285.86)",
-          "oklch(72% 0.0043 285.86)",
-          "oklch(84% 0.0043 285.86)",
-          "oklch(95% 0.0043 285.86)"
+          "oklch(15% 0.0432 166.49)",
+          "oklch(26% 0.0432 166.49)",
+          "oklch(38% 0.0432 166.49)",
+          "oklch(49% 0.0432 166.49)",
+          "oklch(61% 0.0432 166.49)",
+          "oklch(72% 0.0432 166.49)",
+          "oklch(84% 0.0432 166.49)",
+          "oklch(95% 0.0432 166.49)"
         ]
       },
       "panel": {
         "role": "neutral",
         "displayName": "Panel",
         "tonalRamp": [
-          "oklch(15% 0.0044 264.46)",
-          "oklch(26% 0.0044 264.46)",
-          "oklch(38% 0.0044 264.46)",
-          "oklch(49% 0.0044 264.46)",
-          "oklch(61% 0.0044 264.46)",
-          "oklch(72% 0.0044 264.46)",
-          "oklch(84% 0.0044 264.46)",
-          "oklch(95% 0.0044 264.46)"
+          "oklch(15% 0.0439 165.15)",
+          "oklch(26% 0.0439 165.15)",
+          "oklch(38% 0.0439 165.15)",
+          "oklch(49% 0.0439 165.15)",
+          "oklch(61% 0.0439 165.15)",
+          "oklch(72% 0.0439 165.15)",
+          "oklch(84% 0.0439 165.15)",
+          "oklch(95% 0.0439 165.15)"
         ]
       },
       "text": {
         "role": "neutral",
         "displayName": "Text",
         "tonalRamp": [
-          "oklch(15% 0.0025 345.21)",
-          "oklch(26% 0.0025 345.21)",
-          "oklch(38% 0.0025 345.21)",
-          "oklch(49% 0.0025 345.21)",
-          "oklch(61% 0.0025 345.21)",
-          "oklch(72% 0.0025 345.21)",
-          "oklch(84% 0.0025 345.21)",
-          "oklch(95% 0.0025 345.21)"
+          "oklch(15% 0.0017 325.59)",
+          "oklch(26% 0.0017 325.59)",
+          "oklch(38% 0.0017 325.59)",
+          "oklch(49% 0.0017 325.59)",
+          "oklch(61% 0.0017 325.59)",
+          "oklch(72% 0.0017 325.59)",
+          "oklch(84% 0.0017 325.59)",
+          "oklch(95% 0.0017 325.59)"
         ]
       },
       "muted": {
         "role": "neutral",
         "displayName": "Muted",
         "tonalRamp": [
-          "oklch(15% 0.0014 106.43)",
-          "oklch(26% 0.0014 106.43)",
-          "oklch(38% 0.0014 106.43)",
-          "oklch(49% 0.0014 106.43)",
-          "oklch(61% 0.0014 106.43)",
-          "oklch(72% 0.0014 106.43)",
-          "oklch(84% 0.0014 106.43)",
-          "oklch(95% 0.0014 106.43)"
+          "oklch(15% 0.0013 106.43)",
+          "oklch(26% 0.0013 106.43)",
+          "oklch(38% 0.0013 106.43)",
+          "oklch(49% 0.0013 106.43)",
+          "oklch(61% 0.0013 106.43)",
+          "oklch(72% 0.0013 106.43)",
+          "oklch(84% 0.0013 106.43)",
+          "oklch(95% 0.0013 106.43)"
         ]
       },
       "border": {
         "role": "neutral",
         "displayName": "Border",
         "tonalRamp": [
-          "oklch(15% 0.0106 285.77)",
-          "oklch(26% 0.0106 285.77)",
-          "oklch(38% 0.0106 285.77)",
-          "oklch(49% 0.0106 285.77)",
-          "oklch(61% 0.0106 285.77)",
-          "oklch(72% 0.0106 285.77)",
-          "oklch(84% 0.0106 285.77)",
-          "oklch(95% 0.0106 285.77)"
+          "oklch(15% 0.0421 167.97)",
+          "oklch(26% 0.0421 167.97)",
+          "oklch(38% 0.0421 167.97)",
+          "oklch(49% 0.0421 167.97)",
+          "oklch(61% 0.0421 167.97)",
+          "oklch(72% 0.0421 167.97)",
+          "oklch(84% 0.0421 167.97)",
+          "oklch(95% 0.0421 167.97)"
         ]
       },
       "primary": {
-        "role": "neutral",
+        "role": "primary",
         "displayName": "Primary",
         "tonalRamp": [
-          "oklch(15% 0.0025 345.21)",
-          "oklch(26% 0.0025 345.21)",
-          "oklch(38% 0.0025 345.21)",
-          "oklch(49% 0.0025 345.21)",
-          "oklch(61% 0.0025 345.21)",
-          "oklch(72% 0.0025 345.21)",
-          "oklch(84% 0.0025 345.21)",
-          "oklch(95% 0.0025 345.21)"
+          "oklch(15% 0.1151 95.75)",
+          "oklch(26% 0.1151 95.75)",
+          "oklch(38% 0.1151 95.75)",
+          "oklch(49% 0.1151 95.75)",
+          "oklch(61% 0.1151 95.75)",
+          "oklch(72% 0.1151 95.75)",
+          "oklch(84% 0.1151 95.75)",
+          "oklch(95% 0.1151 95.75)"
         ]
       },
       "primary-text": {
         "role": "neutral",
         "displayName": "Primary Text",
         "tonalRamp": [
-          "oklch(15% 0.0013 286.38)",
-          "oklch(26% 0.0013 286.38)",
-          "oklch(38% 0.0013 286.38)",
-          "oklch(49% 0.0013 286.38)",
-          "oklch(61% 0.0013 286.38)",
-          "oklch(72% 0.0013 286.38)",
-          "oklch(84% 0.0013 286.38)",
-          "oklch(95% 0.0013 286.38)"
-        ]
-      },
-      "button-primary": {
-        "role": "neutral",
-        "displayName": "Button Primary",
-        "tonalRamp": [
-          "oklch(15% 0.0079 285.67)",
-          "oklch(26% 0.0079 285.67)",
-          "oklch(38% 0.0079 285.67)",
-          "oklch(49% 0.0079 285.67)",
-          "oklch(61% 0.0079 285.67)",
-          "oklch(72% 0.0079 285.67)",
-          "oklch(84% 0.0079 285.67)",
-          "oklch(95% 0.0079 285.67)"
-        ]
-      },
-      "button-primary-border": {
-        "role": "neutral",
-        "displayName": "Button Primary Border",
-        "tonalRamp": [
-          "oklch(15% 0.0161 285.74)",
-          "oklch(26% 0.0161 285.74)",
-          "oklch(38% 0.0161 285.74)",
-          "oklch(49% 0.0161 285.74)",
-          "oklch(61% 0.0161 285.74)",
-          "oklch(72% 0.0161 285.74)",
-          "oklch(84% 0.0161 285.74)",
-          "oklch(95% 0.0161 285.74)"
-        ]
-      },
-      "button-primary-hover": {
-        "role": "neutral",
-        "displayName": "Button Primary Hover",
-        "tonalRamp": [
-          "oklch(15% 0.0111 285.63)",
-          "oklch(26% 0.0111 285.63)",
-          "oklch(38% 0.0111 285.63)",
-          "oklch(49% 0.0111 285.63)",
-          "oklch(61% 0.0111 285.63)",
-          "oklch(72% 0.0111 285.63)",
-          "oklch(84% 0.0111 285.63)",
-          "oklch(95% 0.0111 285.63)"
+          "oklch(15% 0.0000 0.00)",
+          "oklch(26% 0.0000 0.00)",
+          "oklch(38% 0.0000 0.00)",
+          "oklch(49% 0.0000 0.00)",
+          "oklch(61% 0.0000 0.00)",
+          "oklch(72% 0.0000 0.00)",
+          "oklch(84% 0.0000 0.00)",
+          "oklch(95% 0.0000 0.00)"
         ]
       },
       "hover": {
         "role": "neutral",
         "displayName": "Hover",
         "tonalRamp": [
-          "oklch(15% 0.0040 264.50)",
-          "oklch(26% 0.0040 264.50)",
-          "oklch(38% 0.0040 264.50)",
-          "oklch(49% 0.0040 264.50)",
-          "oklch(61% 0.0040 264.50)",
-          "oklch(72% 0.0040 264.50)",
-          "oklch(84% 0.0040 264.50)",
-          "oklch(95% 0.0040 264.50)"
+          "oklch(15% 0.0501 163.95)",
+          "oklch(26% 0.0501 163.95)",
+          "oklch(38% 0.0501 163.95)",
+          "oklch(49% 0.0501 163.95)",
+          "oklch(61% 0.0501 163.95)",
+          "oklch(72% 0.0501 163.95)",
+          "oklch(84% 0.0501 163.95)",
+          "oklch(95% 0.0501 163.95)"
         ]
       },
       "selected": {
         "role": "neutral",
         "displayName": "Selected",
         "tonalRamp": [
-          "oklch(15% 0.0094 276.74)",
-          "oklch(26% 0.0094 276.74)",
-          "oklch(38% 0.0094 276.74)",
-          "oklch(49% 0.0094 276.74)",
-          "oklch(61% 0.0094 276.74)",
-          "oklch(72% 0.0094 276.74)",
-          "oklch(84% 0.0094 276.74)",
-          "oklch(95% 0.0094 276.74)"
+          "oklch(15% 0.0566 162.72)",
+          "oklch(26% 0.0566 162.72)",
+          "oklch(38% 0.0566 162.72)",
+          "oklch(49% 0.0566 162.72)",
+          "oklch(61% 0.0566 162.72)",
+          "oklch(72% 0.0566 162.72)",
+          "oklch(84% 0.0566 162.72)",
+          "oklch(95% 0.0566 162.72)"
         ]
       },
       "rail": {
         "role": "neutral",
         "displayName": "Rail",
         "tonalRamp": [
-          "oklch(15% 0.0063 285.67)",
-          "oklch(26% 0.0063 285.67)",
-          "oklch(38% 0.0063 285.67)",
-          "oklch(49% 0.0063 285.67)",
-          "oklch(61% 0.0063 285.67)",
-          "oklch(72% 0.0063 285.67)",
-          "oklch(84% 0.0063 285.67)",
-          "oklch(95% 0.0063 285.67)"
+          "oklch(15% 0.0432 166.49)",
+          "oklch(26% 0.0432 166.49)",
+          "oklch(38% 0.0432 166.49)",
+          "oklch(49% 0.0432 166.49)",
+          "oklch(61% 0.0432 166.49)",
+          "oklch(72% 0.0432 166.49)",
+          "oklch(84% 0.0432 166.49)",
+          "oklch(95% 0.0432 166.49)"
         ]
       },
       "accent": {
         "role": "primary",
         "displayName": "Accent",
         "tonalRamp": [
-          "oklch(15% 0.1878 22.77)",
-          "oklch(26% 0.1878 22.77)",
-          "oklch(38% 0.1878 22.77)",
-          "oklch(49% 0.1878 22.77)",
-          "oklch(61% 0.1878 22.77)",
-          "oklch(72% 0.1878 22.77)",
-          "oklch(84% 0.1878 22.77)",
-          "oklch(95% 0.1878 22.77)"
+          "oklch(15% 0.1151 95.75)",
+          "oklch(26% 0.1151 95.75)",
+          "oklch(38% 0.1151 95.75)",
+          "oklch(49% 0.1151 95.75)",
+          "oklch(61% 0.1151 95.75)",
+          "oklch(72% 0.1151 95.75)",
+          "oklch(84% 0.1151 95.75)",
+          "oklch(95% 0.1151 95.75)"
         ]
       },
       "danger": {
@@ -218,28 +176,28 @@
         "role": "neutral",
         "displayName": "Warn",
         "tonalRamp": [
-          "oklch(15% 0.0013 106.43)",
-          "oklch(26% 0.0013 106.43)",
-          "oklch(38% 0.0013 106.43)",
-          "oklch(49% 0.0013 106.43)",
-          "oklch(61% 0.0013 106.43)",
-          "oklch(72% 0.0013 106.43)",
-          "oklch(84% 0.0013 106.43)",
-          "oklch(95% 0.0013 106.43)"
+          "oklch(15% 0.0013 106.42)",
+          "oklch(26% 0.0013 106.42)",
+          "oklch(38% 0.0013 106.42)",
+          "oklch(49% 0.0013 106.42)",
+          "oklch(61% 0.0013 106.42)",
+          "oklch(72% 0.0013 106.42)",
+          "oklch(84% 0.0013 106.42)",
+          "oklch(95% 0.0013 106.42)"
         ]
       },
       "nav-active": {
         "role": "neutral",
         "displayName": "Nav Active",
         "tonalRamp": [
-          "oklch(15% 0.0130 285.47)",
-          "oklch(26% 0.0130 285.47)",
-          "oklch(38% 0.0130 285.47)",
-          "oklch(49% 0.0130 285.47)",
-          "oklch(61% 0.0130 285.47)",
-          "oklch(72% 0.0130 285.47)",
-          "oklch(84% 0.0130 285.47)",
-          "oklch(95% 0.0130 285.47)"
+          "oklch(15% 0.0439 165.15)",
+          "oklch(26% 0.0439 165.15)",
+          "oklch(38% 0.0439 165.15)",
+          "oklch(49% 0.0439 165.15)",
+          "oklch(61% 0.0439 165.15)",
+          "oklch(72% 0.0439 165.15)",
+          "oklch(84% 0.0439 165.15)",
+          "oklch(95% 0.0439 165.15)"
         ]
       },
       "badge-valid": {
@@ -414,19 +372,19 @@
         "role": "neutral",
         "displayName": "Control Border",
         "tonalRamp": [
-          "oklch(15% 0.0155 285.86)",
-          "oklch(26% 0.0155 285.86)",
-          "oklch(38% 0.0155 285.86)",
-          "oklch(49% 0.0155 285.86)",
-          "oklch(61% 0.0155 285.86)",
-          "oklch(72% 0.0155 285.86)",
-          "oklch(84% 0.0155 285.86)",
-          "oklch(95% 0.0155 285.86)"
+          "oklch(15% 0.0330 158.68)",
+          "oklch(26% 0.0330 158.68)",
+          "oklch(38% 0.0330 158.68)",
+          "oklch(49% 0.0330 158.68)",
+          "oklch(61% 0.0330 158.68)",
+          "oklch(72% 0.0330 158.68)",
+          "oklch(84% 0.0330 158.68)",
+          "oklch(95% 0.0330 158.68)"
         ]
       },
       "state-border": {
         "role": "neutral",
-        "displayName": "Active State Border",
+        "displayName": "State Border",
         "tonalRamp": [
           "oklch(15% 0.0145 286.02)",
           "oklch(26% 0.0145 286.02)",
@@ -507,24 +465,64 @@
           "oklch(84% 0.0150 251.17)",
           "oklch(95% 0.0150 251.17)"
         ]
+      },
+      "secondary": {
+        "role": "neutral",
+        "displayName": "Secondary",
+        "tonalRamp": [
+          "oklch(15% 0.0013 106.42)",
+          "oklch(26% 0.0013 106.42)",
+          "oklch(38% 0.0013 106.42)",
+          "oklch(49% 0.0013 106.42)",
+          "oklch(61% 0.0013 106.42)",
+          "oklch(72% 0.0013 106.42)",
+          "oklch(84% 0.0013 106.42)",
+          "oklch(95% 0.0013 106.42)"
+        ]
+      },
+      "primary-hover": {
+        "role": "primary",
+        "displayName": "Primary Hover",
+        "tonalRamp": [
+          "oklch(15% 0.1347 93.42)",
+          "oklch(26% 0.1347 93.42)",
+          "oklch(38% 0.1347 93.42)",
+          "oklch(49% 0.1347 93.42)",
+          "oklch(61% 0.1347 93.42)",
+          "oklch(72% 0.1347 93.42)",
+          "oklch(84% 0.1347 93.42)",
+          "oklch(95% 0.1347 93.42)"
+        ]
       }
     },
     "typographyMeta": {
       "headline": {
-        "displayName": "Panel headline",
-        "purpose": "Main index heading; Host Grotesk at 28px and weight 500 on desktop."
+        "displayName": "headline",
+        "purpose": "Panel and report headings."
       },
       "title": {
-        "displayName": "Product title",
-        "purpose": "Header identity."
+        "displayName": "title",
+        "purpose": "Product identity."
       },
       "body": {
-        "displayName": "Body",
-        "purpose": "Default records and form text."
+        "displayName": "body",
+        "purpose": "Host Grotesk operational text."
       },
       "label": {
-        "displayName": "Label",
-        "purpose": "Form labels and secondary text."
+        "displayName": "label",
+        "purpose": "Form labels and compact UI."
+      },
+      "display": {
+        "displayName": "display",
+        "purpose": "Host Grotesk introduction."
+      },
+      "reading": {
+        "displayName": "reading",
+        "purpose": "EB Garamond explanatory and source prose."
+      },
+      "intro-prose": {
+        "displayName": "intro prose",
+        "purpose": "Serif introductory reading text."
       }
     },
     "shadows": [
@@ -536,7 +534,17 @@
       {
         "name": "map-tool",
         "value": "0 3px 14px #00000066",
-        "purpose": "Floating toolbar, legend and Leaflet controls."
+        "purpose": "Floating toolbar and Leaflet controls."
+      },
+      {
+        "name": "map-legend",
+        "value": "0 3px 14px #00000033",
+        "purpose": "Map legend."
+      },
+      {
+        "name": "mobile-menu",
+        "value": "0 12px 24px #00000033",
+        "purpose": "Expanded mobile navigation."
       },
       {
         "name": "dialog",
@@ -547,11 +555,6 @@
         "name": "toast",
         "value": "0 6px 20px #00000066",
         "purpose": "Transient status message."
-      },
-      {
-        "name": "workspace-glow",
-        "value": "0 8px 55px #c8303a26",
-        "purpose": "Restrained red glow behind the main working surface."
       }
     ],
     "motion": [
@@ -559,16 +562,25 @@
         "name": "control-transition",
         "value": "background-color 160ms, border-color 160ms, color 160ms",
         "purpose": "Button feedback; disabled under prefers-reduced-motion: reduce."
+      },
+      {
+        "name": "disclosure-icon",
+        "value": "transform 160ms",
+        "purpose": "Drawing plus icon rotates 45deg when open; reduced motion disables the transition."
       }
     ],
     "breakpoints": [
+      {
+        "name": "wide-desktop",
+        "value": "1600px"
+      },
       {
         "name": "compact-desktop",
         "value": "1200px"
       },
       {
-        "name": "narrow-desktop",
-        "value": "1000px"
+        "name": "tablet",
+        "value": "920px"
       },
       {
         "name": "mobile",
@@ -583,7 +595,7 @@
       "refersTo": "button-secondary",
       "description": "Implemented action variant.",
       "html": "<button class=\"ds-button-secondary\">Export CSV</button>",
-      "css": ".ds-button-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 12px;border:1px solid var(--border,#303036);background:var(--panel,#121315);color:var(--text,#faf8f9);border-radius:0;cursor:pointer;font:550 14px/1.4 var(--font-host-grotesk,'Host Grotesk'),sans-serif;transition:background-color 160ms,border-color 160ms,color 160ms;}.ds-button-secondary:hover:not(:disabled){background:var(--hover,#222325);border-color:#73737e;}.ds-button-secondary:focus-visible{outline:2px solid #faf8f9;outline-offset:3px;}.ds-button-secondary:disabled{opacity:.55;cursor:default;}@media(prefers-reduced-motion:reduce){.ds-button-secondary{transition:none;}}"
+      "css": ".ds-button-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 12px;border:1px solid var(--border,#345347);background:var(--panel,#224134);color:var(--text,#fffeff);border-radius:0;cursor:pointer;font:550 14px/1.4 var(--font-host-grotesk,'Host Grotesk'),sans-serif;transition:background-color 160ms,border-color 160ms,color 160ms;}.ds-button-secondary:hover:not(:disabled){background:var(--hover,#2d5141);border-color:#a0b6a6;}.ds-button-secondary:focus-visible{outline:2px solid #fffeff;outline-offset:3px;}.ds-button-secondary:disabled{opacity:.55;cursor:default;}@media(prefers-reduced-motion:reduce){.ds-button-secondary{transition:none;}}"
     },
     {
       "name": "Primary Button",
@@ -591,7 +603,7 @@
       "refersTo": "button-primary",
       "description": "Implemented action variant.",
       "html": "<button class=\"ds-button-primary\">Importă catalogul</button>",
-      "css": ".ds-button-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 12px;border:1px solid var(--border,#303036);background:var(--panel,#121315);color:var(--text,#faf8f9);border-radius:0;cursor:pointer;font:550 14px/1.4 var(--font-host-grotesk,'Host Grotesk'),sans-serif;transition:background-color 160ms,border-color 160ms,color 160ms;background:#16161a;color:var(--primary-text,#fcfcfd);border-color:#55555f;}.ds-button-primary:hover:not(:disabled){background:#25252b;border-color:#25252b;}.ds-button-primary:focus-visible{outline:2px solid #faf8f9;outline-offset:3px;}.ds-button-primary:disabled{opacity:.55;cursor:default;}@media(prefers-reduced-motion:reduce){.ds-button-primary{transition:none;}}"
+      "css": ".ds-button-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 12px;border:1px solid var(--border,#345347);background:var(--panel,#224134);color:var(--text,#fffeff);border-radius:0;cursor:pointer;font:550 14px/1.4 var(--font-host-grotesk,'Host Grotesk'),sans-serif;transition:background-color 160ms,border-color 160ms,color 160ms;background:var(--primary,#fde68a);color:var(--primary-text,#040404);border-color:var(--primary,#fde68a);}.ds-button-primary:hover:not(:disabled){background:#f9d96a;border-color:#f9d96a;}.ds-button-primary:focus-visible{outline:2px solid #fffeff;outline-offset:3px;}.ds-button-primary:disabled{opacity:.55;cursor:default;}@media(prefers-reduced-motion:reduce){.ds-button-primary{transition:none;}}"
     },
     {
       "name": "Destructive Button",
@@ -599,23 +611,23 @@
       "refersTo": "button-danger",
       "description": "Implemented action variant.",
       "html": "<button class=\"ds-button-danger\">Șterge</button>",
-      "css": ".ds-button-danger{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 12px;border:1px solid var(--border,#303036);background:var(--panel,#121315);color:var(--text,#faf8f9);border-radius:0;cursor:pointer;font:550 14px/1.4 var(--font-host-grotesk,'Host Grotesk'),sans-serif;transition:background-color 160ms,border-color 160ms,color 160ms;color:var(--danger,#f4d9db);}.ds-button-danger:hover:not(:disabled){background:var(--hover,#222325);border-color:#73737e;}.ds-button-danger:focus-visible{outline:2px solid #faf8f9;outline-offset:3px;}.ds-button-danger:disabled{opacity:.55;cursor:default;}@media(prefers-reduced-motion:reduce){.ds-button-danger{transition:none;}}"
+      "css": ".ds-button-danger{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 12px;border:1px solid var(--border,#345347);background:var(--panel,#224134);color:var(--text,#fffeff);border-radius:0;cursor:pointer;font:550 14px/1.4 var(--font-host-grotesk,'Host Grotesk'),sans-serif;transition:background-color 160ms,border-color 160ms,color 160ms;color:var(--danger,#f4d9db);}.ds-button-danger:hover:not(:disabled){background:var(--hover,#2d5141);border-color:#a0b6a6;}.ds-button-danger:focus-visible{outline:2px solid #fffeff;outline-offset:3px;}.ds-button-danger:disabled{opacity:.55;cursor:default;}@media(prefers-reduced-motion:reduce){.ds-button-danger{transition:none;}}"
     },
     {
       "name": "Community Search",
       "kind": "input",
       "refersTo": "input",
       "description": "Compact record search with inset stroke icon.",
-      "html": "<label class=\"ds-search\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m21 21-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z\"/></svg><input aria-label=\"Caută comunități\" placeholder=\"Nume, localitate sau SIRUTA\"></label>",
-      "css": ".ds-search{position:relative;display:flex;align-items:center;color:var(--muted,#d6d6d5);}.ds-search>svg{position:absolute;left:13px;pointer-events:none;}.ds-search input{width:100%;min-width:0;height:42px;padding:9px 11px 9px 40px;border:1px solid var(--control-border,#6b6b75);border-radius:0;background:var(--panel,#121315);color:var(--text,#faf8f9);font:12px var(--font-host-grotesk,'Host Grotesk'),sans-serif;caret-color:var(--primary,#faf8f9);}.ds-search input::placeholder{color:#b6b6bd;opacity:1;}.ds-search input:focus-visible{outline:2px solid #faf8f9;outline-offset:3px;}"
+      "html": "<div class=\"ds-search-group\"><label for=\"ds-community-search\">Caută în registru</label><div class=\"ds-search\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m21 21-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z\"/></svg><input id=\"ds-community-search\" placeholder=\"Nume, localitate sau SIRUTA\"></div></div>",
+      "css": ".ds-search-group{display:flex;flex-direction:column;gap:6px;}.ds-search-group>label{font:12px/1.5 var(--font-host-grotesk,'Host Grotesk'),sans-serif;color:var(--muted,#e0e0df);}.ds-search{position:relative;display:flex;align-items:center;color:var(--muted,#e0e0df);}.ds-search>svg{position:absolute;left:13px;pointer-events:none;}.ds-search input{width:100%;min-width:0;height:42px;padding:9px 11px 9px 40px;border:1px solid var(--control-border,#879e90);border-radius:0;background:var(--panel,#224134);color:var(--text,#fffeff);font:12px var(--font-host-grotesk,'Host Grotesk'),sans-serif;caret-color:var(--primary,#fde68a);}.ds-search input::placeholder{color:#d3dfd5;opacity:1;}.ds-search input:focus-visible{outline:2px solid #fffeff;outline-offset:3px;}"
     },
     {
       "name": "Navigation",
       "kind": "nav",
       "refersTo": "nav-active",
-      "description": "Near-black rail with graphite active route.",
+      "description": "Horizontal dataset navigation with yellow active label.",
       "html": "<nav class=\"ds-nav\" aria-label=\"Secțiuni\"><button class=\"ds-route\" aria-current=\"page\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15\"/></svg><span>Comunități</span></button><button class=\"ds-route\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15\"/></svg><span>Date</span></button></nav>",
-      "css": ".ds-nav{display:flex;flex-direction:column;gap:12px;width:74px;padding:23px 7px;background:var(--rail,#0d0d10);border-right:1px solid #222325;}.ds-route{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;width:100%;min-height:66px;padding:10px 1px;border:1px solid transparent;background:transparent;color:#d6d6d5;border-radius:0;font:500 10px/1.4 var(--font-host-grotesk,'Host Grotesk'),sans-serif;cursor:pointer;transition:background-color 160ms,color 160ms;}.ds-route:hover{color:white;background:#202025;}.ds-route[aria-current=page]{background:#24242b;color:#faf8f9;border-color:var(--state-border,#9c9ca6);}.ds-route:focus-visible{outline:2px solid #faf8f9;outline-offset:3px;}@media(prefers-reduced-motion:reduce){.ds-route{transition:none;}}"
+      "css": ".ds-nav{display:flex;align-items:center;gap:4px;background:var(--bg,#1b3a2e);}.ds-route{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:10px 11px;border:1px solid transparent;background:transparent;color:var(--muted,#e0e0df);border-radius:0;font:500 12px/1.4 var(--font-host-grotesk,'Host Grotesk'),sans-serif;white-space:nowrap;cursor:pointer;transition:background-color 160ms,color 160ms;}.ds-route:hover{color:white;background:#224134;}.ds-route[aria-current=page],.ds-route[aria-current=page]:hover{background:var(--panel,#224134);color:var(--primary,#fde68a);border-color:transparent;}.ds-route:focus-visible{outline:2px solid #fffeff;outline-offset:3px;}@media(prefers-reduced-motion:reduce){.ds-route{transition:none;}}"
     },
     {
       "name": "Status validată",
@@ -639,7 +651,7 @@
       "refersTo": "card",
       "description": "Flat data grouping separated by a divider.",
       "html": "<section class=\"ds-card\"><b>Export comunități</b><p>Coordonate, SIRUTA, WKT</p></section>",
-      "css": ".ds-card{padding:0 0 22px;border-bottom:1px solid var(--border,#303036);color:var(--text,#faf8f9);font:14px/1.5 var(--font-host-grotesk,'Host Grotesk'),sans-serif;}.ds-card>b{font-size:14px;font-weight:650;}.ds-card p{margin:12px 0 0;color:var(--muted,#d6d6d5);font-size:12px;line-height:1.75;}"
+      "css": ".ds-card{padding:0 0 22px;border-bottom:1px solid var(--border,#345347);color:var(--text,#fffeff);font:14px/1.5 var(--font-host-grotesk,'Host Grotesk'),sans-serif;}.ds-card>b{font-size:14px;font-weight:650;}.ds-card p{margin:12px 0 0;color:var(--muted,#e0e0df);font:18px/1.5 var(--font-eb-garamond,'EB Garamond'),serif;}"
     },
     {
       "name": "Status De validat",
@@ -659,42 +671,42 @@
     }
   ],
   "narrative": {
-    "northStar": "Dark Fieldwork Atlas",
-    "overview": "Near-black surfaces, white typography and sharp neutral controls bring the supplied dark reference into the existing operating platform. Host Grotesk carries Romanian interface labels, geographic records and source summaries.\n\nThin neutral borders and tonal changes organize dense information. A restrained red glow sits behind the main working surface; geographic dataset colors retain their established meanings.",
+    "northStar": "Forest Field Guide",
+    "overview": "Forest-green ground and surfaces frame the working atlas, with warm yellow marking actions, links and the active dataset. Host Grotesk gives headings and operational controls a precise voice; EB Garamond makes explanatory text and source material comfortable to read.\n\nThe interface is flat, square and spacious around the map. A large two-line introduction and live coverage facts orient staff before the task index and geographic evidence. Semantic dataset colors retain their established meanings.",
     "keyCharacteristics": [
-      "Near-black ground with distinct dark panels.",
-      "Host Grotesk, white text and tabular counts.",
-      "Square neutral controls with visible keyboard focus.",
-      "Restrained red workspace glow and stable map semantics."
+      "Forest-green layers and warm-yellow action emphasis.",
+      "Host Grotesk display and UI paired with EB Garamond prose.",
+      "Square controls and a dominant working map.",
+      "Labeled status colors, scope dashes and visible source provenance."
     ],
     "rules": [
       {
-        "name": "The Glow Boundary Rule",
-        "body": "Keep the red accent behind the main working surface; actions and navigation remain neutral.",
+        "name": "The Yellow Emphasis Rule",
+        "body": "Use warm yellow for primary actions, links, identity and active navigation; keep reading surfaces green.",
         "section": "colors"
       },
       {
         "name": "The Geographic Continuity Rule",
-        "body": "Preserve map dataset colors independently of neutral interface action colors.",
+        "body": "Preserve map dataset colors independently of interface action colors.",
         "section": "colors"
       },
       {
         "name": "The Working Surface Rule",
-        "body": "Separate ordinary records with borders and tonal changes; reserve shadows for floating tools, dialogs and the main workspace glow.",
+        "body": "Separate ordinary records with borders and tonal changes; reserve shadows for floating tools, navigation overlays and dialogs.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "Do use the Host Grotesk variable supplied by the root layout.",
-      "Do keep controls square and actions neutral.",
-      "Do keep keyboard focus visible and numeric columns tabular.",
+      "Do use Host Grotesk for display, controls and data; use EB Garamond for reading text.",
+      "Do pair yellow primary actions with their black label color.",
+      "Do keep controls square, keyboard focus visible and numeric columns tabular.",
       "Do preserve labeled map colors and Romanian diacritics.",
       "Do show administrative scope, source year and license beside imported outlines."
     ],
     "donts": [
-      "Don't apply the red glow as a primary-button fill.",
-      "Don't replace the geographic status palette with interface neutrals.",
-      "Don't introduce pale panels or rounded cards into the dark workspace.",
+      "Don't add a decorative glow behind the workspace.",
+      "Don't replace the geographic status palette with brand yellow.",
+      "Don't turn source records into rounded floating cards.",
       "Don't animate controls when reduced motion is requested.",
       "Don't present administrative reference areas as Roma settlement boundaries."
     ]

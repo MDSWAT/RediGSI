@@ -1,24 +1,21 @@
 ---
 name: "Roma Community Map"
-description: "A dark, precise workspace for community maps and source summaries."
+description: "A forest-green field guide to community maps and source evidence."
 colors:
-  bg: "#0a0a0c"
-  panel: "#121315"
-  text: "#faf8f9"
-  muted: "#d6d6d5"
-  border: "#303036"
-  primary: "#faf8f9"
-  primary-text: "#fcfcfd"
-  button-primary: "#16161a"
-  button-primary-border: "#55555f"
-  button-primary-hover: "#25252b"
-  hover: "#222325"
-  selected: "#232429"
-  rail: "#0d0d10"
-  accent: "#c8303a"
+  bg: "#1b3a2e"
+  panel: "#224134"
+  text: "#fffeff"
+  muted: "#e0e0df"
+  border: "#345347"
+  primary: "#fde68a"
+  primary-text: "#040404"
+  hover: "#2d5141"
+  selected: "#315a47"
+  rail: "#1b3a2e"
+  accent: "#fde68a"
   danger: "#f4d9db"
-  warn: "#e5e5e4"
-  nav-active: "#24242b"
+  warn: "#efefee"
+  nav-active: "#224134"
   badge-valid: "#232a27"
   badge-valid-text: "#cde6d5"
   badge-proposed: "#2a2721"
@@ -31,13 +28,15 @@ colors:
   overlap-both: "#16a34a"
   overlap-clients: "#ea580c"
   overlap-communities: "#64748b"
-  control-border: "#6b6b75"
+  control-border: "#879e90"
   state-border: "#9c9ca6"
   map-pending: "#755ca8"
   badge-pending: "#292334"
   badge-pending-text: "#e0d3f3"
   badge-below: "#242a33"
   badge-below-text: "#d9e1ea"
+  secondary: "#efefee"
+  primary-hover: "#f9d96a"
 typography:
   headline:
     fontFamily: "var(--font-host-grotesk), sans-serif"
@@ -63,6 +62,22 @@ typography:
     fontWeight: 400
     lineHeight: 1.5
     letterSpacing: "normal"
+  display:
+    fontFamily: "var(--font-host-grotesk), sans-serif"
+    fontSize: "clamp(44px, 4.65vw, 67px)"
+    fontWeight: 500
+    lineHeight: 1.05
+    letterSpacing: "-.035em"
+  reading:
+    fontFamily: "var(--font-eb-garamond), serif"
+    fontSize: "18px"
+    fontWeight: 400
+    lineHeight: 1.5
+  intro-prose:
+    fontFamily: "var(--font-eb-garamond), serif"
+    fontSize: "21px"
+    fontWeight: 400
+    lineHeight: 1.35
 rounded:
   square: "0px"
 spacing:
@@ -79,12 +94,12 @@ components:
     rounded: "{rounded.square}"
     padding: "8px 12px"
   button-primary:
-    backgroundColor: "{colors.button-primary}"
+    backgroundColor: "{colors.primary}"
     textColor: "{colors.primary-text}"
     rounded: "{rounded.square}"
     padding: "8px 12px"
   button-primary-hover:
-    backgroundColor: "{colors.button-primary-hover}"
+    backgroundColor: "{colors.primary-hover}"
   button-danger:
     backgroundColor: "{colors.panel}"
     textColor: "{colors.danger}"
@@ -97,9 +112,9 @@ components:
     padding: "9px 11px"
   nav-active:
     backgroundColor: "{colors.nav-active}"
-    textColor: "{colors.text}"
+    textColor: "{colors.primary}"
     rounded: "{rounded.square}"
-    padding: "10px 1px"
+    padding: "10px 11px"
   badge-valid:
     backgroundColor: "{colors.badge-valid}"
     textColor: "{colors.badge-valid-text}"
@@ -132,132 +147,126 @@ components:
 
 ## Overview
 
-**Creative North Star: "Dark Fieldwork Atlas"**
+**Creative North Star: "Forest Field Guide"**
 
-Near-black surfaces, white typography and sharp neutral controls bring the supplied dark reference into the existing operating platform. Host Grotesk carries Romanian interface labels, geographic records and source summaries.
+Forest-green ground and surfaces frame the working atlas, with warm yellow marking actions, links and the active dataset. Host Grotesk gives headings and operational controls a precise voice; EB Garamond makes explanatory text and source material comfortable to read.
 
-Thin neutral borders and tonal changes organize dense information. A restrained red glow sits behind the main working surface; geographic dataset colors retain their established meanings.
+The interface is flat, square and spacious around the map. A large two-line introduction and live coverage facts orient staff before the task index and geographic evidence. Semantic dataset colors retain their established meanings.
 
 **Key Characteristics:**
 
-- Near-black ground with distinct dark panels.
-- Host Grotesk, white text and tabular counts.
-- Square neutral controls with visible keyboard focus.
-- Restrained red workspace glow and stable map semantics.
+- Forest-green layers and warm-yellow action emphasis.
+- Host Grotesk display and UI paired with EB Garamond prose.
+- Square controls and a dominant working map.
+- Labeled status colors, scope dashes and visible source provenance.
 
 ## Colors
 
-The interface uses a near-black neutral palette. The frontmatter owns color values; the roles below explain their use.
+The frontmatter is the normative palette. Forest layers carry the workspace; yellow provides warm, focused emphasis.
 
 ### Primary
-- **Soft white:** links, primary interface text and numeric emphasis. The CSS primary token is a foreground color, not a button background.
-- **Graphite action surface:** primary buttons and floating map instruments, with a lighter hover tone and distinct border.
-- **Restrained red:** the translucent glow behind the main working surface.
+- **Warm yellow:** primary buttons, active navigation, brand icon, links and count emphasis. Black labels give filled actions clear contrast; primary hover uses the deeper yellow token.
 
 ### Secondary
-- **Geographic green / amber:** validated and proposed communities on the map; selected geometry keeps its established dark green.
-- **Pending violet / below-threshold slate:** distinguish records awaiting validation and records below the REDI threshold. Below-threshold map geometry reuses the overlap-communities slate token.
-- **Entrepreneur blue / partner terracotta:** distinct point datasets.
-- **Overlap green / orange / slate:** communities with clients, clients only, and communities only.
-- **Pale green / pale amber / pale violet / pale slate:** readable text over dark tinted badges for validated, proposed, pending-validation and below-threshold records.
-- **Pale rose:** destructive action and error text; warning text is light neutral.
+- **Geographic green / amber / violet / slate:** validated, proposed, pending-validation and below-threshold geometry. Below-threshold geometry reuses the overlap-communities slate token.
+- **Entrepreneur blue / partner terracotta:** point datasets; overlap green, orange and slate retain analysis meaning.
+- **Pale green / amber / violet / slate on dark tints:** labeled status badges remain independent of brand yellow.
+- **Pale rose:** destructive actions and errors.
 
 ### Neutral
-- **Near-black ground / dark panel / deeper rail:** application layers.
-- **Soft white / light grey:** primary and secondary reading levels.
-- **Graphite borders / hover / selection:** structural separation and state feedback.
-- **Control border / active-state border:** stronger neutral edges distinguish fields and persistently selected controls. The state-border token also identifies shared areas containing mixed statuses.
+- **Forest ground / raised forest panel:** page ground and operational surfaces, including forms, summaries and popups.
+- **Off-white / soft grey / secondary white:** main text, muted labels and reading copy.
+- **Green border / control border / hover / selection:** structural separation and clear state changes. Hover and selection are distinct tones.
+- **State border:** selected filter edges and mixed-status administrative areas. The legacy rail token is used by toast surfaces; the page has horizontal navigation.
 
-**The Glow Boundary Rule.** Keep the red accent behind the main working surface; actions and navigation remain neutral.
+**The Yellow Emphasis Rule.** Use warm yellow for primary actions, links, identity and active navigation; keep reading surfaces green.
 
-**The Geographic Continuity Rule.** Preserve map dataset colors independently of neutral interface action colors.
+**The Geographic Continuity Rule.** Preserve map dataset colors independently of interface action colors.
 
 ## Typography
 
-Use Host Grotesk through the root layout's font variable, with sans-serif fallback. Next.js self-hosts the Google font with Latin and Latin Extended subsets and swap display. Keep the variable reference so component previews inherit the loaded family.
+Both families are self-hosted through next/font with Latin and Latin Extended subsets and swap display. Keep their root CSS variable references so components inherit the loaded fonts.
 
-- **Headline:** panel headings use the frontmatter headline role; mobile headings reduce to (24px).
-- **Title:** product identity uses the title role; mobile size is (17px).
-- **Body / label:** default text is (14px); secondary copy and form labels commonly use (12px).
-- Record names use (14px, 650); statistics use (24px, 600). Counts, statistics and tables use tabular numerals.
-- Summary headings use (23px), reducing to (21px) on mobile; summary values and prose use (13px), with observations at (12px).
+- **Display:** Host Grotesk, medium weight, tight tracking and two lines in the introduction. The desktop clamp reaches about (67px) at (1440px); it becomes (46px) below (1200px), (40px) below (920px), then clamp(32px, 8.8vw, 42px) on mobile.
+- **Headlines / title:** panel headings use (28px, 500); product identity uses (19px, 650), reducing to (16px) on mobile. Summary headings use (28px), reducing to (24px) on mobile.
+- **UI and data:** Host Grotesk body (14px), field text (13px), search text (12px), labels (12px) and status badges (10px). Record names use weight (500). Counts and tables use tabular numerals.
+- **Reading:** EB Garamond prose uses (18px, 1.5); introductory copy uses (21px, 1.35), reducing to (19px) at narrower widths. Panel descriptions use (18px, 1.35); boundary prose uses (17px). Source metadata values remain operational sans-serif text.
+- **Coverage facts:** Host Grotesk values use (34px, 500), reducing to (30px) below (1200px) and (28px) on mobile. EB Garamond captions use (18px), reducing to (16px) below (920px).
 
 ## Layout
 
-The existing GIS workspace keeps its navigation spine (88px), index (380px), header (84px) and flexible main surface. The index scrolls independently. Panel gaps are (16px) with desktop side padding (24px). The main surface is inset by (18px 24px 24px 18px) and carries the subtle glow.
+The desktop workspace has a horizontal product header with six dataset tabs and import action. Below it, the two-line introduction shares a row with three live coverage facts. A task index (350px) sits beside the dominant map or report, separated by (20px); there is a compact methodology footer. Desktop grid rows are (88px), (236px), minmax(470px, 1fr), and (44px). Page side padding is clamp(24px, 3vw, 48px). The index and main reading surface scroll independently where needed.
 
-At (1200px), the rail/index become (80px/350px). At (1000px), they become (76px/320px) and header counts disappear. At (760px), the map view stacks header (76px), sticky horizontal navigation (72px), map (46dvh), then index; main margins reduce to (12px). Summary mode places the index before the report and allows natural page scrolling. These are current workspace dimensions, not a fixed template for every future surface.
+At (1600px) and wider, the index becomes (370px), the column gap (24px), and outer padding (56px). At (1200px) and below, the index becomes (320px), gap (16px), padding (24px), and navigation icons hide. At (920px) the import action becomes icon-only. These describe the implemented workspace, not a mandatory template for every screen.
 
-The summary uses a horizontally scrollable table with minimum width (660px), readable notes up to (75ch), and desktop padding (30px), reducing to (24px 20px) on mobile. Dialogs use widths (540px) or (840px), internal scrolling and padding (28px), reducing to (20px) on mobile.
+At (760px), the page uses (16px) side padding, header (76px), compact introduction, map minmax(380px, 48dvh), source tools and footer. Dataset navigation moves into a labeled collapsible menu. Lists inside the mobile task panel have maximum height (640px) and contained scrolling. Summary mode places source tools before the report and allows natural page scrolling.
 
-Catalog filters keep country and status selects in two equal columns with a (12px) gap; checkbox filters span both columns. Expanded record details stay within the index and wrap long source content. Source-sheet disclosures remain in the summary reading flow.
+Panels keep a (16px) grouping gap and (24px) desktop side padding. Country/status filters use two columns with a (12px) gap; labeled checkboxes span both columns. Manual-entry forms use two columns and collapse to one on mobile. Dialog widths are (540px) or (840px), with padding (28px), reducing to (20px) on mobile. Summary tables keep minimum width (660px) inside a horizontal scroller; report padding is (28px), reducing to (24px 20px) on mobile.
 
 ## Elevation & Depth
 
-Dark tonal layers and thin borders provide most separation. Black shadows lift map instruments, toasts and dialogs. A translucent black modal backdrop isolates forms. The main workspace has a restrained red shadow; exact values live in the sidecar.
+Forest tonal layers and thin green borders provide most separation. The main workspace is flat with no glow. Black shadows lift floating map tools, the mobile menu, toasts and dialogs. A translucent black modal backdrop isolates forms. Exact shadow values live in the sidecar.
 
-**The Working Surface Rule.** Separate ordinary records with borders and tonal changes; reserve shadows for floating tools, dialogs and the main workspace glow.
+**The Working Surface Rule.** Separate ordinary records with borders and tonal changes; reserve shadows for floating tools, navigation overlays and dialogs.
 
 ## Shapes
 
-Application buttons, inputs, navigation, badges, selected records, summary frames and dialogs use square corners. Circular map markers and legend dots retain their data meaning. Stroke icons use an unfilled (24px) viewBox, rounded caps and joins, and a (1.7px) stroke; their default rendered size is (20px).
+Buttons, fields, navigation states, badges, records, report frames and dialogs have square corners. Circular map markers and legend dots retain their data meaning. Icons use an unfilled (24px) viewBox with (1.7px) strokes, rounded caps and joins; default rendered size is (20px). Menu and close symbols use the same stroke language.
 
 ## Components
 
 ### Buttons
 
-Primary buttons use graphite with near-white text and a stronger neutral border. Secondary buttons use the dark panel surface; destructive variants use pale rose text. Minimum height is (38px), weight (550), line-height (1.4), and padding is (8px 12px). Hover changes background and border. Disabled buttons use opacity (.55). Color transitions take (160ms); reduced motion removes them.
+Primary actions are yellow with black labels and a yellow border. Secondary actions use the green panel surface; destructive actions use pale rose text. Default minimum height is (38px), padding (8px 12px), weight (550) and line-height (1.4). The header action uses minimum height (42px). Hover adjusts surface and border; disabled opacity is (.55). Color transitions take (160ms); reduced motion removes them.
 
 ### Inputs / Fields
 
-Dark panel fields use the stronger control-border token at (1px), square corners and compact padding. Labels sit above controls with a (6px) gap. Search reserves left padding (40px) for a stroke icon and uses height (42px). Control focus is a white outline (2px) with offset (3px); the focusable summary table region uses a (3px) outline.
+Fields use the panel surface, square corners and a (1px) control border. Labels sit above fields with a (6px) gap. Registry search has a visible label and inset stroke icon, height (42px), and left padding (40px). Selects reserve right padding (30px) for an inline SVG chevron. Checkboxes use the primary accent. Keyboard focus is an off-white outline (2px) offset (3px); the summary table region uses a (3px) outline.
 
 ### Navigation
 
-Icon-and-label buttons sit on the deeper rail. Default text is light grey; hover adds a dark neutral fill and white text. Active navigation uses a distinct graphite surface, white text and a persistent state-border outline (1px); inactive buttons reserve that border with transparency. Desktop items stack; mobile items share a horizontal row.
+Desktop dataset tabs are horizontal icon-and-label buttons with muted text; the active tab gains a panel fill and yellow text. Active hover keeps the yellow treatment. Tablet tabs hide icons. On mobile, the expanded menu is a two-column grid with labeled (44px) minimum-height items. Its toggle exposes aria-expanded; Escape closes the menu and returns focus to the toggle. Dataset selection also closes it.
 
 ### Chips
 
-Status badges use compact text (10px), square corners and dark green, amber, violet or slate tinted surfaces with pale matching text. The four textual labels retain meaning alongside their color. Segmented filters use a deeper ground; the selected segment gains the graphite action surface, a persistent state-border outline (1px) and a small black shadow. Inactive segments reserve transparent borders. Filter selection also uses aria-pressed.
+Status badges retain green, amber, violet and slate tinted surfaces with pale matching text, compact (10px) labels and square corners. Generic scope badges use the hover tone and secondary white. The four REDI status names remain explicit. Existing selected filter segments retain their state border and small shadow.
 
 ### Cards / Containers
 
-Data sections use bottom dividers and spacing. Selected list records gain the neutral selected surface. Record activation focuses matching map geometry and exposes actions. Summary tables use dark hover-tone headers, selected-tone totals, neutral borders and readable observation rows; notes remain flat.
+Data sections use bottom dividers and spacing rather than floating cards. Selected records use the selected green tone. Record activation focuses the corresponding geometry and exposes its source details and actions. Summary headers use the hover tone and totals use the selected tone; numeric cells remain sans-serif while reading copy uses the serif family.
 
-### Catalog filters and source details
+### Drawing and source details
 
-Country and four-status selects reuse the existing dark fields; health-campaign and unlocated-only filters use labeled checkboxes (16px) with the primary foreground as accent. The result count distinguishes source records from distinct mapped shapes; multiple source rows can share one administrative outline.
+Drawing tools start in a native disclosure so search stays easy to find. The summary has a plus icon that rotates (45deg) when open; the four tool buttons then appear. Country/status, health and unlocated filters drive the source list and map together. Result counts distinguish source rows from distinct shapes.
 
-Selecting a record expands a semantic definition list below its header. Detail text uses (12px) with line-height (1.65); muted term labels use (11px). Values preserve line breaks, long text wraps, and rows use neutral bottom dividers with vertical padding (8px). Boundary descriptions identify locality, parent-municipality or regional scope and show source, year and license links. They state that administrative reference areas are not Roma settlement boundaries. A missing verified reference point remains explicit even when a wider outline is available. Records without imported outlines retain their existing location notes.
-
-Original source sheets use native details/summary disclosures with keyboard focus inherited from the global controls. Summaries have vertical padding (12px); disclosed rows use (13px) text, line-height (1.7), neutral dividers and wrapping. Reference links stay readable in the normal document flow.
+Selected records expand a semantic definition list. Detail text uses (13px), term labels (11px), preserved line breaks and neutral dividers. Boundary descriptions show administrative scope, source, year and license links, with serif explanatory text. Missing verified locations remain explicit even when a regional outline exists. Source sheets use native disclosures with (12px) summary padding; their reading rows use EB Garamond (18px, 1.5) and wrap long content.
 
 ### Dialogs
 
-Native modal dialogs contain square dark panels over a translucent black backdrop, support Escape and backdrop dismissal, and return focus to their opener. Actions align to the end and wrap as needed.
+Native dialogs use square forest panels over a black translucent backdrop. They support Escape and backdrop dismissal and return focus to their opener. Form labels, values and actions stay in Host Grotesk; primary save actions use yellow. End-aligned actions wrap on narrow screens.
 
 ### Map instruments
 
-Dark neutral toolbars, legends, layer controls and popups surround the geographic imagery. The layer-toggle icon is inline SVG. Imported catalog geometry uses attributed administrative polygons rather than generated point buffers. Status colors remain unchanged; shared outlines with mixed statuses reuse the state-border neutral, and selection uses the established selected map color.
+Toolbars, layer controls, legends and popups inherit the forest panel and off-white text. Imported catalog geometry uses attributed administrative polygons, with existing status colors. Mixed-status shapes reuse the state-border neutral; selection uses the established selected map color.
 
-Long dashes (12 6) identify wider parent or regional references. Short dashes (4 4) identify proposed locality outlines; other locality outlines are solid. Wider-reference styling takes precedence over proposed-status dashes. The wrapping legend explicitly explains both dash patterns and labels all statuses, including mixed areas. Polygon stroke weight increases from (1.5px) to (3.5px) on selection; fill opacity is (.16) for locality/parent outlines, (.07) for regions and (.28) when selected. Remaining point geometry retains its selected radius treatment (8px to 11px).
+Long dashes (12 6) identify wider parent/regional references; short dashes (4 4) identify proposed locality outlines. Wider-reference styling takes precedence, and the wrapping legend explains both. Polygon stroke increases from (1.5px) to (3.5px) on selection; fill opacity is (.16) for locality/parent outlines, (.07) for regions and (.28) when selected. Point geometry retains selected radius (8px to 11px).
 
-Shared geometry is drawn once. Its dark popup lists every source row as a keyboard-operable button with status and source-row labels, in a scrollable choice area (230px maximum height); the popup has maximum width (340px). Choosing a row expands its own details in the index. Popup panels and tips use the graphite action surface with light text, with map-scoped styles overriding Leaflet defaults. Source, year and license links remain visible in the record panel; external tiles and geometry retain attribution. No generated raster or exploration mockup ships with this system.
+Shared geometry is drawn once. Its popup lists all source rows as buttons with status and row labels, with maximum choice-list height (230px) and popup width (340px). Selecting a row expands its own details. Map-scoped popup styles override Leaflet defaults. Tile and geometry attribution remains visible. No generated raster or exploratory landing composition ships as part of this interface.
 
 ## Do's and Don'ts
 
 ### Do:
 
-- Do use the Host Grotesk variable supplied by the root layout.
-- Do keep controls square and actions neutral.
-- Do keep keyboard focus visible and numeric columns tabular.
+- Do use Host Grotesk for display, controls and data; use EB Garamond for reading text.
+- Do pair yellow primary actions with their black label color.
+- Do keep controls square, keyboard focus visible and numeric columns tabular.
 - Do preserve labeled map colors and Romanian diacritics.
 - Do show administrative scope, source year and license beside imported outlines.
 
 ### Don't:
 
-- Don't apply the red glow as a primary-button fill.
-- Don't replace the geographic status palette with interface neutrals.
-- Don't introduce pale panels or rounded cards into the dark workspace.
+- Don't add a decorative glow behind the workspace.
+- Don't replace the geographic status palette with brand yellow.
+- Don't turn source records into rounded floating cards.
 - Don't animate controls when reduced motion is requested.
 - Don't present administrative reference areas as Roma settlement boundaries.

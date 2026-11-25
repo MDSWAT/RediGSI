@@ -16,7 +16,7 @@ Preserve Romanian copy, Leaflet map and layer controls, community drawing and va
 
 ## Brand Commitments
 Preserve the Roma Community Map product name. The user requested a modern redesign using Impeccable.
-The supplied dark design is an aesthetic reference for the existing platform: near-black surfaces, Host Grotesk, sharp controls, neutral actions and restrained red glow. It does not request a separate marketing page or changes to operational content.
+The latest supplied design replaces the earlier neutral palette with forest green #1b3a2e, warm yellow #fde68a, Host Grotesk display and EB Garamond reading text. Apply the identity directly to the existing platform with sharp controls and a dominant working map. The user reiterated that they need the actual page design; do not substitute a proposal or add invented landing-page pricing, testimonials or endorsements.
 
 ## Evidence on Hand
 README.md, implemented workflows, and explicitly fictitious CSV examples under public/samples.

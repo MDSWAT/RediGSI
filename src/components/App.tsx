@@ -46,6 +46,15 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
   const store = useStore();
   const { db } = store;
   const [tab, setTab] = useState<Tab>(initialTab);
+  const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const close = (event: KeyboardEvent) => {
+      if (event.key === "Escape") { setMenuOpen(false); document.getElementById("menu-toggle")?.focus(); }
+    };
+    window.addEventListener("keydown", close);
+    return () => window.removeEventListener("keydown", close);
+  }, [menuOpen]);
   const [summaries, setSummaries] = useState<ImportedCountrySummary[]>([]);
   const [summaryId, setSummaryId] = useState<string>();
   const [summaryError, setSummaryError] = useState<string | null>(null);
@@ -173,23 +182,23 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
 
   return (
     <div className={`app${tab === "summary" ? " summary-mode" : ""}`}>
-      <nav className="navigation" aria-label="Navigare principală">
-        <Link className="rail-brand" href="/" aria-label="Roma Community Map — acasă"><Icon name="map" size={27} /></Link>
-        <div className="nav-items">
-          {TABS.map((t) => <button key={t.id} className={tab === t.id ? "active" : ""} aria-current={tab === t.id ? "page" : undefined} onClick={() => setTab(t.id)} title={t.label}><Icon name={t.icon} size={22} /><span>{t.short}</span></button>)}
-        </div>
-        <span className="rail-signature">RediGSI</span>
-      </nav>
-      <header>
-        <div className="brand">
-          <div>
-            <h1>Roma Community Map</h1>
-            <p className="muted small">Comunități conectate. Perspective comune.</p>
-          </div>
-        </div>
-        <div className="header-summary" aria-label="Rezumat date"><span><b>{db.communities.length}</b> comunități</span><span><b>{db.entrepreneurs.length}</b> antreprenori</span><span><b>{db.clients.length}</b> clienți</span></div>
-        <button className="primary header-import" aria-label="Importă date" onClick={() => setImportTarget(tab === "entrepreneurs" ? "entrepreneurs" : tab === "clients" ? "clients" : "communities")}><Icon name="upload" size={17} /><span>Importă date</span></button>
+      <header className="workspace-header">
+        <Link className="brand" href="/" aria-label="Roma Community Map — acasă"><Icon name="map" size={36} /><div><h1>Roma Community Map</h1><span>RediGSI</span></div></Link>
+        <button id="menu-toggle" className="menu-toggle" aria-label={menuOpen ? "Închide meniul" : "Deschide meniul"} aria-expanded={menuOpen} aria-controls="workspace-navigation" onClick={() => setMenuOpen(!menuOpen)}><Icon name={menuOpen ? "close" : "menu"} /></button>
+        <nav id="workspace-navigation" className={`navigation${menuOpen ? " is-open" : ""}`} aria-label="Navigare principală">
+          <div className="nav-items">{TABS.map((t) => <button key={t.id} className={tab === t.id ? "active" : ""} aria-current={tab === t.id ? "page" : undefined} onClick={() => { setTab(t.id); setMenuOpen(false); }} title={t.label}><Icon name={t.icon} size={18} /><span>{t.short}</span></button>)}</div>
+        </nav>
+        <button className="primary header-import" aria-label="Importă date" onClick={() => { setMenuOpen(false); setImportTarget(tab === "entrepreneurs" ? "entrepreneurs" : tab === "clients" ? "clients" : "communities"); }}><Icon name="upload" size={17} /><span>Importă date</span></button>
       </header>
+
+      <section className="workspace-intro" aria-labelledby="workspace-title">
+        <div><h2 id="workspace-title">Comunități conectate.<br />Perspective comune.</h2><p>Explorează harta, verifică sursele și completează datele comunităților.</p></div>
+        <dl className="workspace-facts" aria-label="Acoperirea registrului">
+          <div><dt>înregistrări</dt><dd>{store.loading ? "—" : db.communities.length.toLocaleString("ro-RO")}</dd></div>
+          <div><dt>zone pe hartă</dt><dd>{store.loading ? "—" : groupBoundaryRecords(db.communities).length.toLocaleString("ro-RO")}</dd></div>
+          <div><dt>țări</dt><dd>{store.loading ? "—" : countries.length}</dd></div>
+        </dl>
+      </section>
 
       <aside aria-label={currentTab.label}>
         <div className="panel-heading"><h2>{currentTab.label}{tab === "communities" && <span className="count">{db.communities.length}</span>}</h2><p>{currentTab.description}</p></div>
@@ -211,8 +220,8 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
 
           {tab === "communities" && (
             <>
-              <div className="draw-tools">
-                <h3>Adaugă pe hartă</h3>
+              <details className="draw-tools">
+                <summary><Icon name="polygon" size={17} />Desenează o comunitate<Icon name="plus" size={15} /></summary>
                 <div className="draw-grid">
                   <button onClick={() => draw("CircleMarker")}><Icon name="point" /><span>Punct</span></button>
                   <button onClick={() => draw("Line")}><Icon name="line" /><span>Stradă</span></button>
@@ -220,8 +229,9 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
                   <button onClick={() => draw("Rectangle")}><Icon name="rectangle" /><span>Zonă</span></button>
                 </div>
                 <details className="drawing-help"><summary>Cum desenez o comunitate?</summary><p>Stradă: click pe fiecare punct, apoi pe ultimul pentru a termina. Cartier: închideți poligonul pe primul punct. Apăsați Esc pentru a anula desenarea.</p></details>
-              </div>
-              <div className="search-field"><Icon name="search" size={18} /><input aria-label="Caută comunități" placeholder="Nume, localitate sau SIRUTA" value={q} onChange={(e) => setQ(e.target.value)} /></div>
+              </details>
+              <label className="search-label" htmlFor="community-search">Caută în registru</label>
+              <div className="search-field"><Icon name="search" size={18} /><input id="community-search" aria-label="Caută comunități" placeholder="Nume, localitate sau SIRUTA" value={q} onChange={(e) => setQ(e.target.value)} /></div>
               <div className="catalog-filters">
                 <label>Țară<select aria-label="Țară" value={countryFilter} onChange={(e) => setCountryFilter(e.target.value)}><option value="">Toate țările ({countries.length})</option>{countries.map((code) => <option key={code} value={code}>{COUNTRY_LABELS[code] ?? code} ({db.communities.filter((c) => c.country === code).length})</option>)}</select></label>
                 <label>Status REDI<select aria-label="Status REDI" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as CommunityStatus | "")}><option value="">Toate statusurile</option>{Object.entries(STATUS_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
@@ -440,6 +450,8 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
         </>}
         {msg && <div className="toast" role="status">{msg}</div>}
       </main>
+
+      <footer className="workspace-footer"><span><Icon name="map" size={15} />RediGSI</span><p>Contururi administrative de referință. Sursele și anii sunt disponibili în detalii.</p><button onClick={() => { setTab("summary"); setMenuOpen(false); }}>Surse și metodologie<Icon name="arrow" size={15} /></button></footer>
 
       {(draft || editing) && (
         <CommunityForm

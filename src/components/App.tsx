@@ -32,6 +32,7 @@ const TABS: { id: Tab; label: string; short: string; icon: IconName; description
   { id: "overlap", label: "Suprapunere", short: "Analiză", icon: "overlap", description: "Compară acoperirea comunităților și a partenerilor." },
   { id: "data", label: "Import / Export", short: "Date", icon: "data", description: "Adaugă, exportă și organizează datele hărții." },
 ];
+const COMPACT_TAB_LABELS: Record<Tab, string> = { communities: "Hartă", summary: "Sumar", entrepreneurs: "Afaceri", clients: "Clienți", overlap: "Analiză", data: "Date" };
 const LIST_LIMIT = 300;
 let seq = 0;
 const nextNonce = () => ++seq;
@@ -46,15 +47,15 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
   const store = useStore();
   const { db } = store;
   const [tab, setTab] = useState<Tab>(initialTab);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [panelOpen, setPanelOpen] = useState(false);
   useEffect(() => {
-    if (!menuOpen) return;
+    if (!panelOpen) return;
     const close = (event: KeyboardEvent) => {
-      if (event.key === "Escape") { setMenuOpen(false); document.getElementById("menu-toggle")?.focus(); }
+      if (event.key === "Escape" && !document.querySelector("dialog[open]")) { setPanelOpen(false); document.getElementById("panel-toggle")?.focus(); }
     };
     window.addEventListener("keydown", close);
     return () => window.removeEventListener("keydown", close);
-  }, [menuOpen]);
+  }, [panelOpen]);
   const [summaries, setSummaries] = useState<ImportedCountrySummary[]>([]);
   const [summaryId, setSummaryId] = useState<string>();
   const [summaryError, setSummaryError] = useState<string | null>(null);
@@ -96,9 +97,7 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
   const focusPoint = (lat: number, lng: number) => setFocus({ lat, lng, zoom: 16, nonce: nextNonce() });
   const draw = (shape: DrawShape) => {
     setDrawRequest({ shape, nonce: nextNonce() });
-    if (window.matchMedia("(max-width: 760px)").matches) {
-      document.querySelector("main")?.scrollIntoView({ block: "start", behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth" });
-    }
+    setPanelOpen(false);
   };
 
   const communityById = useMemo(() => new Map(db.communities.map((c) => [c.id, c])), [db.communities]);
@@ -127,7 +126,7 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
   ), [db.entrepreneurs, nq]);
 
   const onCreateShape = useCallback((g: Geometry) => setDraft(g), []);
-  const onSelectCommunity = useCallback((id: string) => { setSelectedId(id); setTab("communities"); }, []);
+  const onSelectCommunity = useCallback((id: string) => { setSelectedId(id); setTab("communities"); setPanelOpen(true); }, []);
 
   const saveCommunity = async (c: Omit<Community, "id">) => {
     if (editing) {
@@ -181,27 +180,22 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
   const manualDefault: ManualTarget = tab === "summary" ? "summary" : tab === "entrepreneurs" ? "entrepreneurs" : tab === "clients" ? "clients" : "communities";
 
   return (
-    <div className={`app${tab === "summary" ? " summary-mode" : ""}`}>
+    <div className={`app${tab === "summary" ? " summary-mode" : ""}${panelOpen ? " is-panel-open" : ""}`}>
+      <nav id="workspace-navigation" className="navigation" aria-label="Navigare principală">
+        <Link className="rail-brand" href="/" aria-label="Roma Community Map — acasă"><Icon name="map" size={30} /></Link>
+        <div className="nav-items">{TABS.map((t) => <button key={t.id} className={tab === t.id ? "active" : ""} aria-current={tab === t.id ? "page" : undefined} onClick={() => { setTab(t.id); setPanelOpen(t.id !== "summary"); }} title={t.label}><Icon name={t.icon} size={21} /><span className="nav-label">{t.short}</span><span className="nav-compact" aria-hidden="true">{COMPACT_TAB_LABELS[t.id]}</span></button>)}</div>
+        <span className="rail-signature">RediGSI</span>
+      </nav>
       <header className="workspace-header">
-        <Link className="brand" href="/" aria-label="Roma Community Map — acasă"><Icon name="map" size={36} /><div><h1>Roma Community Map</h1><span>RediGSI</span></div></Link>
-        <button id="menu-toggle" className="menu-toggle" aria-label={menuOpen ? "Închide meniul" : "Deschide meniul"} aria-expanded={menuOpen} aria-controls="workspace-navigation" onClick={() => setMenuOpen(!menuOpen)}><Icon name={menuOpen ? "close" : "menu"} /></button>
-        <nav id="workspace-navigation" className={`navigation${menuOpen ? " is-open" : ""}`} aria-label="Navigare principală">
-          <div className="nav-items">{TABS.map((t) => <button key={t.id} className={tab === t.id ? "active" : ""} aria-current={tab === t.id ? "page" : undefined} onClick={() => { setTab(t.id); setMenuOpen(false); }} title={t.label}><Icon name={t.icon} size={18} /><span>{t.short}</span></button>)}</div>
-        </nav>
-        <button className="primary header-import" aria-label="Importă date" onClick={() => { setMenuOpen(false); setImportTarget(tab === "entrepreneurs" ? "entrepreneurs" : tab === "clients" ? "clients" : "communities"); }}><Icon name="upload" size={17} /><span>Importă date</span></button>
+        <button id="panel-toggle" className="panel-toggle" aria-label={panelOpen ? "Închide panoul" : "Deschide panoul"} aria-expanded={panelOpen} aria-controls="workspace-panel" onClick={() => setPanelOpen(!panelOpen)}><Icon name={panelOpen ? "close" : "menu"} /></button>
+        <div className="brand"><h1>Roma Community Map</h1></div>
+        <div className="header-facts" aria-label="Acoperirea registrului"><span><b>{store.loading ? "—" : db.communities.length}</b> înregistrări</span><span><b>{store.loading ? "—" : groupBoundaryRecords(db.communities).length}</b> zone</span><span><b>{store.loading ? "—" : countries.length}</b> țări</span></div>
+        <button className="primary header-import" aria-label="Importă date" onClick={() => { setPanelOpen(false); setImportTarget(tab === "entrepreneurs" ? "entrepreneurs" : tab === "clients" ? "clients" : "communities"); }}><Icon name="upload" size={16} /><span>Importă date</span></button>
       </header>
+      {panelOpen && <button className="panel-backdrop" aria-label="Închide panoul de instrumente" onClick={() => setPanelOpen(false)} />}
 
-      <section className="workspace-intro" aria-labelledby="workspace-title">
-        <div><h2 id="workspace-title">Comunități conectate.<br />Perspective comune.</h2><p>Explorează harta, verifică sursele și completează datele comunităților.</p></div>
-        <dl className="workspace-facts" aria-label="Acoperirea registrului">
-          <div><dt>înregistrări</dt><dd>{store.loading ? "—" : db.communities.length.toLocaleString("ro-RO")}</dd></div>
-          <div><dt>zone pe hartă</dt><dd>{store.loading ? "—" : groupBoundaryRecords(db.communities).length.toLocaleString("ro-RO")}</dd></div>
-          <div><dt>țări</dt><dd>{store.loading ? "—" : countries.length}</dd></div>
-        </dl>
-      </section>
-
-      <aside aria-label={currentTab.label}>
-        <div className="panel-heading"><h2>{currentTab.label}{tab === "communities" && <span className="count">{db.communities.length}</span>}</h2><p>{currentTab.description}</p></div>
+      <aside id="workspace-panel" aria-label={currentTab.label}>
+        <div className="panel-heading"><h2>{currentTab.label}{tab === "communities" && <span className="count">{db.communities.length}</span>}</h2><p>{currentTab.description}</p><button className="panel-close" aria-label="Închide instrumentele" onClick={() => setPanelOpen(false)}><Icon name="close" size={18} /></button></div>
         <div className="panel">
           {store.error && <p className="error">{store.error}</p>}
           {store.loading && <p className="muted">Se încarcă datele…</p>}
@@ -435,7 +429,7 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
 
       <main aria-label={tab === "summary" ? "Sumar pe țări" : "Harta comunităților"}>
         {tab === "summary" ? <CountrySummaryView report={selectedSummary} /> : <>
-        <div className="map-toolbar"><span><Icon name="map" size={17} />Hartă interactivă · {groupBoundaryRecords(communities).length} forme</span><button onClick={fitAll}><Icon name="fit" size={17} />Vezi tot</button></div>
+        <div className="map-toolbar"><span><Icon name="map" size={17} />Hartă · {groupBoundaryRecords(communities).length} forme</span><button onClick={fitAll}><Icon name="fit" size={17} />Vezi tot</button></div>
         <MapView
           db={tab === "communities" ? { ...db, communities } : db}
           version={store.version}
@@ -446,12 +440,10 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
           onCreateShape={onCreateShape}
           onSelectCommunity={onSelectCommunity}
         />
-        <div className="map-key" aria-label="Legenda hărții"><span className="boundary-legend-note">Contur administrativ · linii lungi = zonă mai largă; scurte = propusă</span><span><i className="key-validated" />Validate</span><span><i className="key-proposed" />Propuse</span><span><i className="key-pending" />De validat</span><span><i className="key-below" />Sub prag</span><span><i className="key-mixed" />Statusuri mixte</span><span><i className="key-entrepreneur" />Antreprenori</span><span><i className="key-client" />Clienți</span></div>
+        <details className="map-key" aria-label="Legenda hărții"><summary>Legendă</summary><div className="legend-items"><span className="boundary-legend-note">Contur administrativ · linii lungi = zonă mai largă; scurte = propusă</span><span><i className="key-validated" />Validate</span><span><i className="key-proposed" />Propuse</span><span><i className="key-pending" />De validat</span><span><i className="key-below" />Sub prag</span><span><i className="key-mixed" />Statusuri mixte</span><span><i className="key-entrepreneur" />Antreprenori</span><span><i className="key-client" />Clienți</span></div></details>
         </>}
         {msg && <div className="toast" role="status">{msg}</div>}
       </main>
-
-      <footer className="workspace-footer"><span><Icon name="map" size={15} />RediGSI</span><p>Contururi administrative de referință. Sursele și anii sunt disponibili în detalii.</p><button onClick={() => { setTab("summary"); setMenuOpen(false); }}>Surse și metodologie<Icon name="arrow" size={15} /></button></footer>
 
       {(draft || editing) && (
         <CommunityForm

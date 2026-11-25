@@ -40,14 +40,14 @@ colors:
 typography:
   headline:
     fontFamily: "var(--font-host-grotesk), sans-serif"
-    fontSize: "28px"
+    fontSize: "22px"
     fontWeight: 500
     lineHeight: 1.3
     letterSpacing: "-.03em"
   title:
     fontFamily: "var(--font-host-grotesk), sans-serif"
-    fontSize: "19px"
-    fontWeight: 650
+    fontSize: "16px"
+    fontWeight: 500
     lineHeight: 1.4
     letterSpacing: "-.025em"
   body:
@@ -62,22 +62,11 @@ typography:
     fontWeight: 400
     lineHeight: 1.5
     letterSpacing: "normal"
-  display:
-    fontFamily: "var(--font-host-grotesk), sans-serif"
-    fontSize: "clamp(44px, 4.65vw, 67px)"
-    fontWeight: 500
-    lineHeight: 1.05
-    letterSpacing: "-.035em"
   reading:
     fontFamily: "var(--font-eb-garamond), serif"
     fontSize: "18px"
     fontWeight: 400
     lineHeight: 1.5
-  intro-prose:
-    fontFamily: "var(--font-eb-garamond), serif"
-    fontSize: "21px"
-    fontWeight: 400
-    lineHeight: 1.35
 rounded:
   square: "0px"
 spacing:
@@ -85,8 +74,9 @@ spacing:
   control: "8px"
   field: "12px"
   group: "16px"
-  panel: "24px"
+  panel: "20px"
   dialog: "28px"
+  tools: "14px"
 components:
   button-secondary:
     backgroundColor: "{colors.panel}"
@@ -114,7 +104,7 @@ components:
     backgroundColor: "{colors.nav-active}"
     textColor: "{colors.primary}"
     rounded: "{rounded.square}"
-    padding: "10px 11px"
+    padding: "9px 2px"
   badge-valid:
     backgroundColor: "{colors.badge-valid}"
     textColor: "{colors.badge-valid-text}"
@@ -149,9 +139,9 @@ components:
 
 **Creative North Star: "Forest Field Guide"**
 
-Forest-green ground and surfaces frame the working atlas, with warm yellow marking actions, links and the active dataset. Host Grotesk gives headings and operational controls a precise voice; EB Garamond makes explanatory text and source material comfortable to read.
+Forest-green ground and surfaces frame a compact working atlas, with warm yellow marking actions, links and the active dataset. Host Grotesk gives headings and operational controls a precise voice; EB Garamond supports explanatory text and source material.
 
-The interface is flat, square and spacious around the map. A large two-line introduction and live coverage facts orient staff before the task index and geographic evidence. Semantic dataset colors retain their established meanings.
+The interface owns the viewport: a persistent left menu, compact topbar and independently scrolling task tools leave the map or report as the main surface. Square forms and restrained depth preserve the field-guide identity while semantic dataset colors retain their established meanings.
 
 **Key Characteristics:**
 
@@ -177,7 +167,7 @@ The frontmatter is the normative palette. Forest layers carry the workspace; yel
 - **Forest ground / raised forest panel:** page ground and operational surfaces, including forms, summaries and popups.
 - **Off-white / soft grey / secondary white:** main text, muted labels and reading copy.
 - **Green border / control border / hover / selection:** structural separation and clear state changes. Hover and selection are distinct tones.
-- **State border:** selected filter edges and mixed-status administrative areas. The legacy rail token is used by toast surfaces; the page has horizontal navigation.
+- **State border:** selected filter edges and mixed-status administrative areas. The persistent navigation rail uses the forest ground; the rail token also supplies toast surfaces.
 
 **The Yellow Emphasis Rule.** Use warm yellow for primary actions, links, identity and active navigation; keep reading surfaces green.
 
@@ -185,29 +175,26 @@ The frontmatter is the normative palette. Forest layers carry the workspace; yel
 
 ## Typography
 
-Both families are self-hosted through next/font with Latin and Latin Extended subsets and swap display. Keep their root CSS variable references so components inherit the loaded fonts.
+Both families are self-hosted through next/font with Latin and Latin Extended subsets and swap display. Keep root CSS variable references so components inherit the loaded fonts.
 
-- **Display:** Host Grotesk, medium weight, tight tracking and two lines in the introduction. The desktop clamp reaches about (67px) at (1440px); it becomes (46px) below (1200px), (40px) below (920px), then clamp(32px, 8.8vw, 42px) on mobile.
-- **Headlines / title:** panel headings use (28px, 500); product identity uses (19px, 650), reducing to (16px) on mobile. Summary headings use (28px), reducing to (24px) on mobile.
-- **UI and data:** Host Grotesk body (14px), field text (13px), search text (12px), labels (12px) and status badges (10px). Record names use weight (500). Counts and tables use tabular numerals.
-- **Reading:** EB Garamond prose uses (18px, 1.5); introductory copy uses (21px, 1.35), reducing to (19px) at narrower widths. Panel descriptions use (18px, 1.35); boundary prose uses (17px). Source metadata values remain operational sans-serif text.
-- **Coverage facts:** Host Grotesk values use (34px, 500), reducing to (30px) below (1200px) and (28px) on mobile. EB Garamond captions use (18px), reducing to (16px) below (920px).
+- **Title:** Host Grotesk product identity (16px, 500), reduced to (13px) on mobile. The compact shell has no display introduction.
+- **Headlines:** panel headings use (22px, 500), with mobile tool headings at (21px). Summary headings use (28px), reduced to (22px) on mobile; dialog headings retain (23px).
+- **UI and data:** body (14px), field text (13px), search (12px), labels (12px) and status badges (10px). Rail labels use (9px), (8px) at compact desktop width, and visible compact mobile labels (10px). Record names use weight (500). Counts and tables use tabular numerals.
+- **Reading:** EB Garamond prose uses (18px, 1.5); panel descriptions use (16px, 1.35), boundary prose (17px), and source metadata values remain operational sans-serif text.
 
 ## Layout
 
-The desktop workspace has a horizontal product header with six dataset tabs and import action. Below it, the two-line introduction shares a row with three live coverage facts. A task index (350px) sits beside the dominant map or report, separated by (20px); there is a compact methodology footer. Desktop grid rows are (88px), (236px), minmax(470px, 1fr), and (44px). Page side padding is clamp(24px, 3vw, 48px). The index and main reading surface scroll independently where needed.
+The shell fills exactly (100dvh), with no outer padding, editorial introduction or footer. Desktop columns are a persistent left rail (76px), task panel (320px), and edge-to-edge main surface; the topbar is (56px). Both document and body keep overflow hidden. The task panel and report scroll internally, while wide tables use dedicated horizontal scrollers.
 
-At (1600px) and wider, the index becomes (370px), the column gap (24px), and outer padding (56px). At (1200px) and below, the index becomes (320px), gap (16px), padding (24px), and navigation icons hide. At (920px) the import action becomes icon-only. These describe the implemented workspace, not a mandatory template for every screen.
+At (1100px) and below, the rail/panel become (68px/300px). At (900px), header coverage facts hide. At (760px), the rail remains visible at (56px) and the topbar reduces to (52px); the full remaining surface belongs to the map or report. Tools open as an overlaid left drawer, width min(320px, 100vw - 56px), beneath the topbar. At heights (600px) and below, rail spacing compresses and its signature hides so all six links fit.
 
-At (760px), the page uses (16px) side padding, header (76px), compact introduction, map minmax(380px, 48dvh), source tools and footer. Dataset navigation moves into a labeled collapsible menu. Lists inside the mobile task panel have maximum height (640px) and contained scrolling. Summary mode places source tools before the report and allows natural page scrolling.
-
-Panels keep a (16px) grouping gap and (24px) desktop side padding. Country/status filters use two columns with a (12px) gap; labeled checkboxes span both columns. Manual-entry forms use two columns and collapse to one on mobile. Dialog widths are (540px) or (840px), with padding (28px), reducing to (20px) on mobile. Summary tables keep minimum width (660px) inside a horizontal scroller; report padding is (28px), reducing to (24px 20px) on mobile.
+Panels use internal gaps (14px) and side padding (20px). Country/status filters remain two columns with a (12px) gap; checkbox filters span both columns. Manual forms use two columns and collapse to one on mobile. Dialog widths are (540px) or (840px), with padding (28px), reduced to (20px) on mobile. Reports scroll inside the main surface; summary tables keep minimum width (660px). These dimensions describe the implemented operational shell.
 
 ## Elevation & Depth
 
-Forest tonal layers and thin green borders provide most separation. The main workspace is flat with no glow. Black shadows lift floating map tools, the mobile menu, toasts and dialogs. A translucent black modal backdrop isolates forms. Exact shadow values live in the sidecar.
+Forest tonal layers and thin green borders provide most separation. The main workspace is flat with no glow. Black shadows lift floating map tools, the mobile tools drawer, toasts and dialogs. A translucent black modal backdrop isolates forms. Exact shadow values live in the sidecar.
 
-**The Working Surface Rule.** Separate ordinary records with borders and tonal changes; reserve shadows for floating tools, navigation overlays and dialogs.
+**The Working Surface Rule.** Separate ordinary records with borders and tonal changes; reserve shadows for floating tools, tool drawers and dialogs.
 
 ## Shapes
 
@@ -217,7 +204,7 @@ Buttons, fields, navigation states, badges, records, report frames and dialogs h
 
 ### Buttons
 
-Primary actions are yellow with black labels and a yellow border. Secondary actions use the green panel surface; destructive actions use pale rose text. Default minimum height is (38px), padding (8px 12px), weight (550) and line-height (1.4). The header action uses minimum height (42px). Hover adjusts surface and border; disabled opacity is (.55). Color transitions take (160ms); reduced motion removes them.
+Primary actions are yellow with black labels and a yellow border. Secondary actions use the green panel surface; destructive actions use pale rose text. Default minimum height is (38px), padding (8px 12px), weight (550) and line-height (1.4). The header action uses minimum height (34px). Hover adjusts surface and border; disabled opacity is (.55). Color transitions take (160ms); reduced motion removes them.
 
 ### Inputs / Fields
 
@@ -225,7 +212,9 @@ Fields use the panel surface, square corners and a (1px) control border. Labels 
 
 ### Navigation
 
-Desktop dataset tabs are horizontal icon-and-label buttons with muted text; the active tab gains a panel fill and yellow text. Active hover keeps the yellow treatment. Tablet tabs hide icons. On mobile, the expanded menu is a two-column grid with labeled (44px) minimum-height items. Its toggle exposes aria-expanded; Escape closes the menu and returns focus to the toggle. Dataset selection also closes it.
+Six icon-and-label dataset links stack in the persistent left rail. Muted labels turn yellow on the active panel surface; active hover retains yellow. Desktop items have minimum height (60px), reducing to (52px) on mobile and (44px) on short screens. Mobile displays compact visual labels while retaining the full accessible labels and aria-current state. The navigation itself remains visible.
+
+A labeled topbar toggle controls the mobile tools drawer and exposes aria-expanded. A close button, backdrop and Escape dismiss the drawer; Escape returns focus to its toggle. While a native dialog is open, Escape acts on that dialog and leaves the underlying drawer open. Selecting a map record opens its details drawer.
 
 ### Chips
 
@@ -247,9 +236,9 @@ Native dialogs use square forest panels over a black translucent backdrop. They 
 
 ### Map instruments
 
-Toolbars, layer controls, legends and popups inherit the forest panel and off-white text. Imported catalog geometry uses attributed administrative polygons, with existing status colors. Mixed-status shapes reuse the state-border neutral; selection uses the established selected map color.
+Toolbars, layer controls, legends and popups inherit the forest panel and off-white text. The compact toolbar sits (12px) from the desktop edges, with (11px) labels and (9px 11px) padding; mobile uses (10px) offsets and labels with (8px 9px) padding. The legend is a native disclosure, collapsed by default. Expanded legend content wraps and scrolls within a maximum height min(260px, 45%) so it does not permanently cover the map. Imported catalog geometry uses attributed administrative polygons, with existing status colors. Mixed-status shapes reuse the state-border neutral; selection uses the established selected map color.
 
-Long dashes (12 6) identify wider parent/regional references; short dashes (4 4) identify proposed locality outlines. Wider-reference styling takes precedence, and the wrapping legend explains both. Polygon stroke increases from (1.5px) to (3.5px) on selection; fill opacity is (.16) for locality/parent outlines, (.07) for regions and (.28) when selected. Point geometry retains selected radius (8px to 11px).
+Long dashes (12 6) identify wider parent/regional references; short dashes (4 4) identify proposed locality outlines. Wider-reference styling takes precedence, and the legend explains both. Polygon stroke increases from (1.5px) to (3.5px) on selection; fill opacity is (.16) for locality/parent outlines, (.07) for regions and (.28) when selected. Point geometry retains selected radius (8px to 11px).
 
 Shared geometry is drawn once. Its popup lists all source rows as buttons with status and row labels, with maximum choice-list height (230px) and popup width (340px). Selecting a row expands its own details. Map-scoped popup styles override Leaflet defaults. Tile and geometry attribution remains visible. No generated raster or exploratory landing composition ships as part of this interface.
 

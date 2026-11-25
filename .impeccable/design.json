@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-25T07:08:42.844Z",
+  "generatedAt": "2026-11-25T07:34:10.492Z",
   "title": "Design System: Roma Community Map",
   "extensions": {
     "colorMeta": {
@@ -498,11 +498,11 @@
     "typographyMeta": {
       "headline": {
         "displayName": "headline",
-        "purpose": "Panel and report headings."
+        "purpose": "Compact tool-panel headings; reports and dialogs retain their local sizes."
       },
       "title": {
         "displayName": "title",
-        "purpose": "Product identity."
+        "purpose": "Compact topbar product identity."
       },
       "body": {
         "displayName": "body",
@@ -512,17 +512,9 @@
         "displayName": "label",
         "purpose": "Form labels and compact UI."
       },
-      "display": {
-        "displayName": "display",
-        "purpose": "Host Grotesk introduction."
-      },
       "reading": {
         "displayName": "reading",
         "purpose": "EB Garamond explanatory and source prose."
-      },
-      "intro-prose": {
-        "displayName": "intro prose",
-        "purpose": "Serif introductory reading text."
       }
     },
     "shadows": [
@@ -542,9 +534,9 @@
         "purpose": "Map legend."
       },
       {
-        "name": "mobile-menu",
-        "value": "0 12px 24px #00000033",
-        "purpose": "Expanded mobile navigation."
+        "name": "tools-drawer",
+        "value": "6px 0 20px #00000033",
+        "purpose": "Mobile tools and source-details drawer."
       },
       {
         "name": "dialog",
@@ -571,20 +563,20 @@
     ],
     "breakpoints": [
       {
-        "name": "wide-desktop",
-        "value": "1600px"
-      },
-      {
         "name": "compact-desktop",
-        "value": "1200px"
+        "value": "1100px"
       },
       {
-        "name": "tablet",
-        "value": "920px"
+        "name": "hide-header-facts",
+        "value": "900px"
       },
       {
         "name": "mobile",
         "value": "760px"
+      },
+      {
+        "name": "short-height",
+        "value": "600px"
       }
     ]
   },
@@ -625,9 +617,9 @@
       "name": "Navigation",
       "kind": "nav",
       "refersTo": "nav-active",
-      "description": "Horizontal dataset navigation with yellow active label.",
-      "html": "<nav class=\"ds-nav\" aria-label=\"Secțiuni\"><button class=\"ds-route\" aria-current=\"page\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15\"/></svg><span>Comunități</span></button><button class=\"ds-route\"><svg width=\"20\" height=\"20\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15\"/></svg><span>Date</span></button></nav>",
-      "css": ".ds-nav{display:flex;align-items:center;gap:4px;background:var(--bg,#1b3a2e);}.ds-route{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:42px;padding:10px 11px;border:1px solid transparent;background:transparent;color:var(--muted,#e0e0df);border-radius:0;font:500 12px/1.4 var(--font-host-grotesk,'Host Grotesk'),sans-serif;white-space:nowrap;cursor:pointer;transition:background-color 160ms,color 160ms;}.ds-route:hover{color:white;background:#224134;}.ds-route[aria-current=page],.ds-route[aria-current=page]:hover{background:var(--panel,#224134);color:var(--primary,#fde68a);border-color:transparent;}.ds-route:focus-visible{outline:2px solid #fffeff;outline-offset:3px;}@media(prefers-reduced-motion:reduce){.ds-route{transition:none;}}"
+      "description": "Persistent left dataset rail with yellow active labels.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"Secțiuni\"><button class=\"ds-route\" aria-current=\"page\"><svg width=\"21\" height=\"21\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15\"/></svg><span>Comunități</span></button><button class=\"ds-route\"><svg width=\"21\" height=\"21\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15\"/></svg><span>Date</span></button></nav>",
+      "css": ".ds-nav{display:flex;flex-direction:column;align-items:center;gap:6px;width:64px;background:var(--bg,#1b3a2e);}.ds-route{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:60px;width:100%;padding:9px 2px;border:0;background:transparent;color:var(--muted,#e0e0df);border-radius:0;font:500 9px/1.4 var(--font-host-grotesk,'Host Grotesk'),sans-serif;cursor:pointer;transition:background-color 160ms,color 160ms;}.ds-route:hover{color:white;background:#224134;}.ds-route[aria-current=page],.ds-route[aria-current=page]:hover{background:var(--panel,#224134);color:var(--primary,#fde68a);}.ds-route:focus-visible{outline:2px solid #fffeff;outline-offset:3px;}@media(max-width:1100px){.ds-route{font-size:8px;}}@media(max-width:760px){.ds-nav{width:48px;}.ds-route{min-height:52px;padding:8px 0;font-size:10px;gap:5px;}.ds-route svg{width:20px;height:20px;}}@media(max-height:600px){.ds-nav{gap:3px;}.ds-route{min-height:44px;padding-block:5px;gap:3px;}.ds-route svg{width:18px;height:18px;}}@media(prefers-reduced-motion:reduce){.ds-route{transition:none;}}"
     },
     {
       "name": "Status validată",
@@ -672,7 +664,7 @@
   ],
   "narrative": {
     "northStar": "Forest Field Guide",
-    "overview": "Forest-green ground and surfaces frame the working atlas, with warm yellow marking actions, links and the active dataset. Host Grotesk gives headings and operational controls a precise voice; EB Garamond makes explanatory text and source material comfortable to read.\n\nThe interface is flat, square and spacious around the map. A large two-line introduction and live coverage facts orient staff before the task index and geographic evidence. Semantic dataset colors retain their established meanings.",
+    "overview": "Forest-green ground and surfaces frame a compact working atlas, with warm yellow marking actions, links and the active dataset. Host Grotesk gives headings and operational controls a precise voice; EB Garamond supports explanatory text and source material.\n\nThe interface owns the viewport: a persistent left menu, compact topbar and independently scrolling task tools leave the map or report as the main surface. Square forms and restrained depth preserve the field-guide identity while semantic dataset colors retain their established meanings.",
     "keyCharacteristics": [
       "Forest-green layers and warm-yellow action emphasis.",
       "Host Grotesk display and UI paired with EB Garamond prose.",
@@ -692,7 +684,7 @@
       },
       {
         "name": "The Working Surface Rule",
-        "body": "Separate ordinary records with borders and tonal changes; reserve shadows for floating tools, navigation overlays and dialogs.",
+        "body": "Separate ordinary records with borders and tonal changes; reserve shadows for floating tools, tool drawers and dialogs.",
         "section": "elevation"
       }
     ],

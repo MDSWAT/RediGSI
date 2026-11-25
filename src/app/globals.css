@@ -204,7 +204,7 @@ tbody tr:hover { background: var(--hover); }tr.hit { background: #232429; }
 }
 
 /* Match the map provider's controls to the surrounding workspace. */
-.map .leaflet-bar a, .map .leaflet-control-layers, .leaflet-popup-content-wrapper, .leaflet-popup-tip { background: #16161a; color: #faf8f9; }
+.map .leaflet-bar a, .map .leaflet-control-layers, .map .leaflet-popup-content-wrapper, .map .leaflet-popup-tip { background: #16161a; color: #faf8f9; }
 .map .leaflet-bar a:hover, .map .leaflet-bar a:focus { background: #303036; }
 .map .leaflet-bar a.leaflet-disabled { background: #121315; color: #9c9ca6; }
 .map .leaflet-control-layers label { flex-direction: row; align-items: center; color: #e5e5e4; gap: 8px; }
@@ -238,3 +238,12 @@ tbody tr:hover { background: var(--hover); }tr.hit { background: #232429; }
 .source-sheet { margin-top: 20px; }
 .source-sheet summary { cursor: pointer; padding-block: 12px; }
 .source-sheet p { padding-block: 8px; border-bottom: 1px solid var(--border); font-size: 13px; line-height: 1.7; overflow-wrap: anywhere; }
+.boundary-description { padding-block: 12px; border-bottom: 1px solid var(--border); }
+.boundary-description b { display: block; font-size: 14px; }
+.boundary-legend-note { flex-basis: 100%; color: var(--muted); }
+.boundary-popup p { font-size: 12px; line-height: 1.6; }
+.boundary-choices { max-height: 230px; overflow-y: auto; margin-top: 12px; }
+.boundary-choices button { color: var(--text); display: flex; flex-direction: column; align-items: flex-start; width: 100%; text-align: left; padding: 9px 12px; margin-top: 5px; }
+.boundary-choices span { font-size: 11px; color: var(--muted); }
+
+.key-mixed { background: var(--state-border); }

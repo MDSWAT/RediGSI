@@ -14,6 +14,7 @@ import {
 import type { DrawShape, Focus } from "./MapView";
 import CommunityForm from "./CommunityForm";
 import CommunityDetails from "./CommunityDetails";
+import { BOUNDARY_SCOPE_LABELS, groupBoundaryRecords } from "@/lib/boundaries";
 import ImportDialog from "./ImportDialog";
 import Icon, { type IconName } from "./Icon";
 import CountrySummaryView from "./CountrySummaryView";
@@ -108,7 +109,7 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
   const communities = useMemo(() => db.communities.filter((c) =>
     (!statusFilter || c.status === statusFilter) &&
     (!countryFilter || c.country === countryFilter) &&
-    (!unlocatedOnly || !c.geometry) &&
+    (!unlocatedOnly || !c.geometry || (c.boundary && !c.boundary.referencePoint)) &&
     (!healthOnly || c.extra?.["campanie REDI health"]?.toLowerCase() === "da") &&
     (!nq || norm([c.name, c.locality, c.county, c.siruta].join(" ")).includes(nq)),
   ), [db.communities, statusFilter, countryFilter, unlocatedOnly, healthOnly, nq]);
@@ -227,17 +228,17 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
                 <label className="check-filter"><input type="checkbox" checked={healthOnly} onChange={(e) => setHealthOnly(e.target.checked)} />Campanie REDI health</label>
                 <label className="check-filter"><input type="checkbox" checked={unlocatedOnly} onChange={(e) => setUnlocatedOnly(e.target.checked)} />Doar fără localizare</label>
               </div>
-              {!!db.communities.length && <p className="results-label">{communities.length} înregistrări · {communities.filter((c) => c.geometry).length} pe hartă</p>}
+              {!!db.communities.length && <p className="results-label">{communities.length} înregistrări · {groupBoundaryRecords(communities).length} forme pe hartă</p>}
               <ul className="list">
                 {communities.map((c) => {
                   const n = db.entrepreneurs.filter((e) => e.communityId === c.id).length;
                   return (
                     <li key={c.id} className={c.id === selectedId ? "selected" : ""}>
-                      <button className="record-select" aria-expanded={c.id === selectedId} onClick={() => { setSelectedId(c.id); focusGeom(c.geometry, !!c.locationAccuracy); }}>
+                      <button className="record-select" aria-expanded={c.id === selectedId} onClick={() => { setSelectedId(c.id); focusGeom(c.geometry, !!c.locationAccuracy && !c.boundary); }}>
                       <div className="li-main">
                         <b>{c.name}</b>
                         <span className={`badge ${c.status}`}>{STATUS_LABELS[c.status]}</span>
-                        <span className="badge">{KIND_LABELS[c.kind]}</span>
+                        <span className="badge">{c.boundary ? BOUNDARY_SCOPE_LABELS[c.boundary.scope] : KIND_LABELS[c.kind]}</span>
                       </div>
                       <div className="muted small">
                         {[c.locality, c.county, c.country].filter(Boolean).join(", ") || "—"}{c.siruta ? ` · SIRUTA ${c.siruta}` : ""} · {SOURCE_LABELS[c.source]}{n ? ` · ${n} antreprenori` : ""}
@@ -424,7 +425,7 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
 
       <main aria-label={tab === "summary" ? "Sumar pe țări" : "Harta comunităților"}>
         {tab === "summary" ? <CountrySummaryView report={selectedSummary} /> : <>
-        <div className="map-toolbar"><span><Icon name="map" size={17} />Hartă interactivă · {communities.filter((c) => c.geometry).length} poziții</span><button onClick={fitAll}><Icon name="fit" size={17} />Vezi tot</button></div>
+        <div className="map-toolbar"><span><Icon name="map" size={17} />Hartă interactivă · {groupBoundaryRecords(communities).length} forme</span><button onClick={fitAll}><Icon name="fit" size={17} />Vezi tot</button></div>
         <MapView
           db={tab === "communities" ? { ...db, communities } : db}
           version={store.version}
@@ -435,7 +436,7 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
           onCreateShape={onCreateShape}
           onSelectCommunity={onSelectCommunity}
         />
-        <div className="map-key" aria-label="Legenda hărții"><span><i className="key-validated" />Validate</span><span><i className="key-proposed" />Propuse</span><span><i className="key-pending" />De validat</span><span><i className="key-below" />Sub prag</span><span><i className="key-entrepreneur" />Antreprenori</span><span><i className="key-client" />Clienți</span></div>
+        <div className="map-key" aria-label="Legenda hărții"><span className="boundary-legend-note">Contur administrativ · linii lungi = zonă mai largă; scurte = propusă</span><span><i className="key-validated" />Validate</span><span><i className="key-proposed" />Propuse</span><span><i className="key-pending" />De validat</span><span><i className="key-below" />Sub prag</span><span><i className="key-mixed" />Statusuri mixte</span><span><i className="key-entrepreneur" />Antreprenori</span><span><i className="key-client" />Clienți</span></div>
         </>}
         {msg && <div className="toast" role="status">{msg}</div>}
       </main>

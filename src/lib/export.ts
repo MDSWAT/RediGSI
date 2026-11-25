@@ -30,7 +30,8 @@ export function communityRows(db: DB): Flat[] {
       id: c.id, nume: c.name, tip: c.kind, status: c.status, sursa: c.source,
       siruta: c.siruta, localitate: c.locality, judet: c.county, tara: c.country,
       lat: ctr ? +ctr.lat.toFixed(7) : undefined, lng: ctr ? +ctr.lng.toFixed(7) : undefined, tip_geometrie: c.geometry?.type,
-      wkt: c.geometry ? toWKT(c.geometry) : undefined, precizie: c.locationAccuracy, populatie: c.population, observatii: c.notes,
+      wkt: c.geometry ? toWKT(c.geometry) : undefined, precizie: c.locationAccuracy, contur: c.boundary?.name, nivel_contur: c.boundary?.scope, an_contur: c.boundary?.year, sursa_contur: c.boundary?.sourceURL, licenta_contur: c.boundary?.license, populatie: c.population, observatii: c.notes,
+      contur_administrativ: c.boundary ? JSON.stringify(c.boundary) : undefined,
       antreprenori: db.entrepreneurs.filter((e) => e.communityId === c.id).length,
     });
   });
@@ -97,7 +98,7 @@ export function communityGeoJSON(communities: Community[]): FeatureCollection<Ge
       properties: {
         id: c.id, nume: c.name, tip: c.kind, status: c.status, sursa: c.source, siruta: c.siruta ?? null,
         localitate: c.locality ?? null, judet: c.county ?? null, tara: c.country,
-        precizie: c.locationAccuracy ?? null, populatie: c.population ?? null, observatii: c.notes ?? null, ...(c.extra ?? {}),
+        precizie: c.locationAccuracy ?? null, contur_administrativ: c.boundary ?? null, populatie: c.population ?? null, observatii: c.notes ?? null, ...(c.extra ?? {}),
       },
     })),
   };

@@ -4,6 +4,7 @@ import { DatabaseError } from "@/lib/database";
 import { storageResponse } from "@/lib/storageResponse";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export async function GET(request: Request) {
   try {

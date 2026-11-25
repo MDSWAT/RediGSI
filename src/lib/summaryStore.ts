@@ -2,20 +2,20 @@ import "server-only";
 import { createHash } from "crypto";
 import { parseCountrySummary, type CountrySummary, type ImportedCountrySummary } from "./countrySummary";
 import { database, storageError } from "./database";
-import { ensureCatalog } from "./catalogSeed";
+import { ensureBoundaries } from "./boundaryImport";
 
 interface SummaryRow { id: string; imported_at: string; report: CountrySummary }
 const reportOf = (row: SummaryRow): ImportedCountrySummary => ({ ...row.report, id: row.id, importedAt: row.imported_at });
 
 export async function readSummaries(): Promise<ImportedCountrySummary[]> {
-  await ensureCatalog();
+  await ensureBoundaries();
   const result: ImportedCountrySummary[] = [];
   const client = database();
   for (let offset = 0; ; offset += 500) {
     const { data, error } = await client.from("redi_summaries").select("id,imported_at,report").order("imported_at").order("id").range(offset, offset + 499);
     if (error) storageError(error);
     const rows = data as SummaryRow[];
-    result.push(...rows.map(reportOf));
+    result.push(...rows.filter(row => !("kind" in row.report && row.report.kind === "boundary-import")).map(reportOf));
     if (rows.length < 500) return result;
   }
 }

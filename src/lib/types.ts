@@ -33,6 +33,22 @@ export type CommunityKind = "punct" | "strada" | "cartier" | "zona";
 export type CommunityStatus = "validat" | "propus" | "de_validat" | "sub_prag";
 export type CommunitySource = "catalog" | "manual" | "import";
 
+export interface AdministrativeBoundary {
+  id: string;
+  name: string;
+  scope: "locality" | "parent" | "region";
+  level: string;
+  year: string;
+  source: string;
+  sourceURL: string;
+  license: string;
+  licenseURL: string;
+  method: string;
+  displayToleranceDegrees?: number;
+  /** Original gazetteer point; null means the locality itself is still unresolved. */
+  referencePoint: [number, number] | null;
+}
+
 export interface Community extends BaseRecord {
   name: string;
   kind: CommunityKind;
@@ -40,7 +56,8 @@ export interface Community extends BaseRecord {
   source: CommunitySource;
   geometry: Geometry | null;
   /** Gazetteer reference; never a surveyed community boundary. */
-  locationAccuracy?: "locality" | "municipality" | "unresolved";
+  locationAccuracy?: "locality" | "municipality" | "unresolved" | "administrative";
+  boundary?: AdministrativeBoundary;
   siruta?: string;
   locality?: string;
   county?: string;

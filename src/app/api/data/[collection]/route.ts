@@ -3,6 +3,7 @@ import { isCollection, addRecords, updateRecords, deleteRecords, readDB } from "
 import { storageResponse } from "@/lib/storageResponse";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 type Ctx = { params: Promise<{ collection: string }> };
 const isObj = (value: unknown): value is Record<string, unknown> => typeof value === "object" && value !== null && !Array.isArray(value);
 

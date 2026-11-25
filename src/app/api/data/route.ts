@@ -3,6 +3,7 @@ import { readDB } from "@/lib/db";
 import { storageResponse } from "@/lib/storageResponse";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export async function GET() {
   try { return NextResponse.json(await readDB()); }

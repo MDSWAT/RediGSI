@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-24T13:49:47.580Z",
+  "generatedAt": "2026-11-25T06:19:12.350Z",
   "title": "Design System: Roma Community Map",
   "extensions": {
     "colorMeta": {
@@ -688,13 +688,15 @@
       "Do use the Host Grotesk variable supplied by the root layout.",
       "Do keep controls square and actions neutral.",
       "Do keep keyboard focus visible and numeric columns tabular.",
-      "Do preserve labeled map colors and Romanian diacritics."
+      "Do preserve labeled map colors and Romanian diacritics.",
+      "Do show administrative scope, source year and license beside imported outlines."
     ],
     "donts": [
       "Don't apply the red glow as a primary-button fill.",
       "Don't replace the geographic status palette with interface neutrals.",
       "Don't introduce pale panels or rounded cards into the dark workspace.",
-      "Don't animate controls when reduced motion is requested."
+      "Don't animate controls when reduced motion is requested.",
+      "Don't present administrative reference areas as Roma settlement boundaries."
     ]
   }
 }

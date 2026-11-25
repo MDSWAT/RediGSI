@@ -156,7 +156,7 @@ The interface uses a near-black neutral palette. The frontmatter owns color valu
 
 ### Secondary
 - **Geographic green / amber:** validated and proposed communities on the map; selected geometry keeps its established dark green.
-- **Pending violet / below-threshold slate:** distinguish records awaiting validation and records below the REDI threshold. Below-threshold map points reuse the overlap-communities slate token.
+- **Pending violet / below-threshold slate:** distinguish records awaiting validation and records below the REDI threshold. Below-threshold map geometry reuses the overlap-communities slate token.
 - **Entrepreneur blue / partner terracotta:** distinct point datasets.
 - **Overlap green / orange / slate:** communities with clients, clients only, and communities only.
 - **Pale green / pale amber / pale violet / pale slate:** readable text over dark tinted badges for validated, proposed, pending-validation and below-threshold records.
@@ -166,7 +166,7 @@ The interface uses a near-black neutral palette. The frontmatter owns color valu
 - **Near-black ground / dark panel / deeper rail:** application layers.
 - **Soft white / light grey:** primary and secondary reading levels.
 - **Graphite borders / hover / selection:** structural separation and state feedback.
-- **Control border / active-state border:** stronger neutral edges distinguish fields and persistently selected controls.
+- **Control border / active-state border:** stronger neutral edges distinguish fields and persistently selected controls. The state-border token also identifies shared areas containing mixed statuses.
 
 **The Glow Boundary Rule.** Keep the red accent behind the main working surface; actions and navigation remain neutral.
 
@@ -226,9 +226,9 @@ Data sections use bottom dividers and spacing. Selected list records gain the ne
 
 ### Catalog filters and source details
 
-Country and four-status selects reuse the existing dark fields; health-campaign and unlocated-only filters use labeled checkboxes (16px) with the primary foreground as accent. The result count distinguishes listed records from mapped positions.
+Country and four-status selects reuse the existing dark fields; health-campaign and unlocated-only filters use labeled checkboxes (16px) with the primary foreground as accent. The result count distinguishes source records from distinct mapped shapes; multiple source rows can share one administrative outline.
 
-Selecting a record expands a semantic definition list below its header. Detail text uses (12px) with line-height (1.65); muted term labels use (11px). Values preserve line breaks, long text wraps, and rows use neutral bottom dividers with vertical padding (8px). Location notes distinguish approximate locality centers from unresolved records.
+Selecting a record expands a semantic definition list below its header. Detail text uses (12px) with line-height (1.65); muted term labels use (11px). Values preserve line breaks, long text wraps, and rows use neutral bottom dividers with vertical padding (8px). Boundary descriptions identify locality, parent-municipality or regional scope and show source, year and license links. They state that administrative reference areas are not Roma settlement boundaries. A missing verified reference point remains explicit even when a wider outline is available. Records without imported outlines retain their existing location notes.
 
 Original source sheets use native details/summary disclosures with keyboard focus inherited from the global controls. Summaries have vertical padding (12px); disclosed rows use (13px) text, line-height (1.7), neutral dividers and wrapping. Reference links stay readable in the normal document flow.
 
@@ -238,7 +238,11 @@ Native modal dialogs contain square dark panels over a translucent black backdro
 
 ### Map instruments
 
-Dark neutral toolbars, legends, layer controls and popups surround the geographic imagery. The layer-toggle icon is inline SVG. Community map colors cover all four REDI statuses, and the six-item dataset legend wraps. Proposed boundaries remain dashed (6 5); validated boundaries remain solid. Selected geometry increases line weight (4px to 6px) or point radius (8px to 11px). External OpenStreetMap and Esri tiles keep their attribution. No generated raster or exploration mockup ships with this system.
+Dark neutral toolbars, legends, layer controls and popups surround the geographic imagery. The layer-toggle icon is inline SVG. Imported catalog geometry uses attributed administrative polygons rather than generated point buffers. Status colors remain unchanged; shared outlines with mixed statuses reuse the state-border neutral, and selection uses the established selected map color.
+
+Long dashes (12 6) identify wider parent or regional references. Short dashes (4 4) identify proposed locality outlines; other locality outlines are solid. Wider-reference styling takes precedence over proposed-status dashes. The wrapping legend explicitly explains both dash patterns and labels all statuses, including mixed areas. Polygon stroke weight increases from (1.5px) to (3.5px) on selection; fill opacity is (.16) for locality/parent outlines, (.07) for regions and (.28) when selected. Remaining point geometry retains its selected radius treatment (8px to 11px).
+
+Shared geometry is drawn once. Its dark popup lists every source row as a keyboard-operable button with status and source-row labels, in a scrollable choice area (230px maximum height); the popup has maximum width (340px). Choosing a row expands its own details in the index. Popup panels and tips use the graphite action surface with light text, with map-scoped styles overriding Leaflet defaults. Source, year and license links remain visible in the record panel; external tiles and geometry retain attribution. No generated raster or exploration mockup ships with this system.
 
 ## Do's and Don'ts
 
@@ -248,6 +252,7 @@ Dark neutral toolbars, legends, layer controls and popups surround the geographi
 - Do keep controls square and actions neutral.
 - Do keep keyboard focus visible and numeric columns tabular.
 - Do preserve labeled map colors and Romanian diacritics.
+- Do show administrative scope, source year and license beside imported outlines.
 
 ### Don't:
 
@@ -255,3 +260,4 @@ Dark neutral toolbars, legends, layer controls and popups surround the geographi
 - Don't replace the geographic status palette with interface neutrals.
 - Don't introduce pale panels or rounded cards into the dark workspace.
 - Don't animate controls when reduced motion is requested.
+- Don't present administrative reference areas as Roma settlement boundaries.

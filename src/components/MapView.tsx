@@ -10,6 +10,7 @@ import type { Community, DB } from "@/lib/types";
 import { KIND_LABELS, SOURCE_LABELS, STATUS_LABELS } from "@/lib/types";
 import type { OverlapRow } from "@/lib/overlap";
 import { validLatLng } from "@/lib/geo";
+import { groupBoundaryRecords, BOUNDARY_SCOPE_LABELS } from "@/lib/boundaries";
 
 export type DrawShape = "CircleMarker" | "Line" | "Polygon" | "Rectangle";
 export type Focus = { bounds?: [[number, number], [number, number]]; lat?: number; lng?: number; zoom?: number; nonce: number };
@@ -34,6 +35,7 @@ const COLORS = {
   de_validat: "#755ca8",
   sub_prag: "#64748b",
   selected: "#193c34",
+  mixed: "#9c9ca6",
   entrepreneur: "#397ca5",
   client: "#b85b43",
   both: "#16a34a",
@@ -103,7 +105,7 @@ function communityPopup(c: Community, entrepreneurs: number) {
     ${c.population ? `<div>Populație estimată: ${esc(c.population)}</div>` : ""}
     <div>Antreprenori: ${entrepreneurs}</div>
     <div class="muted">Sursa: ${esc(SOURCE_LABELS[c.source])}</div>
-    ${c.locationAccuracy ? '<div class="muted">Centre orientativ, nu limite ale comunității.</div>' : ""}
+    ${c.boundary ? `<div><b>${esc(BOUNDARY_SCOPE_LABELS[c.boundary.scope])}: ${esc(c.boundary.name)}</b></div><div class="muted">Limită administrativă · sursă ${esc(c.boundary.year)}. Nu reprezintă granița comunității Roma.</div>` : c.locationAccuracy ? '<div class="muted">Centre orientativ, nu limite ale comunității.</div>' : ""}
     ${["Pop. totala", "Romi recens.", "Romi alte surse", "Prag REDI", "campanie REDI health"].filter((k) => c.extra?.[k]).map((k) => `<div>${esc(k)}: ${esc(c.extra![k])}</div>`).join("")}
     <div class="muted">Toate detaliile sunt disponibile în panoul comunității.</div>
   </div>`;
@@ -122,7 +124,7 @@ export default function MapView(props: Props) {
 
   const communityFC = useMemo<FeatureCollection>(() => ({
     type: "FeatureCollection",
-    features: db.communities.filter((c) => c.geometry).map((c) => ({ type: "Feature", id: c.id, geometry: c.geometry!, properties: { id: c.id } })),
+    features: groupBoundaryRecords(db.communities).map((group) => ({ type: "Feature", id: group[0].boundary?.id ?? group[0].id, geometry: group[0].geometry!, properties: { ids: group.map(c => c.id) } })),
   }), [db.communities]);
   const byId = useMemo(() => new Map(db.communities.map((c) => [c.id, c])), [db.communities]);
   const communityName = (id?: string) => (id ? byId.get(id)?.name : undefined);
@@ -133,7 +135,7 @@ export default function MapView(props: Props) {
     <MapContainer center={[45.9432, 24.9668]} zoom={7} preferCanvas className="map" zoomControl>
       <LayersControl position="topright">
         <LayersControl.BaseLayer checked name="Hartă (OpenStreetMap)">
-          <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · Localizări: <a href="https://www.geonames.org/">GeoNames CC BY 4.0</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" maxZoom={19} />
+          <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" maxZoom={19} />
         </LayersControl.BaseLayer>
         <LayersControl.BaseLayer name="Satelit (Esri)">
           <TileLayer attribution="Tiles &copy; Esri" url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" maxZoom={19} />
@@ -143,14 +145,17 @@ export default function MapView(props: Props) {
           <GeoJSON
             key={`c-${version}-${selectedId ?? ""}-${db.communities.map((c) => c.id).join(",")}`}
             data={communityFC}
+            attribution='Contururi: <a href="https://www.geoboundaries.org/">geoBoundaries</a> · Localizări: <a href="https://www.geonames.org/">GeoNames CC BY 4.0</a>'
             style={(f) => {
-              const c = byId.get(f?.properties?.id);
-              const sel = c?.id === selectedId;
-              const color = sel ? COLORS.selected : COLORS[c?.status ?? "validat"];
-              return { color, weight: sel ? 6 : 4, opacity: 0.9, fillOpacity: 0.2, dashArray: c?.status === "propus" ? "6 5" : undefined };
+              const records = (f?.properties?.ids ?? []).map((id: string) => byId.get(id)).filter(Boolean) as Community[];
+              const c = records.find(c => c.id === selectedId) ?? records[0];
+              const sel = records.some(c => c.id === selectedId);
+              const mixed = new Set(records.map(c => c.status)).size > 1;
+              const color = sel ? COLORS.selected : mixed ? COLORS.mixed : COLORS[c?.status ?? "validat"];
+              return { color, weight: sel ? 3.5 : 1.5, opacity: 0.95, fillOpacity: sel ? 0.28 : c?.boundary?.scope === "region" ? 0.07 : 0.16, dashArray: c?.boundary && c.boundary.scope !== "locality" ? "12 6" : c?.status === "propus" ? "4 4" : undefined };
             }}
             pointToLayer={(f, latlng) => {
-              const c = byId.get(f.properties?.id);
+              const c = byId.get(f.properties?.ids?.[0]);
               const sel = c?.id === selectedId;
               return L.circleMarker(latlng, {
                 radius: sel ? 11 : 8, weight: 2, color: "#fff",
@@ -158,11 +163,24 @@ export default function MapView(props: Props) {
               });
             }}
             onEachFeature={(f, layer) => {
-              const c = byId.get(f.properties?.id);
+              const records = (f.properties?.ids ?? []).map((id: string) => byId.get(id)).filter(Boolean) as Community[];
+              const c = records[0];
               if (!c) return;
-              layer.bindPopup(communityPopup(c, entrepreneurCount.get(c.id) ?? 0));
-              layer.bindTooltip(esc(c.name), { sticky: true });
-              layer.on("click", () => onSelect.current(c.id));
+              const label = c.boundary?.name ?? c.name;
+              layer.bindTooltip(esc(`${label}${records.length > 1 ? ` · ${records.length} înregistrări` : ""}`), { sticky: true });
+              if (records.length === 1) {
+                layer.bindPopup(communityPopup(c, entrepreneurCount.get(c.id) ?? 0));
+                layer.on("click", () => onSelect.current(c.id));
+              } else {
+                const content = document.createElement("div");
+                content.className = "boundary-popup";
+                content.innerHTML = `<strong>${esc(label)}</strong>${c.boundary ? `<div>${esc(BOUNDARY_SCOPE_LABELS[c.boundary.scope])} · sursă ${esc(c.boundary.year)}</div><p>Nu reprezintă granița comunităților Roma.</p>` : ""}<p>Contur administrativ comun · ${records.length} înregistrări. Selectează o localitate pentru toate datele.</p><div class="boundary-choices">${records.map(r => `<button type="button" data-community-id="${esc(r.id)}">${esc(r.name)}<span>${esc(STATUS_LABELS[r.status])}${r.extra?._sourceRow ? ` · rând ${esc(r.extra._sourceRow)}` : ""}</span></button>`).join("")}</div>`;
+                content.addEventListener("click", event => {
+                  const button = (event.target as HTMLElement).closest<HTMLButtonElement>("button[data-community-id]");
+                  if (button?.dataset.communityId) { event.stopPropagation(); onSelect.current(button.dataset.communityId); }
+                });
+                layer.bindPopup(content, { maxWidth: 340 });
+              }
             }}
           />
         </LayersControl.Overlay>

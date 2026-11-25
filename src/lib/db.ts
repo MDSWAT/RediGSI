@@ -2,10 +2,10 @@ import "server-only";
 import { randomUUID } from "crypto";
 import { COLLECTIONS, type CollectionName, type DB, type BaseRecord } from "./types";
 import { database, DatabaseError, storageError } from "./database";
-import { ensureCatalog } from "./catalogSeed";
+import { ensureBoundaries } from "./boundaryImport";
 
 export async function readDB(): Promise<DB> {
-  await ensureCatalog();
+  await ensureBoundaries();
   // One database snapshot, with no PostgREST 1,000-row truncation.
   const { data, error } = await database().rpc("redi_read_data");
   if (error) storageError(error);

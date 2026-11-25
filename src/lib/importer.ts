@@ -2,6 +2,7 @@ import Papa from "papaparse";
 import * as XLSX from "xlsx";
 import type { Geometry } from "geojson";
 import type { CollectionName, Community, CommunityStatus, CommunitySource, DB, Entrepreneur, Locality, PartnerClient } from "./types";
+import { importedBoundary } from "./boundaries";
 
 import {
   assignCommunity, buildLocalityIndex, center, enrich, kindForGeometry, norm, normCountry, normSiruta,
@@ -93,7 +94,7 @@ export function buildRecords(
   file.rows.forEach((row, i) => {
     const get = (k: string) => (mapping[k] ? row[mapping[k]] : undefined);
     const extra: Record<string, string> = {};
-    for (const [k, v] of Object.entries(row)) if (!mapped.has(k) && str(v) !== undefined) extra[k] = String(v);
+    for (const [k, v] of Object.entries(row)) if (!mapped.has(k) && k !== "contur_administrativ" && str(v) !== undefined) extra[k] = typeof v === "object" ? JSON.stringify(v) : String(v);
 
     let lat = parseNum(get("lat"));
     let lng = parseNum(get("lng"));
@@ -137,6 +138,7 @@ export function buildRecords(
       if (approx && !parseGeometry(get("geometry")) && !fileGeom) placedAtLocality++;
       const kindTxt = norm(str(get("kind")));
       const statusTxt = norm(str(get("status")));
+      const boundary = importedBoundary(row.contur_administrativ);
       items.push({
         id: "",
         name: str(get("name")) ?? e.locality ?? `Comunitate ${i + 1}`,
@@ -147,6 +149,8 @@ export function buildRecords(
           : statusTxt.includes("confirm") || statusTxt.includes("valid") || statusTxt === "da" ? "validat" : opts.defaultStatus,
         source: opts.source,
         geometry,
+        boundary,
+        locationAccuracy: boundary || row.precizie === "administrative" ? "administrative" : undefined,
         siruta: e.siruta,
         locality: e.locality,
         county: e.county,

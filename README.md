@@ -111,3 +111,14 @@ Sunt disponibile 628 de rânduri: Albania 61, Bosnia 90, Kosovo 38, Macedonia N 
 610 rânduri au poziții orientative asociate după nume și regiune din GeoNames (CC BY 4.0, https://www.geonames.org/). Sunt centre de localitate sau municipalitate, nu limite sau adrese ale comunităților. Cele 18 rânduri ambigue/fără nume rămân în listă cu geometrie nulă. Duplicate precum Ege și Örnekköy sunt păstrate ca rânduri distincte ale sursei. Cifrele de recensământ și cele din alte surse rămân separate; nu sunt însumate.
 
 Filtrele de țară, cele patru statusuri REDI, campania health și localizarea se aplică și hărții. Selectarea unei înregistrări afișează toate coloanele originale. În Sumar REDI se pot consulta acoperirea, toate foile originale și referințele bibliografice. Exporturile păstrează și înregistrările fără geometrie.
+
+
+### Contururi administrative
+
+Registrul are acum un import suplimentar de contururi reale pentru toate cele 628 de rânduri: 534 contururi de localitate, 36 municipalități mai largi și 58 regiuni de referință, reprezentate ca 560 de zone distincte. Toate cele 111 înregistrări românești au contur de localitate. Sursele și anii diferă: datele nu reprezintă automat delimitările administrative din prezent. În special Tuzi și Zeta folosesc municipalitatea Podgorica din sursa 2017 ca referință mai largă; Moldova are raioane și Turcia provincii. Contururile nu afirmă limitele populației Roma.
+
+La prima citire după deploy, `boundaryImport.ts` completează în Supabase geometria originală a înregistrărilor de catalog. Nu este necesară o nouă schemă SQL. Sunt păstrate editările numelui, statusului și notelor; geometriile personalizate și înregistrările șterse sunt excluse. Comparația întregului document la actualizare protejează și editările concurente. Importul se poate relua după o eroare și are un marcaj de finalizare în baza de date, ascuns din lista de sumare.
+
+Contururile comune sunt desenate o singură dată; popup-ul oferă acces la fiecare rând. Liniile întrerupte indică zone mai largi, iar panoul și exporturile includ nivelul, sursa, anul și licența. Cele 18 puncte inițial necunoscute rămân marcate ca localizare neconfirmată, chiar dacă regiunea lor de referință este afișată.
+
+Surse, licențe și pașii opționali de regenerare: [BOUNDARY_SOURCES.md](src/data/BOUNDARY_SOURCES.md).

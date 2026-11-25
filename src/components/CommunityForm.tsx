@@ -61,6 +61,7 @@ export default function CommunityForm({ db, geometry, existing, onSave, onCancel
         source: existing?.source ?? "manual",
         geometry: geom,
         locationAccuracy: existing?.locationAccuracy,
+        boundary: existing?.boundary,
         siruta: normSiruta(f.siruta),
         locality: f.locality.trim() || undefined,
         county: f.county.trim() || undefined,

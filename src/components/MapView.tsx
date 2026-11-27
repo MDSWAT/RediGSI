@@ -44,6 +44,8 @@ export type Focus = {
 interface Props {
   canDraw?: boolean;
   clusterPoints?: boolean;
+  /** Fill outlines with diagonal hatching in the status colour instead of a flat tint. */
+  hatched?: boolean;
   editRequest?: GeometryEditRequest;
   onGeometryChange?: (geometry: Geometry) => void;
   proposalMode?: boolean;
@@ -69,7 +71,7 @@ const esc = (s: unknown) =>
 
 const COLORS = {
   validat: "#206457",
-  propus: "#b07821",
+  propus: "#f07400",
   de_validat: "#755ca8",
   sub_prag: "#64748b",
   selected: "#193c34",
@@ -231,6 +233,29 @@ function communityTooltip(records: Community[], entrepreneurs: Map<string, numbe
   </div>`;
 }
 
+const HATCH_STATUSES = ["validat", "propus", "de_validat", "sub_prag", "selected", "mixed"] as const;
+/** SVG patterns referenced as fill="url(#hatch-…)" by the outline layer (SVG renderer). */
+function HatchPatterns() {
+  return (
+    <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
+      <defs>
+        {HATCH_STATUSES.map((status) => (
+          <pattern
+            key={status}
+            id={`hatch-${status}`}
+            width="8"
+            height="8"
+            patternUnits="userSpaceOnUse"
+            patternTransform="rotate(45)"
+          >
+            <line x1="0" y1="0" x2="0" y2="8" stroke={COLORS[status]} strokeWidth="2.5" />
+          </pattern>
+        ))}
+      </defs>
+    </svg>
+  );
+}
+
 function communityPopup(c: Community, entrepreneurs: number) {
   return `<div class="pop">
     <strong>${esc(c.name)}</strong>
@@ -257,6 +282,13 @@ function communityPopup(c: Community, entrepreneurs: number) {
 
 export default function MapView(props: Props) {
   const { db, version, selectedId, overlap } = props;
+  const hatched = props.hatched === true;
+  const svgRenderer = useMemo(() => L.svg({ padding: 0.5 }), []);
+  const rendererOptions: Pick<L.PathOptions, "renderer"> = hatched
+    ? { renderer: svgRenderer }
+    : {};
+  const restFill = (region: boolean) =>
+    hatched ? (region ? 0.35 : 0.6) : region ? 0.07 : 0.16;
   const onSelect = useRef(props.onSelectCommunity);
   useEffect(() => {
     onSelect.current = props.onSelectCommunity;
@@ -327,6 +359,7 @@ export default function MapView(props: Props) {
       zoomControl
       maxZoom={19}
     >
+      <HatchPatterns />
       <LayersControl position="topright">
         {CARTO_KEY && (
           <LayersControl.BaseLayer checked name="Hartă rutieră (CARTO Voyager)">
@@ -391,8 +424,10 @@ export default function MapView(props: Props) {
               )}
             />
             <GeoJSON
-              key={`c-${version}-${selectedId ?? ""}-${db.communities.map((c) => c.id).join(",")}`}
+              key={`c-${version}-${selectedId ?? ""}-${hatched ? "h" : "f"}-${db.communities.map((c) => c.id).join(",")}`}
               data={communityFC}
+              // Hatch patterns need SVG; Leaflet passes GeoJSON options on to each polygon.
+              {...rendererOptions}
               attribution='Contururi: <a href="https://www.geoboundaries.org/">geoBoundaries</a> · Localizări: <a href="https://www.geonames.org/">GeoNames CC BY 4.0</a>'
               style={(f) => {
                 const records = (f?.properties?.ids ?? [])
@@ -402,20 +437,21 @@ export default function MapView(props: Props) {
                   records.find((c) => c.id === selectedId) ?? records[0];
                 const sel = records.some((c) => c.id === selectedId);
                 const mixed = new Set(records.map((c) => c.status)).size > 1;
-                const color = sel
-                  ? COLORS.selected
+                const tone = sel
+                  ? "selected"
                   : mixed
-                    ? COLORS.mixed
-                    : COLORS[c?.status ?? "validat"];
+                    ? "mixed"
+                    : (c?.status ?? "validat");
                 return {
-                  color,
+                  color: COLORS[tone],
+                  fillColor: hatched ? `url(#hatch-${tone})` : COLORS[tone],
                   weight: sel ? 3.5 : 1.5,
                   opacity: 0.95,
                   fillOpacity: sel
-                    ? 0.28
-                    : c?.boundary?.scope === "region"
-                      ? 0.07
-                      : 0.16,
+                    ? hatched
+                      ? 0.9
+                      : 0.28
+                    : restFill(c?.boundary?.scope === "region"),
                   dashArray:
                     c?.boundary && c.boundary.scope !== "locality"
                       ? "12 6"
@@ -458,10 +494,10 @@ export default function MapView(props: Props) {
                 ) {
                   const rest = {
                     weight: 1.5,
-                    fillOpacity: c.boundary?.scope === "region" ? 0.07 : 0.16,
+                    fillOpacity: restFill(c.boundary?.scope === "region"),
                   };
                   layer.on("mouseover", () =>
-                    layer.setStyle({ weight: 3, fillOpacity: 0.3 }),
+                    layer.setStyle({ weight: 3, fillOpacity: hatched ? 0.9 : 0.3 }),
                   );
                   layer.on("mouseout", () => layer.setStyle(rest));
                 }

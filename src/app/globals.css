@@ -675,7 +675,7 @@ main {
   background: #206457;
 }
 .key-proposed {
-  background: #b07821;
+  background: #f07400;
 }
 .key-entrepreneur {
   background: #397ca5;
@@ -926,8 +926,8 @@ main {
   color: #256144;
 }
 .badge.propus {
-  background: #fff3dc;
-  color: #8a5d12;
+  background: #ffe8d1;
+  color: #a84a00;
 }
 .badge.de_validat {
   background: #f0eafa;
@@ -2353,11 +2353,22 @@ tr.hit {
   vertical-align: 1px;
 }
 .tt-dot.status-validat { background: #206457; }
-.tt-dot.status-propus { background: #b07821; }
+.tt-dot.status-propus { background: #f07400; }
 .tt-dot.status-de_validat { background: #755ca8; }
 .tt-dot.status-sub_prag { background: #64748b; }
 @media (hover: none) {
   .leaflet-tooltip.community-tooltip {
     display: none;
   }
+}
+
+.invite-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+}
+.invite-form label {
+  flex: 1 1 240px;
 }

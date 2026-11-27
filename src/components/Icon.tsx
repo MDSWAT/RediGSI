@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 
-export type IconName = "map" | "people" | "briefcase" | "overlap" | "data" | "upload" | "fit" | "search" | "point" | "line" | "polygon" | "rectangle" | "arrow" | "plus" | "menu" | "close";
+export type IconName = "map" | "people" | "briefcase" | "overlap" | "hatch" | "data" | "upload" | "fit" | "search" | "point" | "line" | "polygon" | "rectangle" | "arrow" | "plus" | "menu" | "close";
 
 const paths: Record<IconName, string> = {
   menu: "M4 6h16M4 12h16M4 18h16",
@@ -10,6 +10,7 @@ const paths: Record<IconName, string> = {
   people: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2m20 0v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75M13 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z",
   briefcase: "M9 7V4h6v3M3 7h18v14H3V7Zm0 6a25 25 0 0 0 18 0m-9-2v4",
   overlap: "M15 9a6 6 0 1 1-12 0 6 6 0 0 1 12 0Zm6 6a6 6 0 1 1-12 0 6 6 0 0 1 12 0Z",
+  hatch: "M4 4h16v16H4V4Zm0 8 8-8m-8 16L20 4m-4 16 4-4",
   data: "M20 5c0 1.66-3.58 3-8 3S4 6.66 4 5s3.58-3 8-3 8 1.34 8 3Zm0 0v14c0 1.66-3.58 3-8 3s-8-1.34-8-3V5m0 7c0 1.66 3.58 3 8 3s8-1.34 8-3",
   upload: "M12 16V3m-5 5 5-5 5 5M4 15v6h16v-6",
   fit: "M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M8 12h8m-4-4v8",

@@ -166,6 +166,7 @@ export default function App({
   const [proposalGeometry, setProposalGeometry] = useState<Geometry>();
   const [submissionDrawing, setSubmissionDrawing] = useState(false);
   const [clusterPoints, setClusterPoints] = useState(true);
+  const [hatched, setHatched] = useState(false);
   const [geometryEditRequest, setGeometryEditRequest] =
     useState<GeometryEditRequest>();
   const [editedGeometry, setEditedGeometry] = useState<Geometry>();
@@ -1486,6 +1487,14 @@ export default function App({
                   <Icon name="overlap" size={16} />
                   <span>Grupare</span>
                 </button>
+                <button
+                  aria-pressed={hatched}
+                  title="Hașurează contururile în culoarea statusului"
+                  onClick={() => setHatched((v) => !v)}
+                >
+                  <Icon name="hatch" size={16} />
+                  <span>Hașurare</span>
+                </button>
                 <button onClick={fitAll}>
                   <Icon name="fit" size={17} />
                   Vezi tot
@@ -1533,6 +1542,7 @@ export default function App({
             )}
             <MapView
               clusterPoints={clusterPoints}
+              hatched={hatched}
               editRequest={canEdit(access) ? geometryEditRequest : undefined}
               onGeometryChange={setEditedGeometry}
               canDraw={canEdit(access) || submissionDrawing}

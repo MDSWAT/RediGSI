@@ -89,6 +89,7 @@ export default function AdministrationWorkspace({
   const [shareGeometry, setShareGeometry] = useState(false);
   const [privacy, setPrivacy] = useState(false);
   const [member, setMember] = useState<Member>();
+  const [inviteEmail, setInviteEmail] = useState("");
   const reload = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -410,10 +411,38 @@ export default function AdministrationWorkspace({
       {section === "members" && isAdmin(access) && (
         <>
           <p className="muted small">
-            Sunt afișate conturile existente în Supabase Auth. Conturile fără
-            rol atribuit rămân vizitatori publici. Nu se trimit invitații
-            automat.
+            Sunt afișate conturile existente. Conturile fără rol atribuit rămân
+            vizitatori publici. Autentificarea se face cu un cod trimis pe email.
           </p>
+          <form
+            className="invite-form"
+            onSubmit={(e) => {
+              e.preventDefault();
+              const email = inviteEmail.trim();
+              void run(async () => {
+                const result = await request("/api/admin", "POST", {
+                  action: "invite",
+                  email,
+                });
+                setInviteEmail("");
+                if (result.warning) throw new Error(result.warning);
+              }, `Invitație trimisă către ${email}. Atribuie-i acum rolul și teritoriile.`);
+            }}
+          >
+            <label>
+              Invită un utilizator
+              <input
+                type="email"
+                required
+                placeholder="nume@organizatie.org"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+              />
+            </label>
+            <button className="primary" disabled={busy}>
+              Trimite invitația
+            </button>
+          </form>
           <div className="member-layout">
             <div className="member-list">
               {members.map((m) => (

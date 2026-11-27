@@ -35,6 +35,9 @@ test("governance enforces roles, geography, privacy, proposal transitions, audit
     const censusSQL = migration("202611270005_public_census_figures.sql");
     await db.exec(censusSQL);
     await db.exec(censusSQL);
+    const speedSQL = migration("202611270006_workspace_data_speed.sql");
+    await db.exec(speedSQL);
+    await db.exec(speedSQL);
     await db.query(
       `insert into public.redi_memberships(user_id,role,scopes,can_review) values ($1,'administrator','[]',true),($2,'gis_editor','[{"country":"RO","county":"Cluj"}]',true),($3,'authorized_viewer','[{"country":"RO"}]',false)`,
       [ADMIN, EDITOR, VIEWER],

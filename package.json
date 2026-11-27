@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "catalog:upload": "node --env-file=.env.local scripts/upload-catalog.mjs",
     "admin:bootstrap": "node --env-file=.env.local scripts/bootstrap-admin.mjs",
     "migrate:local": "node --env-file=.env.local scripts/migrate-local-data.mjs",
     "test": "node --test tests/*.test.mjs",

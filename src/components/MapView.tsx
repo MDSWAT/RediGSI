@@ -234,8 +234,46 @@ function communityTooltip(records: Community[], entrepreneurs: Map<string, numbe
   </div>`;
 }
 
-const HATCH_STATUSES = ["validat", "propus", "de_validat", "sub_prag", "selected", "mixed"] as const;
-/** SVG patterns referenced as fill="url(#hatch-…)" by the outline layer (SVG renderer). */
+/**
+ * Canvas renderer that understands hatch fills: a path whose fillColor is "url(#hatch-<tone>)" is
+ * filled with diagonal stripes in that tone's colour. Keeping every outline on one canvas stays fast
+ * with thousands of outlines, where an SVG pattern layer would make panning and zooming sluggish.
+ */
+const hatchTiles = new Map<string, HTMLCanvasElement>();
+function hatchTile(color: string) {
+  let tile = hatchTiles.get(color);
+  if (!tile) {
+    tile = document.createElement("canvas");
+    tile.width = tile.height = 8;
+    const g = tile.getContext("2d")!;
+    g.strokeStyle = color;
+    g.lineWidth = 2.5;
+    g.beginPath();
+    for (const [x1, y1, x2, y2] of [[-4, 4, 4, -4], [0, 8, 8, 0], [4, 12, 12, 4]]) {
+      g.moveTo(x1, y1);
+      g.lineTo(x2, y2);
+    }
+    g.stroke();
+    hatchTiles.set(color, tile);
+  }
+  return tile;
+}
+type CanvasInternals = { _fillStroke(ctx: CanvasRenderingContext2D, layer: L.Path): void };
+const baseFillStroke = (L.Canvas.prototype as unknown as CanvasInternals)._fillStroke;
+const HatchCanvas = L.Canvas.extend({
+  _fillStroke(this: L.Canvas, ctx: CanvasRenderingContext2D, layer: L.Path) {
+    const options = layer.options;
+    const tone = typeof options.fillColor === "string" && options.fillColor.match(/^url\(#hatch-(\w+)\)$/)?.[1];
+    if (!tone) return baseFillStroke.call(this, ctx, layer);
+    const original = options.fillColor;
+    const color = COLORS[tone as keyof typeof COLORS] ?? options.color ?? "#000";
+    // ctx.fillStyle accepts a pattern; Leaflet assigns fillColor to it as is.
+    (options as { fillColor: unknown }).fillColor = ctx.createPattern(hatchTile(color), "repeat");
+    baseFillStroke.call(this, ctx, layer);
+    options.fillColor = original;
+  },
+});
+
 /** Reports the zoom level after each zoom, so outline strokes can thin out when zoomed out. */
 function ZoomWatcher({ onZoom }: { onZoom: (zoom: number) => void }) {
   const map = useMapEvents({ zoomend: () => onZoom(map.getZoom()) });
@@ -245,27 +283,6 @@ function ZoomWatcher({ onZoom }: { onZoom: (zoom: number) => void }) {
 /** Outline stroke scale: hairlines at country level, full weight from city level. */
 function strokeScale(zoom: number) {
   return zoom <= 5 ? 0.35 : zoom <= 6 ? 0.5 : zoom <= 7 ? 0.7 : zoom <= 8 ? 0.85 : 1;
-}
-
-function HatchPatterns() {
-  return (
-    <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
-      <defs>
-        {HATCH_STATUSES.map((status) => (
-          <pattern
-            key={status}
-            id={`hatch-${status}`}
-            width="8"
-            height="8"
-            patternUnits="userSpaceOnUse"
-            patternTransform="rotate(45)"
-          >
-            <line x1="0" y1="0" x2="0" y2="8" stroke={COLORS[status]} strokeWidth="2.5" />
-          </pattern>
-        ))}
-      </defs>
-    </svg>
-  );
 }
 
 function communityPopup(c: Community, entrepreneurs: number) {
@@ -297,10 +314,7 @@ export default function MapView(props: Props) {
   const hatched = props.hatched === true;
   const [zoom, setZoom] = useState(7);
   const stroke = strokeScale(zoom);
-  const svgRenderer = useMemo(() => L.svg({ padding: 0.5 }), []);
-  const rendererOptions: Pick<L.PathOptions, "renderer"> = hatched
-    ? { renderer: svgRenderer }
-    : {};
+  const renderer = useMemo(() => new (HatchCanvas as unknown as typeof L.Canvas)({ padding: 0.5 }), []);
   const restFill = (region: boolean, hatch = hatched) =>
     hatch ? (region ? 0.35 : 0.6) : region ? 0.07 : 0.16;
   const onSelect = useRef(props.onSelectCommunity);
@@ -354,8 +368,6 @@ export default function MapView(props: Props) {
       // Outlines still awaiting validation are always hatched, so they stand out without the toggle.
       const hatch = hatched || (!mixed && c?.status === "de_validat");
       return {
-        // Hatch patterns need SVG; the renderer is fixed before the outline joins the map.
-        renderer: hatch ? svgRenderer : undefined,
         color: COLORS[tone],
         fillColor: hatch ? `url(#hatch-${tone})` : COLORS[tone],
         weight: sel ? 3.5 * Math.max(stroke, 0.7) : 1.5 * stroke,
@@ -374,7 +386,7 @@ export default function MapView(props: Props) {
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps -- restFill depends only on hatched
-    [byId, selectedId, hatched, svgRenderer, stroke],
+    [byId, selectedId, hatched, stroke],
   );
   const styleRef = useRef(communityStyle);
   useEffect(() => {
@@ -416,11 +428,11 @@ export default function MapView(props: Props) {
       center={[45.9432, 24.9668]}
       zoom={7}
       preferCanvas
+      renderer={renderer}
       className="map"
       zoomControl
       maxZoom={19}
     >
-      <HatchPatterns />
       <ZoomWatcher onZoom={setZoom} />
       <LayersControl position="topright">
         {CARTO_KEY && (
@@ -486,10 +498,8 @@ export default function MapView(props: Props) {
               )}
             />
             <GeoJSON
-              key={`c-${version}-${hatched ? "h" : "f"}-${db.communities.map((c) => c.id).join(",")}`}
+              key={`c-${version}-${db.communities.map((c) => c.id).join(",")}`}
               data={communityFC}
-              // Hatch patterns need SVG; Leaflet passes GeoJSON options on to each polygon.
-              {...rendererOptions}
               attribution='Contururi: <a href="https://www.geoboundaries.org/">geoBoundaries</a> · Localizări: <a href="https://www.geonames.org/">GeoNames CC BY 4.0</a>'
               // Restyled in place when the selection changes, without rebuilding every outline.
               style={communityStyle}

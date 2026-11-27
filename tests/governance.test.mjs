@@ -41,6 +41,9 @@ test("governance enforces roles, geography, privacy, proposal transitions, audit
     const publicViewSQL = migration("202611270007_stored_public_view.sql");
     await db.exec(publicViewSQL);
     await db.exec(publicViewSQL);
+    const pagesSQL = migration("202611270008_workspace_pages.sql");
+    await db.exec(pagesSQL);
+    await db.exec(pagesSQL);
     await db.query(
       `insert into public.redi_memberships(user_id,role,scopes,can_review) values ($1,'administrator','[]',true),($2,'gis_editor','[{"country":"RO","county":"Cluj"}]',true),($3,'authorized_viewer','[{"country":"RO"}]',false)`,
       [ADMIN, EDITOR, VIEWER],
@@ -91,6 +94,7 @@ test("governance enforces roles, geography, privacy, proposal transitions, audit
         const data = await rpc("redi_workspace_data");
         assert.equal(data.communities.length, 0);
         assert.equal(data.clients.length, 0);
+        assert.equal((await rpc("redi_workspace_page", [0, 600])).count, 0);
         await assert.rejects(
           db.query("select * from public.redi_records"),
           /permission denied/,
@@ -117,6 +121,11 @@ test("governance enforces roles, geography, privacy, proposal transitions, audit
           data.communities.map((r) => r.id),
           ["ro"],
         );
+        // Pages apply the same access rules as the full workspace.
+        const page = await rpc("redi_workspace_page", [0, 600]);
+        assert.deepEqual(page.communities, data.communities);
+        assert.equal(page.count, data.communities.length + data.entrepreneurs.length + data.clients.length + data.localities.length);
+        assert.equal((await rpc("redi_workspace_page", [1, 600])).count, page.count - 1);
         await assert.rejects(
           rpc("redi_mutate_records", [
             "communities",

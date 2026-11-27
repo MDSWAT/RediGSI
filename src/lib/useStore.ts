@@ -3,6 +3,7 @@ import { importBatches } from "./importBatches";
 import { useCallback, useEffect, useState } from "react";
 import type { BaseRecord, CollectionName, DB } from "./types";
 import { createClient } from "@/utils/supabase/client";
+import { loadAllPages, WORKSPACE_PAGE_SIZE, type WorkspacePage } from "./workspacePages";
 
 const empty: DB = {
   communities: [],
@@ -28,16 +29,24 @@ async function call<T>(
 
 /**
  * Signed-in users read their workspace straight from Supabase with the browser session (row access
- * is decided by redi_workspace_data, and the full outline set is larger than a serverless response
- * may be). Visitors without a session get the shared CDN copy of the public map.
+ * is decided by redi_workspace_page). Visitors without a session get the shared CDN copy of the
+ * public map. Both are loaded in pages, since the full outline set is larger than one response may be.
  */
 async function loadWorkspace(): Promise<DB> {
   const supabase = createClient();
   const { data: auth } = await supabase.auth.getSession();
-  if (!auth.session) return { ...empty, ...(await call<Partial<DB>>("/api/public-map", "GET")) };
-  const { data, error } = await supabase.rpc("redi_workspace_data");
-  if (error) throw new Error(`Datele nu au putut fi încărcate din baza de date: ${error.message}`);
-  return { ...empty, ...(data as Partial<DB>) };
+  if (!auth.session)
+    return loadAllPages((offset) =>
+      call<WorkspacePage>(`/api/public-map?page=${offset / WORKSPACE_PAGE_SIZE}`, "GET"),
+    );
+  return loadAllPages(async (offset) => {
+    const { data, error } = await supabase.rpc("redi_workspace_page", {
+      p_offset: offset,
+      p_limit: WORKSPACE_PAGE_SIZE,
+    });
+    if (error) throw new Error(`Datele nu au putut fi încărcate din baza de date: ${error.message}`);
+    return data as WorkspacePage;
+  });
 }
 
 /** Client-side mirror of the server DB with optimistic-free, server-confirmed mutations. */

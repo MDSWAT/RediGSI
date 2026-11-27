@@ -665,20 +665,6 @@ export default function AdministrationWorkspace({
       )}
       {section === "audit" && isAdmin(access) && (
         <>
-          <button
-            disabled={busy}
-            onClick={() =>
-              void run(
-                () =>
-                  request("/api/admin", "POST", {
-                    action: "initialize_catalog",
-                  }),
-                "Importul inițial a fost verificat. Datele și editările existente au fost păstrate.",
-              )
-            }
-          >
-            Verifică importul catalogului REDI
-          </button>
           <p className="muted small">
             Ultimele 100 de operații. Instantaneele complete sunt păstrate în
             baza de date pentru istoricul versiunilor.

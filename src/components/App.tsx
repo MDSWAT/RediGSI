@@ -1073,7 +1073,7 @@ export default function App({
                   </h3>
                   <p>
                     {canEdit(access)
-                      ? "Importă catalogul existent sau marchează prima comunitate direct pe hartă."
+                      ? "Baza de date nu conține încă nicio comunitate. Importă un fișier sau marchează prima comunitate direct pe hartă."
                       : "Comunitățile apar după verificare și aprobarea informațiilor pentru public."}
                   </p>
                   {canEdit(access) ? (
@@ -1082,7 +1082,7 @@ export default function App({
                       onClick={() => setImportTarget("communities")}
                     >
                       <Icon name="upload" size={16} />
-                      Importă catalogul
+                      Importă date
                     </button>
                   ) : (
                     <button onClick={() => setProposalOpen(true)}>

@@ -2,6 +2,7 @@
 import { importBatches } from "./importBatches";
 import { useCallback, useEffect, useState } from "react";
 import type { BaseRecord, CollectionName, DB } from "./types";
+import { createClient } from "@/utils/supabase/client";
 
 const empty: DB = {
   communities: [],
@@ -25,6 +26,20 @@ async function call<T>(
   return res.json();
 }
 
+/**
+ * Signed-in users read their workspace straight from Supabase with the browser session (row access
+ * is decided by redi_workspace_data, and the full outline set is larger than a serverless response
+ * may be). Visitors without a session get the shared CDN copy of the public map.
+ */
+async function loadWorkspace(): Promise<DB> {
+  const supabase = createClient();
+  const { data: auth } = await supabase.auth.getSession();
+  if (!auth.session) return { ...empty, ...(await call<Partial<DB>>("/api/public-map", "GET")) };
+  const { data, error } = await supabase.rpc("redi_workspace_data");
+  if (error) throw new Error(`Datele nu au putut fi încărcate din baza de date: ${error.message}`);
+  return { ...empty, ...(data as Partial<DB>) };
+}
+
 /** Client-side mirror of the server DB with optimistic-free, server-confirmed mutations. */
 export function useStore() {
   const [db, setDb] = useState<DB>(empty);
@@ -35,7 +50,7 @@ export function useStore() {
 
   const reload = useCallback(async () => {
     try {
-      setDb(await call<DB>("/api/data", "GET"));
+      setDb(await loadWorkspace());
       setVersion((v) => v + 1);
       setError(null);
     } catch (e) {
@@ -48,7 +63,7 @@ export function useStore() {
 
   useEffect(() => {
     let alive = true;
-    call<DB>("/api/data", "GET")
+    loadWorkspace()
       .then((d) => {
         if (alive) {
           setDb(d);

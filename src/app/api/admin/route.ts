@@ -1,6 +1,5 @@
 import { accessProfile } from "@/lib/workspaceServer";
 import { EXPORT_GROUPS, isAdmin, type ExportGroup } from "@/lib/access";
-import { ensureBoundaries } from "@/lib/boundaryImport";
 import { database } from "@/lib/database";
 import { inviteEmail, MailError, sendMail } from "@/lib/mail";
 import {
@@ -47,12 +46,6 @@ export async function POST(request: Request) {
     if (!isAdmin(await accessProfile()))
       throw new AccessError("Operația necesită un administrator.");
     const body = await readJSON(request, 50_000);
-    if (body.action === "initialize_catalog") {
-      if (!isAdmin(await accessProfile()))
-        throw new AccessError("Operația necesită un administrator.");
-      await ensureBoundaries();
-      return privateJSON({ saved: true });
-    }
     const client = await workspaceClient();
     if (body.action === "invite") {
       const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";

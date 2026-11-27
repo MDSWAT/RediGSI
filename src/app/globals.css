@@ -684,8 +684,8 @@ main {
   background: #b85b43;
 }
 .key-pending {
-  background: repeating-linear-gradient(45deg, #ff5a00 0 2px, #ffd2b8 2px 4px);
-  border: 1px solid #ff5a00;
+  background: repeating-linear-gradient(45deg, #f2853a 0 2px, #fde3cf 2px 4px);
+  border: 1px solid #f2853a;
 }
 .key-below {
   background: #64748b;
@@ -931,8 +931,8 @@ main {
   color: #a84a00;
 }
 .badge.de_validat {
-  background: #ffe4d4;
-  color: #b33c00;
+  background: #fde8d8;
+  color: #a8501a;
 }
 .badge.sub_prag {
   background: #edf1f5;
@@ -2355,7 +2355,7 @@ tr.hit {
 }
 .tt-dot.status-validat { background: #206457; }
 .tt-dot.status-propus { background: #f07400; }
-.tt-dot.status-de_validat { background: #ff5a00; }
+.tt-dot.status-de_validat { background: #f2853a; }
 .tt-dot.status-sub_prag { background: #64748b; }
 @media (hover: none) {
   .leaflet-tooltip.community-tooltip {

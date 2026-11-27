@@ -3,7 +3,7 @@ import PointClusterLayer from "./PointClusterLayer";
 import GeometryEditLayer, {
   type GeometryEditRequest,
 } from "./GeometryEditLayer";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -13,6 +13,7 @@ import {
   LayerGroup,
   Tooltip,
   useMap,
+  useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
 import type { Feature, FeatureCollection, Geometry } from "geojson";
@@ -72,7 +73,7 @@ const esc = (s: unknown) =>
 const COLORS = {
   validat: "#206457",
   propus: "#f07400",
-  de_validat: "#ff5a00",
+  de_validat: "#f2853a",
   sub_prag: "#64748b",
   selected: "#193c34",
   mixed: "#9c9ca6",
@@ -235,6 +236,17 @@ function communityTooltip(records: Community[], entrepreneurs: Map<string, numbe
 
 const HATCH_STATUSES = ["validat", "propus", "de_validat", "sub_prag", "selected", "mixed"] as const;
 /** SVG patterns referenced as fill="url(#hatch-…)" by the outline layer (SVG renderer). */
+/** Reports the zoom level after each zoom, so outline strokes can thin out when zoomed out. */
+function ZoomWatcher({ onZoom }: { onZoom: (zoom: number) => void }) {
+  const map = useMapEvents({ zoomend: () => onZoom(map.getZoom()) });
+  return null;
+}
+
+/** Outline stroke scale: hairlines at country level, full weight from city level. */
+function strokeScale(zoom: number) {
+  return zoom <= 5 ? 0.35 : zoom <= 6 ? 0.5 : zoom <= 7 ? 0.7 : zoom <= 8 ? 0.85 : 1;
+}
+
 function HatchPatterns() {
   return (
     <svg width="0" height="0" style={{ position: "absolute" }} aria-hidden="true">
@@ -283,6 +295,8 @@ function communityPopup(c: Community, entrepreneurs: number) {
 export default function MapView(props: Props) {
   const { db, version, selectedId, overlap } = props;
   const hatched = props.hatched === true;
+  const [zoom, setZoom] = useState(7);
+  const stroke = strokeScale(zoom);
   const svgRenderer = useMemo(() => L.svg({ padding: 0.5 }), []);
   const rendererOptions: Pick<L.PathOptions, "renderer"> = hatched
     ? { renderer: svgRenderer }
@@ -344,8 +358,8 @@ export default function MapView(props: Props) {
         renderer: hatch ? svgRenderer : undefined,
         color: COLORS[tone],
         fillColor: hatch ? `url(#hatch-${tone})` : COLORS[tone],
-        weight: sel ? 3.5 : 1.5,
-        opacity: 0.95,
+        weight: sel ? 3.5 * Math.max(stroke, 0.7) : 1.5 * stroke,
+        opacity: sel ? 0.95 : 0.45 + 0.5 * stroke,
         fillOpacity: sel
           ? hatch
             ? 0.9
@@ -360,7 +374,7 @@ export default function MapView(props: Props) {
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps -- restFill depends only on hatched
-    [byId, selectedId, hatched, svgRenderer],
+    [byId, selectedId, hatched, svgRenderer, stroke],
   );
   const styleRef = useRef(communityStyle);
   useEffect(() => {
@@ -407,6 +421,7 @@ export default function MapView(props: Props) {
       maxZoom={19}
     >
       <HatchPatterns />
+      <ZoomWatcher onZoom={setZoom} />
       <LayersControl position="topright">
         {CARTO_KEY && (
           <LayersControl.BaseLayer checked name="Hartă rutieră (CARTO Voyager)">
@@ -512,7 +527,7 @@ export default function MapView(props: Props) {
                   layer.on("mouseover", () => {
                     if (!selected())
                       layer.setStyle({
-                        weight: 3,
+                        weight: 3 * Math.max(stroke, 0.7),
                         fillOpacity: String(layer.options.fillColor).startsWith("url(") ? 0.9 : 0.3,
                       });
                   });

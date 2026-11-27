@@ -1,7 +1,13 @@
 import type { Geometry } from "geojson";
 
-export type CollectionName = "communities" | "entrepreneurs" | "clients" | "localities";
-export const COLLECTIONS: CollectionName[] = ["communities", "entrepreneurs", "clients", "localities"];
+export type CollectionName =
+  "communities" | "entrepreneurs" | "clients" | "localities";
+export const COLLECTIONS: CollectionName[] = [
+  "communities",
+  "entrepreneurs",
+  "clients",
+  "localities",
+];
 
 export const COLLECTION_LABELS: Record<CollectionName, string> = {
   communities: "Comunități",
@@ -13,6 +19,7 @@ export const COLLECTION_LABELS: Record<CollectionName, string> = {
 export interface BaseRecord {
   id: string;
   createdAt?: string;
+  visibility?: "public" | "restricted" | "confidential";
   /** Columns from imported files that are not mapped to a known field. */
   extra?: Record<string, string>;
 }
@@ -50,13 +57,17 @@ export interface AdministrativeBoundary {
 }
 
 export interface Community extends BaseRecord {
+  classification?: string;
+  region?: string;
+  publicationStatus?: "draft" | "published";
   name: string;
   kind: CommunityKind;
   status: CommunityStatus;
   source: CommunitySource;
   geometry: Geometry | null;
   /** Gazetteer reference; never a surveyed community boundary. */
-  locationAccuracy?: "locality" | "municipality" | "unresolved" | "administrative";
+  locationAccuracy?:
+    "locality" | "municipality" | "unresolved" | "administrative";
   boundary?: AdministrativeBoundary;
   siruta?: string;
   locality?: string;
@@ -116,7 +127,17 @@ export const STATUS_LABELS: Record<CommunityStatus, string> = {
   sub_prag: "Sub prag",
 };
 
-export const COUNTRY_LABELS: Record<string, string> = { RO: "România", MD: "Moldova", AL: "Albania", BA: "Bosnia și Herțegovina", XK: "Kosovo", MK: "Macedonia de Nord", ME: "Muntenegru", RS: "Serbia", TR: "Turcia" };
+export const COUNTRY_LABELS: Record<string, string> = {
+  RO: "România",
+  MD: "Moldova",
+  AL: "Albania",
+  BA: "Bosnia și Herțegovina",
+  XK: "Kosovo",
+  MK: "Macedonia de Nord",
+  ME: "Muntenegru",
+  RS: "Serbia",
+  TR: "Turcia",
+};
 
 export const SOURCE_LABELS: Record<CommunitySource, string> = {
   catalog: "Catalog",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-27T07:04:28.766456+00:00",
+  "generatedAt": "2026-11-27T07:41:54.771453+00:00",
   "title": "Design System: Roma Community Map",
   "extensions": {
     "colorMeta": {
@@ -553,6 +553,26 @@
       "label": {
         "displayName": "Field Label",
         "purpose": "Compact operational labels."
+      },
+      "module": {
+        "displayName": "Module Heading",
+        "purpose": "Wide workspace and summary headings; 22px on mobile."
+      },
+      "metric": {
+        "displayName": "Territorial Metric",
+        "purpose": "Baseline KPI values; 28px on mobile, tabular numerals."
+      },
+      "operational": {
+        "displayName": "Operational Text",
+        "purpose": "Fields, module descriptions and record prose."
+      },
+      "metadata": {
+        "displayName": "Metadata",
+        "purpose": "Small labels, record timestamps and detail keys."
+      },
+      "micro": {
+        "displayName": "Micro Label",
+        "purpose": "Status badges and compact map dataset subfilters."
       }
     },
     "shadows": [
@@ -587,20 +607,24 @@
     "breakpoints": [
       {
         "name": "compact-desktop",
-        "value": "1200px"
+        "value": "1200px",
+        "purpose": "Map rail/tools 176px/312px; wide modules retain only the 176px rail."
       },
       {
         "name": "compact-rail",
-        "value": "1000px"
+        "value": "1000px",
+        "purpose": "68px rail; map tools 310px; tighter review/member columns."
       },
       {
         "name": "mobile",
-        "value": "760px"
+        "value": "760px",
+        "purpose": "56px rail/header; map drawer; wide modules retain no aside; KPI strip becomes two columns and module/detail/scope layouts stack."
       },
       {
         "name": "short-screen",
         "value": "600px",
-        "axis": "height"
+        "axis": "height",
+        "purpose": "Compress rail spacing and hide workspace signature."
       }
     ]
   },
@@ -638,11 +662,11 @@
       "css": ".ds-field{font-family:var(--font-host-grotesk),sans-serif;display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted,#64717d);}.ds-field input{font-family:var(--font-host-grotesk),sans-serif;padding:9px 11px;border:1px solid var(--control-border,#d5dce2);border-radius:var(--radius,8px);background:var(--panel,#fff);color:var(--text,#202b33);font-size:13px;}.ds-field input:focus-visible{outline:2px solid var(--primary,#107c70);outline-offset:3px;}"
     },
     {
-      "name": "Active Navigation",
+      "name": "Active Module Navigation",
       "kind": "nav",
       "refersTo": "nav-active",
-      "description": "Active desktop dataset destination.",
-      "html": "<button class=\"ds-nav\" aria-current=\"page\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15\"/></svg>Comunități<span></span></button>",
+      "description": "Permission-aware module destination; public sees Map and Analytics.",
+      "html": "<button class=\"ds-nav\" aria-current=\"page\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15\"/></svg>Hartă<span></span></button>",
       "css": ".ds-nav{font-family:var(--font-host-grotesk),sans-serif;display:flex;align-items:center;gap:11px;min-height:42px;min-width:176px;padding:10px 12px;border:0;border-radius:8px;background:#e5f0ec;color:#11695d;font-size:13px;font-weight:500;cursor:pointer;}.ds-nav span{width:5px;height:5px;border-radius:50%;background:currentColor;margin-left:auto;}.ds-nav:hover{background:#e5f0ec;color:#11695d;}.ds-nav:focus-visible{outline:2px solid var(--primary,#107c70);outline-offset:3px;}"
     },
     {
@@ -667,6 +691,20 @@
       "description": "Floating, initially collapsed map key.",
       "html": "<details class=\"ds-key\"><summary>Legendă</summary><div><i></i>Comunitate validată</div></details>",
       "css": ".ds-key{font-family:var(--font-host-grotesk),sans-serif;background:var(--panel,#fff);color:var(--text,#202b33);border-radius:8px;box-shadow:var(--floating-shadow,0 4px 18px #24374714);font-size:11px;}.ds-key summary{padding:10px 13px;cursor:pointer;}.ds-key summary:hover{background:var(--hover,#f1f5f6);border-radius:8px;}.ds-key summary:focus-visible{outline:2px solid var(--primary,#107c70);outline-offset:3px;}.ds-key div{display:flex;gap:6px;align-items:center;padding:4px 13px 14px;}.ds-key i{width:8px;height:8px;border-radius:50%;background:#206457;}"
+    },
+    {
+      "name": "Map Dataset Subfilters",
+      "kind": "custom",
+      "description": "Dataset choices live inside Map, below module navigation.",
+      "html": "<div class=\"ds-datasets\" aria-label=\"Set de date\"><button class=\"ds-selected\">Comunități</button><button>Antreprenori</button><button>Parteneri</button><button>Suprapunere</button></div>",
+      "css": ".ds-datasets{display:flex;gap:4px;flex-wrap:wrap;padding-bottom:12px;border-bottom:1px solid var(--border,#e5e9ed);font-family:var(--font-host-grotesk),sans-serif}.ds-datasets button{font-family:inherit;min-height:28px;padding:5px 7px;font-size:10px;border:1px solid transparent;border-radius:8px;background:transparent;color:var(--text,#202b33);cursor:pointer}.ds-datasets button.ds-selected{background:var(--selected,#eaf5f1);color:var(--primary,#107c70)}.ds-datasets button:hover{background:var(--hover,#f1f5f6)}.ds-datasets button:focus-visible{outline:2px solid var(--primary,#107c70);outline-offset:3px}"
+    },
+    {
+      "name": "Territorial Metric Strip",
+      "kind": "custom",
+      "description": "Baseline accessible-data totals; em dashes represent loading, never invented counts.",
+      "html": "<dl class=\"ds-metrics\"><div><dt>Comunități vizibile</dt><dd>—</dd></div><div><dt>Zone distincte</dt><dd>—</dd></div><div><dt>De verificat</dt><dd>—</dd></div><div><dt>Fără geometrie</dt><dd>—</dd></div></dl>",
+      "css": ".ds-metrics{font-family:var(--font-host-grotesk),sans-serif;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin:0 0 32px;padding-bottom:28px;border-bottom:1px solid var(--border,#e5e9ed);font-variant-numeric:tabular-nums;color:var(--text,#202b33)}.ds-metrics dt{font-size:12px;color:var(--muted,#64717d);margin-bottom:8px}.ds-metrics dd{margin:0;font-size:32px;font-weight:550;letter-spacing:-.03em;line-height:1.3}@media(max-width:760px){.ds-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 12px}.ds-metrics dd{font-size:28px}}"
     }
   ],
   "narrative": {

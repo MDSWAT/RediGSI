@@ -1,11 +1,18 @@
-import { NextResponse } from "next/server";
-import { readDB } from "@/lib/db";
-import { storageResponse } from "@/lib/storageResponse";
-
+import {
+  workspaceClient,
+  rpcError,
+  apiError,
+  privateJSON,
+} from "@/lib/workspaceServer";
 export const dynamic = "force-dynamic";
-export const maxDuration = 60;
-
 export async function GET() {
-  try { return NextResponse.json(await readDB()); }
-  catch (error) { return storageResponse(error); }
+  try {
+    const { data, error } = await (
+      await workspaceClient()
+    ).rpc("redi_workspace_data");
+    if (error) throw rpcError(error);
+    return privateJSON(data);
+  } catch (e) {
+    return apiError(e);
+  }
 }

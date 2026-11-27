@@ -47,6 +47,27 @@ typography:
     fontWeight: 600
     lineHeight: 1.3
     letterSpacing: "-.03em"
+  module:
+    fontFamily: "var(--font-host-grotesk), sans-serif"
+    fontSize: "26px"
+    fontWeight: 600
+    lineHeight: 1.3
+    letterSpacing: "-.03em"
+  metric:
+    fontFamily: "var(--font-host-grotesk), sans-serif"
+    fontSize: "32px"
+    fontWeight: 550
+    lineHeight: 1.3
+    letterSpacing: "-.03em"
+  operational:
+    fontFamily: "var(--font-host-grotesk), sans-serif"
+    fontSize: "13px"
+  metadata:
+    fontFamily: "var(--font-host-grotesk), sans-serif"
+    fontSize: "11px"
+  micro:
+    fontFamily: "var(--font-host-grotesk), sans-serif"
+    fontSize: "10px"
   title:
     fontFamily: "var(--font-host-grotesk), sans-serif"
     fontSize: "14px"
@@ -160,16 +181,19 @@ The frontmatter is normative. White and cool gray surfaces provide a quiet setti
 
 Host Grotesk is the sole family, loaded through next/font with Latin and Latin Extended subsets and swap display. Retain the root font variable. There is no serif or separate display family.
 
-- **Headlines:** task headings use the headline token; summary headings use (26px), dialog headings (23px), with summary and tool headings reduced to (22px) and (21px) on mobile.
+- **Headlines:** task headings use the headline token; wide module and summary headings use the module role, dialog headings (23px). Module/summary and tool headings reduce to (22px) and (21px) on mobile.
+- **Metrics:** the metric role is reserved for baseline KPI values, with tabular numerals and (28px) mobile sizing. It is not a promotional display face.
 - **Title:** the header dataset name uses the title token; the rail wordmark is (20px, 650). Mobile header text becomes (13px).
 - **Body:** the root body uses (14px, 1.5). Source prose is operational sans-serif (13px), with line-height (1.7) in source sheets and contextual reading regions.
-- **Labels and data:** fields use (13px), navigation (13px, 500), search and metadata (12px), small labels (11px), badges (10px). Record names use (13px, 600). Counts and numeric tables use tabular numerals.
+- **Labels and data:** the operational role covers fields, module descriptions and record prose; navigation uses it at weight (500), record names at (600). The label role covers search, metric captions and tabs. Metadata covers small labels and record timestamps; micro covers badges and map dataset subfilters. Counts and numeric tables use tabular numerals. Compact rail labels may reduce further to fit the established rail.
 
 ## Layout
 
 The shell fills (100dvh), hides document overflow and has no outer padding or footer. Desktop uses navigation (200px), tools (336px), and the remaining width for the map/report. The white header is (64px) tall and spans tools and map. Tools and reports scroll internally; wide tables have dedicated horizontal scrollers.
 
 At (1200px) and below, navigation/tools become (176px/312px); the header product label and divider hide. At (1000px), navigation becomes an icon-and-label rail (68px), tools (310px), the wordmark and workspace signature copy hide, and navigation stacks its icons over labels. At (760px), navigation/header become (56px/56px), header facts hide and import becomes icon-only. The map or report owns the remaining surface. Tools open in a left drawer at (56px, 56px), width min(336px, 100vw - 56px), extending to the bottom. The backdrop leaves navigation accessible. At height (600px) and below, rail spacing compresses and its signature hides.
+
+Analytics, Data and Administration use a wide two-column shell: navigation plus main content, with no map aside or tools toggle. Rail widths retain the same breakpoints. Wide content scrolls internally with padding (32px clamp(20px, 3vw, 48px)), becoming (24px 18px) on mobile. The four-column KPI strip becomes two columns; analytics comparisons, data guidance, review lists/details and member lists/forms become one column. Scope fields collapse from two columns to one. Map-only search/status/health/location filters do not constrain Analytics; its country selection is shared with Map.
 
 Task padding is (22px), reducing to (20px) below the first breakpoint, with (16px) panel gaps. Country/status filters remain two columns with (12px) gaps. Manual forms use two columns and collapse on mobile. Reports use (32px) padding, reduced to (24px 16px) on mobile. Summary tables retain minimum width (660px). Dialog widths are (540px) or (840px), with (28px) padding reduced to (20px) on mobile.
 
@@ -191,11 +215,11 @@ Primary actions use teal, white labels and a matching border. Secondary actions 
 
 ### Inputs / Fields
 
-White fields use a (1px) control border and control radius. Labels sit above with a (6px) gap. Registry search has a visible label, inset icon, cool gray fill and height (40px). Selects reserve (29px) on the right for a chevron. Checkboxes use teal. Focus is a teal outline (2px), offset (3px), including the horizontally scrolling summary table region.
+White fields use a (1px) control border and control radius. Labels sit above with a (6px) gap. Registry search has a visible non-growing label, inset icon, cool gray fill and height (40px). Selects reserve (29px) on the right for a chevron. Checkboxes use teal. Focus is a teal outline (2px), offset (3px), including the horizontally scrolling summary table region.
 
 ### Navigation
 
-Six dataset controls sit in persistent left navigation. Desktop rows pair an icon and label; active rows use pale green, dark teal text and a small trailing dot. At compact widths they stack; mobile uses short visible labels with full accessible names and aria-current retained. The bottom workspace signature anchors the rail when space permits.
+Four permission-aware modules sit in persistent left navigation: Hartă, Analiză, Date and Administrare. Public visitors see Hartă and Analiză; other destinations follow effective permissions. Map datasets (communities, entrepreneurs, partners and overlap) are compact subfilters inside the map tools panel. Desktop rows pair an icon and label; active rows use pale green, dark teal text and a small trailing dot. At compact widths they stack; mobile uses short visible labels with full accessible names and aria-current retained. The bottom workspace signature anchors the rail when space permits.
 
 A labeled toggle exposes aria-expanded for mobile tools. Close, backdrop and Escape dismiss the drawer; Escape returns focus to the toggle. When a native dialog is open, Escape acts on the dialog without closing the underlying drawer. Selecting map records exposes their details.
 
@@ -214,6 +238,16 @@ Drawing tools use a native disclosure; its plus rotates (45deg) when expanded. F
 ### Dialogs
 
 Native dialogs use white rounded surfaces over a slate backdrop, support Escape/backdrop dismissal and return focus to the opener. Actions align to the end and wrap on small screens. Form and reading text share Host Grotesk.
+
+### Module workspaces
+
+Baseline Analytics uses a flat KPI strip for visible communities, distinct zones, records to verify and records without geometry, followed by country bars, registry quality and a territorial comparison table. All values derive from accessible data and the selected country. Loading, unavailable and empty states remain explicit. Country actions return to the map and clear hidden map-only filters.
+
+Data uses flat dataset rows and permission-aware import, manual-add, export and administrator archive actions. Export preserves accessible records with null geometry. Administration uses compact tabs, selectable lists and detail forms: scoped reviewers progress proposals; administrators approve/reject/publish, manage existing users and multiple geographic grants, inspect audit/version snapshots and restore archived records. Privacy review, public visibility and geometry disclosure are separate controls; publication choices start unchecked. REDI classification remains separate from proposal workflow status. These controls extend existing forms and tables, without a new visual identity.
+
+### Authentication and public proposals
+
+Login uses the standard dialog with labeled email/password fields, busy feedback and an inline error. Public proposals use the wide dialog, paired fields on desktop and a single mobile column, a consent control and server-confirmed receipt. A draft can leave the dialog to draw a boundary on the map and return with its entered fields and geometry; consent must be confirmed in the returned form. Escape cancels drawing. A proposal is not an automatically published registry record.
 
 ### Map instruments
 

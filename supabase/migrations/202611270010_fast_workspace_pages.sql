@@ -1,0 +1,31 @@
+begin;
+
+-- With 4,500+ outlines each page built every visible record before taking its slice, so parallel
+-- page requests exceeded the statement limit. A page now picks its rows from the small columns
+-- first and only then reads the large documents of those rows. Access rules are unchanged.
+create or replace function public.redi_workspace_page(p_offset integer, p_limit integer) returns jsonb language sql stable security definer set search_path='' as $$
+ with me as (select public.redi_role() as role),
+ page as (
+  select r.collection,r.created_at,r.id
+  from public.redi_records r cross join me
+  where r.deleted_at is null and case
+    when me.role='public_viewer' then r.public_view is not null
+    when me.role='administrator' then true
+    else r.public_view is not null or (coalesce(r.data->>'visibility','restricted')<>'confidential' and public.redi_in_scope(r.data)) end
+  order by r.collection,r.created_at,r.id
+  offset greatest(coalesce(p_offset,0),0) limit least(greatest(coalesce(p_limit,500),1),2000)
+ ), visible as (
+  select p.collection,p.created_at,p.id,coalesce(
+   case when me.role='administrator' then r.data-'publicRecord'-'publicGeometry'
+        when me.role='public_viewer' then null
+        when coalesce(r.data->>'visibility','restricted')<>'confidential' and public.redi_in_scope(r.data) then r.data-'publicRecord'-'publicGeometry'
+   end, r.public_view) as data
+  from page p join public.redi_records r on r.collection=p.collection and r.id=p.id cross join me
+ ) select jsonb_build_object('communities',coalesce(jsonb_agg(data order by created_at,id) filter(where collection='communities'),'[]'::jsonb),'entrepreneurs',coalesce(jsonb_agg(data order by created_at,id) filter(where collection='entrepreneurs'),'[]'::jsonb),'clients',coalesce(jsonb_agg(data order by created_at,id) filter(where collection='clients'),'[]'::jsonb),'localities',coalesce(jsonb_agg(data order by created_at,id) filter(where collection='localities'),'[]'::jsonb),'count',count(*)) from visible;
+$$;
+revoke all on function public.redi_workspace_page(integer,integer) from public;
+grant execute on function public.redi_workspace_page(integer,integer) to anon,authenticated;
+create index if not exists redi_records_page_order on public.redi_records(collection,created_at,id) where deleted_at is null;
+
+notify pgrst,'reload schema';
+commit;

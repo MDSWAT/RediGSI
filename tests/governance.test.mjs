@@ -44,6 +44,16 @@ test("governance enforces roles, geography, privacy, proposal transitions, audit
     const pagesSQL = migration("202611270008_workspace_pages.sql");
     await db.exec(pagesSQL);
     await db.exec(pagesSQL);
+    const fastPagesSQL = migration("202611270010_fast_workspace_pages.sql");
+    await db.exec(fastPagesSQL);
+    await db.exec(fastPagesSQL);
+    const serviceSQL = migration("202611270009_service_role_public_view.sql");
+    await db.exec(serviceSQL);
+    await db.exec(serviceSQL);
+    // Import scripts write as the service role; the stored public projection must not block them.
+    await db.exec(`set role service_role; insert into public.redi_records(collection,id,data) values ('communities','service-write','{"id":"service-write","name":"x","visibility":"public","publicationStatus":"published","privacyReviewed":true,"publicRecord":{"name":"x"}}'); reset role;`);
+    assert.equal((await db.query(`select public_view->>'name' as name from public.redi_records where id='service-write'`)).rows[0].name, "x");
+    await db.exec(`delete from public.redi_records where id='service-write'`);
     await db.query(
       `insert into public.redi_memberships(user_id,role,scopes,can_review) values ($1,'administrator','[]',true),($2,'gis_editor','[{"country":"RO","county":"Cluj"}]',true),($3,'authorized_viewer','[{"country":"RO"}]',false)`,
       [ADMIN, EDITOR, VIEWER],

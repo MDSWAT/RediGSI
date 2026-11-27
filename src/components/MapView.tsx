@@ -72,7 +72,7 @@ const esc = (s: unknown) =>
 const COLORS = {
   validat: "#206457",
   propus: "#f07400",
-  de_validat: "#755ca8",
+  de_validat: "#ff5a00",
   sub_prag: "#64748b",
   selected: "#193c34",
   mixed: "#9c9ca6",
@@ -287,8 +287,8 @@ export default function MapView(props: Props) {
   const rendererOptions: Pick<L.PathOptions, "renderer"> = hatched
     ? { renderer: svgRenderer }
     : {};
-  const restFill = (region: boolean) =>
-    hatched ? (region ? 0.35 : 0.6) : region ? 0.07 : 0.16;
+  const restFill = (region: boolean, hatch = hatched) =>
+    hatch ? (region ? 0.35 : 0.6) : region ? 0.07 : 0.16;
   const onSelect = useRef(props.onSelectCommunity);
   useEffect(() => {
     onSelect.current = props.onSelectCommunity;
@@ -337,16 +337,20 @@ export default function MapView(props: Props) {
         : mixed
           ? "mixed"
           : (c?.status ?? "validat");
+      // Outlines still awaiting validation are always hatched, so they stand out without the toggle.
+      const hatch = hatched || (!mixed && c?.status === "de_validat");
       return {
+        // Hatch patterns need SVG; the renderer is fixed before the outline joins the map.
+        renderer: hatch ? svgRenderer : undefined,
         color: COLORS[tone],
-        fillColor: hatched ? `url(#hatch-${tone})` : COLORS[tone],
+        fillColor: hatch ? `url(#hatch-${tone})` : COLORS[tone],
         weight: sel ? 3.5 : 1.5,
         opacity: 0.95,
         fillOpacity: sel
-          ? hatched
+          ? hatch
             ? 0.9
             : 0.28
-          : restFill(c?.boundary?.scope === "region"),
+          : restFill(c?.boundary?.scope === "region", hatch),
         dashArray:
           c?.boundary && c.boundary.scope !== "locality"
             ? "12 6"
@@ -356,7 +360,7 @@ export default function MapView(props: Props) {
       };
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps -- restFill depends only on hatched
-    [byId, selectedId, hatched],
+    [byId, selectedId, hatched, svgRenderer],
   );
   const styleRef = useRef(communityStyle);
   useEffect(() => {
@@ -507,7 +511,10 @@ export default function MapView(props: Props) {
                     records.some((r) => r.id === selectedRef.current);
                   layer.on("mouseover", () => {
                     if (!selected())
-                      layer.setStyle({ weight: 3, fillOpacity: hatched ? 0.9 : 0.3 });
+                      layer.setStyle({
+                        weight: 3,
+                        fillOpacity: String(layer.options.fillColor).startsWith("url(") ? 0.9 : 0.3,
+                      });
                   });
                   layer.on("mouseout", () => layer.setStyle(styleRef.current(f)));
                 }

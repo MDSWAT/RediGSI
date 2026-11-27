@@ -1,4 +1,5 @@
 import { BOUNDARY_SCOPE_LABELS } from "@/lib/boundaries";
+import { ACCURACY_LABELS } from "@/lib/geocoding";
 import { center } from "@/lib/geo";
 import type { Community } from "@/lib/types";
 
@@ -49,6 +50,18 @@ export default function CommunityDetails({
           {c.geometry
             ? "Poziție orientativă: centrul localității sau al municipalității, din GeoNames. Nu delimitează comunitatea."
             : "Localizare neconfirmată. Înregistrarea este păstrată integral, fără un punct presupus pe hartă."}
+        </p>
+      )}
+      {c.geocoding && (
+        <p className="location-note">
+          Sugestie de geocodare aleasă manual:{" "}
+          {ACCURACY_LABELS[c.geocoding.accuracy]} · {c.geocoding.source}.
+        </p>
+      )}
+      {c.geometrySource === "manual_correction" && (
+        <p className="location-note">
+          Geometrie corectată manual. Precizia nu este confirmată automat;
+          conturul original rămâne în istoric.
         </p>
       )}
       {c.classification && <p>Clasificare: {c.classification}</p>}

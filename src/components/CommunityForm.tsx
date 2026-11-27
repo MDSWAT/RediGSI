@@ -1,4 +1,5 @@
 "use client";
+import { useClassifications } from "@/lib/classifications";
 import { useMemo, useState } from "react";
 import type { Geometry } from "geojson";
 import type {
@@ -36,6 +37,7 @@ export default function CommunityForm({
   onSave,
   onCancel,
 }: Props) {
+  const classifications = useClassifications();
   const geom = existing ? existing.geometry : geometry!;
   const idx = useMemo(() => buildLocalityIndex(db), [db]);
   const suggestion = useMemo(() => {
@@ -56,6 +58,7 @@ export default function CommunityForm({
     population: existing?.population?.toString() ?? "",
     notes: existing?.notes ?? "",
   });
+  const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const set =
     (k: keyof typeof f) =>
@@ -95,6 +98,7 @@ export default function CommunityForm({
     e.preventDefault();
     if (!f.name.trim()) return;
     setSaving(true);
+    setError("");
     try {
       await onSave({
         name: f.name.trim(),
@@ -114,6 +118,8 @@ export default function CommunityForm({
         extra: existing?.extra,
         createdAt: existing?.createdAt,
       });
+    } catch (e) {
+      setError((e as Error).message);
     } finally {
       setSaving(false);
     }
@@ -148,11 +154,17 @@ export default function CommunityForm({
         <label>
           Clasificare comunitate
           <input
+            list="community-classification-list"
             value={f.classification}
             onChange={set("classification")}
             placeholder="De exemplu, rurală sau urbană"
           />
         </label>
+        <datalist id="community-classification-list">
+          {classifications.map((c) => (
+            <option key={c.id} value={c.name} />
+          ))}
+        </datalist>
         <div className="row">
           <label>
             Tip
@@ -216,6 +228,11 @@ export default function CommunityForm({
           Observații
           <textarea rows={3} value={f.notes} onChange={set("notes")} />
         </label>
+        {error && (
+          <p className="error" role="alert">
+            {error}
+          </p>
+        )}
         <div className="actions">
           <button type="button" onClick={onCancel}>
             Renunță

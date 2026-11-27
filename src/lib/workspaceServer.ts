@@ -38,6 +38,11 @@ export function rpcError(error: { code?: string; message: string }) {
     return new AccessError(
       "Nu aveți permisiunea necesară pentru această operație.",
     );
+  if (error.code === "23505")
+    return new AccessError(
+      "O înregistrare cu această denumire există deja.",
+      409,
+    );
   if (error.code === "40001")
     return new AccessError(
       "Înregistrarea a fost modificată. Reîncărcați înainte de a continua.",
@@ -45,6 +50,11 @@ export function rpcError(error: { code?: string; message: string }) {
     );
   if (error.code === "P0002")
     return new AccessError("Înregistrarea nu a fost găsită.", 404);
+  if (error.code === "P0001" && error.message.includes("Geocoder"))
+    return new AccessError(
+      "Prea multe căutări. Reîncercați peste câteva secunde.",
+      429,
+    );
   if (error.code === "P0001")
     return new AccessError(
       "Limita de propuneri a fost atinsă. Reîncercați mai târziu.",

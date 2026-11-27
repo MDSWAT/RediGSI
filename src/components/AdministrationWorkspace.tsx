@@ -1,9 +1,13 @@
 "use client";
+import ClassificationManager from "./ClassificationManager";
 import { useCallback, useEffect, useState } from "react";
 import {
   allowedTransitions,
   canReview,
+  EXPORT_GROUP_LABELS,
+  EXPORT_GROUPS,
   isAdmin,
+  type ExportGroup,
   PROPOSAL_LABELS,
   ROLE_LABELS,
   type AccessProfile,
@@ -26,6 +30,7 @@ interface Member {
   scopes: GeographicScope[];
   canReview: boolean;
   canExport: boolean;
+  exportGroups: ExportGroup[];
 }
 interface Audit {
   id: string;
@@ -45,7 +50,8 @@ interface Deleted {
   name: string;
   deletedAt: string;
 }
-type Section = "proposals" | "members" | "audit" | "deleted";
+type Section =
+  "proposals" | "members" | "audit" | "deleted" | "classifications";
 const date = (s: string) => new Date(s).toLocaleString("ro-RO");
 async function request(url: string, method = "GET", body?: unknown) {
   const r = await fetch(url, {
@@ -151,6 +157,7 @@ export default function AdministrationWorkspace({
             ...(isAdmin(access)
               ? [
                   ["members", "Utilizatori"],
+                  ["classifications", "Clasificări"],
                   ["audit", "Jurnal"],
                   ["deleted", "Restaurare"],
                 ]
@@ -324,16 +331,11 @@ export default function AdministrationWorkspace({
                           Permite vizualizarea informațiilor de bază fără
                           autentificare.
                         </label>
-                        <label className="check-filter consent-field">
-                          <input
-                            type="checkbox"
-                            disabled={!publicVisibility}
-                            checked={shareGeometry}
-                            onChange={(e) => setShareGeometry(e.target.checked)}
-                          />
-                          Publică și geometria exactă, după evaluarea
-                          riscurilor.
-                        </label>
+                        <p className="muted small">
+                          Geometria exactă nu se publică direct din propunere.
+                          După publicare, folosiți „Revizuiește publicarea” pe
+                          comunitate pentru evaluarea riscului.
+                        </p>
                         <p className="muted small">
                           Implicit, înregistrarea publicată rămâne
                           restricționată. Notele și informațiile de susținere nu
@@ -401,6 +403,9 @@ export default function AdministrationWorkspace({
             )}
           </div>
         </>
+      )}
+      {section === "classifications" && isAdmin(access) && (
+        <ClassificationManager />
       )}
       {section === "members" && isAdmin(access) && (
         <>
@@ -490,6 +495,40 @@ export default function AdministrationWorkspace({
                   />
                   Poate exporta câmpurile permise
                 </label>
+                {member.role !== "public_viewer" &&
+                  member.role !== "administrator" &&
+                  member.canExport && (
+                    <fieldset className="scope-editor">
+                      <legend>Câmpuri sensibile la export</legend>
+                      <p className="muted small">
+                        Câmpurile de bază (zonă administrativă, tip, statut)
+                        sunt incluse mereu. Datele de contact, numele persoanelor
+                        și notele nu se exportă niciodată.
+                      </p>
+                      {EXPORT_GROUPS.map((group) => (
+                        <label
+                          className="check-filter consent-field"
+                          key={group}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={member.exportGroups.includes(group)}
+                            onChange={(e) =>
+                              setMember({
+                                ...member,
+                                exportGroups: e.target.checked
+                                  ? [...member.exportGroups, group]
+                                  : member.exportGroups.filter(
+                                      (g) => g !== group,
+                                    ),
+                              })
+                            }
+                          />
+                          {EXPORT_GROUP_LABELS[group]}
+                        </label>
+                      ))}
+                    </fieldset>
+                  )}
                 {member.role !== "administrator" && (
                   <>
                     <h3>Teritorii alocate</h3>

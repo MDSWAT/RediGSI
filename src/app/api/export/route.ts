@@ -1,3 +1,8 @@
+import {
+  filterRows,
+  FILTER_KEYS,
+  type WorkspaceFilters,
+} from "@/lib/workspaceFilters";
 import { accessProfile } from "@/lib/workspaceServer";
 import { canExport } from "@/lib/access";
 import { isCollection } from "@/lib/db";
@@ -21,12 +26,12 @@ export async function GET(request: Request) {
       await workspaceClient()
     ).rpc("redi_export_data", { p_collection: collection });
     if (error) throw rpcError(error);
-    const country = url.searchParams.get("country");
-    return privateJSON(
-      country
-        ? data.filter((row: { country?: string }) => row.country === country)
-        : data,
-    );
+    const filters = Object.fromEntries(
+      FILTER_KEYS.map((key) => [key, url.searchParams.get(key) ?? ""]),
+    ) as unknown as WorkspaceFilters;
+    if (Object.values(filters).some((v) => v.length > 200))
+      throw new AccessError("Filtru prea lung.", 400);
+    return privateJSON(filterRows(collection, data, filters));
   } catch (e) {
     return apiError(e);
   }

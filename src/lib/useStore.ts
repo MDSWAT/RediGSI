@@ -1,4 +1,5 @@
 "use client";
+import { importBatches } from "./importBatches";
 import { useCallback, useEffect, useState } from "react";
 import type { BaseRecord, CollectionName, DB } from "./types";
 
@@ -73,15 +74,24 @@ export function useStore() {
     async <T extends object>(c: CollectionName, items: T[]) => {
       // Chunk large imports to keep request bodies reasonable.
       const out: BaseRecord[] = [];
-      for (let i = 0; i < items.length; i += 2000) {
-        const res = await call<{ items: BaseRecord[] }>(
-          `/api/data/${c}`,
-          "POST",
-          { items: items.slice(i, i + 2000) },
-        );
-        out.push(...res.items);
+      const batches = importBatches(items);
+      try {
+        for (const batch of batches) {
+          const res = await call<{ items: BaseRecord[] }>(
+            `/api/data/${c}`,
+            "POST",
+            { items: batch },
+          );
+          out.push(...res.items);
+          apply(c, (l) => [...l, ...res.items]);
+        }
+      } catch (e) {
+        if (out.length)
+          throw new Error(
+            `${out.length} înregistrări au fost salvate înainte de întrerupere. Verificați duplicatele înainte de reluare. ${String(e)}`,
+          );
+        throw e;
       }
-      apply(c, (l) => [...l, ...out]);
       return out;
     },
     [],

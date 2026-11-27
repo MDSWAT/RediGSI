@@ -1,4 +1,5 @@
 "use client";
+import { useClassifications } from "@/lib/classifications";
 import { useState } from "react";
 import type { Geometry } from "geojson";
 import Dialog from "./Dialog";
@@ -25,6 +26,7 @@ export default function ProposalDialog({
   onDraw: (fields: ProposalFields) => void;
   initialValues?: ProposalFields;
 }) {
+  const classifications = useClassifications();
   const [f, setF] = useState<ProposalFields>(
     initialValues ?? {
       name: "",
@@ -158,6 +160,7 @@ export default function ProposalDialog({
               <label>
                 Clasificare comunitate
                 <input
+                  list="proposal-classification-list"
                   value={f.classification}
                   onChange={field("classification")}
                   placeholder="De exemplu, rurală sau urbană"
@@ -165,6 +168,11 @@ export default function ProposalDialog({
                 />
               </label>
             </div>
+            <datalist id="proposal-classification-list">
+              {classifications.map((c) => (
+                <option key={c.id} value={c.name} />
+              ))}
+            </datalist>
             {geometry ? (
               <div className="preview">
                 Geometria desenată pe hartă este atașată propunerii.

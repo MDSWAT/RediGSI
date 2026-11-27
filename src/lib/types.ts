@@ -1,3 +1,4 @@
+import type { GeocodingMetadata } from "./geocoding";
 import type { Geometry } from "geojson";
 
 export type CollectionName =
@@ -17,6 +18,8 @@ export const COLLECTION_LABELS: Record<CollectionName, string> = {
 };
 
 export interface BaseRecord {
+  datasetId?: string;
+  datasetName?: string;
   id: string;
   createdAt?: string;
   visibility?: "public" | "restricted" | "confidential";
@@ -57,6 +60,9 @@ export interface AdministrativeBoundary {
 }
 
 export interface Community extends BaseRecord {
+  geocoding?: GeocodingMetadata;
+  geometrySource?: "manual_correction";
+  geometryUpdatedAt?: string;
   classification?: string;
   region?: string;
   publicationStatus?: "draft" | "published";
@@ -89,6 +95,7 @@ export interface Entrepreneur extends BaseRecord, Located {
 }
 
 export interface PartnerClient extends BaseRecord, Located {
+  currency?: string;
   partner: string;
   name: string;
   amount?: number;

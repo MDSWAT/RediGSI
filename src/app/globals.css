@@ -2039,3 +2039,248 @@ tr.hit {
     font-size: 11px;
   }
 }
+
+.map-toolbar-actions {
+  display: flex;
+  gap: 8px;
+  pointer-events: auto;
+}
+.map-toolbar-actions button[aria-pressed="true"] {
+  color: var(--primary);
+  background: var(--selected);
+}
+.map .cluster-count {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0;
+  pointer-events: none;
+}
+.cluster-members {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 190px;
+  max-height: 320px;
+  overflow-y: auto;
+}
+.cluster-members > button {
+  justify-content: flex-start;
+  text-align: left;
+  font-size: 12px;
+  padding: 7px 9px;
+}
+.cluster-members .btn-row {
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+}
+.geometry-edit-marker {
+  padding:11px;
+  background: transparent;
+}
+.geometry-edit-marker span {
+  display: block;
+  width: 22px;
+  height: 22px;
+  background: var(--primary);
+  border: 3px solid white;
+  border-radius: 50%;
+  box-shadow: var(--floating-shadow);
+  cursor: grab;
+}
+.geometry-edit-toolbar {
+  position: absolute;
+  z-index: 950;
+  top: 66px;
+  left: 70px;
+  right: 70px;
+  padding: 14px;
+  background: var(--panel);
+  box-shadow: var(--floating-shadow);
+  border-radius: 8px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.geometry-edit-toolbar > b {
+  font-size: 13px;
+}
+.geometry-edit-toolbar > span {
+  flex: 1 1 200px;
+  font-size: 12px;
+  color: var(--muted);
+}
+.geometry-edit-toolbar .error {
+  flex-basis: 100%;
+}
+.geometry-edit-toolbar button {
+  font-size: 12px;
+}
+@media (max-width: 760px) {
+  .map-toolbar-actions {
+    gap: 6px;
+  }
+  .map-toolbar-actions button {
+    gap: 4px;
+    padding-inline: 7px;
+  }
+  .geometry-edit-toolbar {
+    left: 52px;
+    right: 64px;
+    top: 64px;
+    padding: 10px;
+  }
+  .geometry-edit-toolbar > span {
+    font-size: 11px;
+  }
+  .geometry-edit-toolbar button {
+    padding: 6px 8px;
+    min-height: 32px;
+    font-size: 11px;
+  }
+}
+
+.workspace-filters {
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 16px;
+  margin-bottom: 8px;
+}
+.workspace-filters > summary {
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 500;
+  padding-block: 8px;
+}
+.workspace-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-block: 12px;
+}
+.panel .workspace-filter-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+.workspace-filters > button {
+  margin-top: 10px;
+  font-size: 11px;
+  min-height: 30px;
+}
+@media (max-width: 760px) {
+  .workspace-filter-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+}
+
+.finance-heading {
+  margin-top: 26px;
+}
+
+.geocode-search {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+.geocode-search > summary {
+  font-size: 13px;
+  cursor: pointer;
+  margin-bottom: 12px;
+}
+.geocode-search > label {
+  margin-block: 12px;
+}
+.geocode-search > button {
+  font-size: 12px;
+}
+.geocode-results {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-block: 12px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.geocode-results button {
+  text-align: left;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+}
+.geocode-results button span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+/* Publication privacy assessment. */
+.risk-panel {
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--ok);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  background: var(--bg);
+}
+.risk-panel ul {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+.risk-panel p {
+  margin: 4px 0 0;
+}
+.risk-medium {
+  border-left-color: var(--warn);
+}
+.risk-medium strong {
+  color: var(--warn);
+}
+.risk-high {
+  border-left-color: var(--danger);
+}
+.risk-high strong {
+  color: var(--danger);
+}
+.export-scope {
+  margin-top: 12px;
+}
+
+/* Field operations: touch-sized map controls, safe areas and no focus zoom on phones. */
+@media (pointer: coarse) {
+  .leaflet-touch .leaflet-bar a {
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+    font-size: 20px;
+  }
+  .leaflet-touch .leaflet-control-layers-toggle {
+    width: 44px;
+    height: 44px;
+  }
+  .leaflet-control-layers-list label {
+    min-height: 40px;
+    display: flex;
+    align-items: center;
+  }
+}
+@media (max-width: 760px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+  .leaflet-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .navigation {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+  .modal .actions {
+    position: sticky;
+    bottom: -20px;
+    background: var(--panel);
+    padding-block: 12px;
+  }
+}

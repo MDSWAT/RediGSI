@@ -76,7 +76,7 @@ Opțiunea **Sumar REDI pe țară** creează un sumar manual separat, cu sursă �
 3. **Antreprenori** – sunt legați automat de comunități (în poligon / la ≤300 m de stradă / ≤500 m de punct / aceeași localitate dacă e singura comunitate acolo).
 4. **Clienți parteneri**.
 
-Formate acceptate: CSV (separator `,` `;` sau tab), XLSX/XLS/ODS, GeoJSON. Coloanele sunt potrivite automat după nume (RO/EN) și pot fi corectate manual; coloanele necunoscute se păstrează și apar la export.
+Formate acceptate: CSV (separator `,` `;` sau tab), XLSX/XLS/ODS, GeoJSON și KML. Coloanele sunt potrivite automat după nume (RO/EN) și pot fi corectate manual; coloanele necunoscute se păstrează în datele originale, dar sunt excluse din exporturile cu listă de câmpuri permisă.
 
 Poziția se ia, în ordine, din: coloana WKT/GeoJSON → lat/lng → coloana „lat, lng” → nomenclator (cod SIRUTA sau localitate + județ). Rândurile plasate la centrul localității sunt marcate `approx` și nu intră în calculul „în perimetrul comunității”.
 
@@ -95,8 +95,7 @@ Fișiere exemplu (date fictive) în `public/samples/`. Codurile SIRUTA din exemp
 ## Pași următori pentru producție
 
 - Indexare și funcții PostGIS pentru interogări geografice la volume mari.
-- Autentificare și roluri (cine poate valida comunități).
-- Editarea geometriei comunităților existente.
+- Verificarea operațională a rolurilor și editării pe proiectul Supabase găzduit.
 - Granițe administrative (UAT) pentru suprapunere pe poligoane, nu doar pe cod.
 
 
@@ -140,8 +139,8 @@ Aplicarea migrării și bootstrap-ul pe proiectul găzduit nu au fost executate 
 ### Cele patru module
 
 - **Hartă**: comunități, antreprenori, parteneri și suprapunere ca selecții în panoul hărții. Desenarea directă și formularele de modificare apar numai editorilor. Publicul poate trimite separat o propunere punctuală sau un contur; navigarea Google Maps/Waze apare numai când utilizatorul are deja acces la geometrie.
-- **Analiză**: indicatori de bază, distribuția pe țări, calitatea registrului și comparații calculate exclusiv din datele accesibile. Selecția de țară se păstrează la deschiderea hărții. Sumarele originale, care pot conține foi din mai multe țări, sunt accesibile numai rolurilor cu acces global; sursa CSV originală este descărcabilă numai de administrator.
-- **Date**: importurile existente CSV/Excel/GeoJSON cu potrivirea coloanelor, adăugare manuală și export printr-un endpoint protejat. Publicul nu vede acest modul. Exportul exclude numele persoanelor din afaceri/portofolii, contactele, notele și coloanele suplimentare. Exporturile respectă teritoriile și filtrul de țară. Administratorii pot arhiva selecția vizibilă și o pot restaura ulterior.
+- **Analiză**: indicatori ai registrului, distribuția pe țări, calitatea datelor, demografie și comparații calculate exclusiv din datele accesibile. Filtrele comune se păstrează la deschiderea hărții. Sumarele originale, care pot conține foi din mai multe țări, sunt accesibile numai rolurilor cu acces global; sursa CSV originală este descărcabilă numai de administrator.
+- **Date**: importuri CSV/Excel/GeoJSON/KML cu potrivirea coloanelor, adăugare manuală și export printr-un endpoint protejat. Publicul nu vede acest modul. Exportul exclude numele persoanelor din afaceri/portofolii, contactele, notele și coloanele suplimentare. Exporturile respectă teritoriile și filtrele comune. Administratorii pot arhiva selecția vizibilă și o pot restaura ulterior.
 - **Administrare**: propuneri pentru editorii cu drept explicit de revizuire; utilizatori, aprobarea/publicarea, jurnalul, versiunile și restaurarea pentru administratori. Ultimul administrator activ nu poate fi dezactivat sau retrogradat din aplicație.
 
 ### Reguli de acces și geografie
@@ -166,4 +165,22 @@ Clasificarea comunității și statusul REDI importat rămân independente de et
 
 `npm test` include teste PostgreSQL/PGlite pentru roluri, izolarea datelor și teritoriilor, publicare, conflicte de etapă, exporturi, audit și restaurare, plus testele existente ale catalogului și importurilor. Datele din teste sunt exclusiv sintetice și nu sunt folosite ca fallback în aplicație.
 
-Rămân pentru etapele următoare: clustering dinamic, editarea geometriei existente direct pe hartă, limite administrative suplimentare verificate, nomenclatoare configurabile de clasificări, KML, deduplicare asistată, geocodare și evaluarea preciziei, analize financiare/de penetrare avansate, hărți tematice suplimentare și validarea operațională pe proiectul găzduit. Datele și funcțiile existente de geometrie/proveniență rămân păstrate.
+Rămân pentru etapele următoare: limite administrative suplimentare verificate, interogări/permisiuni de incluziune PostGIS, analize financiare și de penetrare avansate, hărți tematice suplimentare și validarea operațională pe proiectul găzduit. Datele și funcțiile existente de geometrie/proveniență rămân păstrate.
+
+## Extinderea hărții și a administrării datelor
+
+Implementarea locală adaugă gruparea dinamică a punctelor pe fiecare strat. Punctele coincidente rămân accesibile individual din lista paginată a grupului. Editorii pot muta puncte, corecta GPS și modifica vârfurile geometriilor existente. Salvarea este explicită, verifică geometria anterioară pentru conflicte și păstrează versiunea veche în audit. Anularea nu modifică baza de date.
+
+Aplicați, în ordine după migrarea de guvernanță, `supabase/migrations/202611270002_geometry_editing.sql` și `supabase/migrations/202611270003_data_management.sql`. Sunt aditive și repetabile; testele PostgreSQL le aplică inclusiv de două ori. Aceste migrări nu au fost aplicate proiectului găzduit: tokenul disponibil primește 403 pentru proiectul configurat. Nu s-a atribuit nici primul administrator.
+
+Versiunea publică aprobată a unei comunități este un instantaneu separat de documentul de lucru. Editările ulterioare nu o schimbă automat. Administratorul republică explicit după evaluarea confidențialității; distribuirea geometriei exacte rămâne o opțiune separată, debifată implicit. Republicarea verifică și versiunea înregistrării pentru a evita aprobarea unor date schimbate între timp.
+
+Filtrele de țară, județ/regiune, localitate, domeniu, partener și an sunt comune hărții, analizelor și exporturilor. Domeniul se aplică antreprenorilor, iar partenerul/anul clienților; comunitățile respectă filtrele geografice. Căutarea și statusul din catalog rămân filtre locale ale hărții. Indicatorii includ intervale demografice fără însumarea estimărilor suprapuse, acoperirea registrului, distribuția domeniilor, rețeaua partenerilor și sume separate pe monede explicite. Valorile fără monedă nu sunt însumate. Acoperirea registrului nu reprezintă penetrarea întregii piețe.
+
+Importul KML păstrează proprietățile originale, geometriile și elementele fără localizare. Fișierele KML sunt limitate la 25 MB și nu acceptă declarații externe XML. Revizuirea duplicatelor probabile este asistată: excluderea cere o alegere explicită, iar rândurile distincte care împart același contur nu sunt unite. Loturile au limite de dimensiune; o întrerupere raportează câte rânduri au fost deja confirmate de server. Modulul Date arată loturile importate. Administratorii pot crea, modifica sau arhiva sugestiile de clasificare fără a rescrie valorile istorice; numele active sunt publice, descrierile interne nu.
+
+### Geocodare opțională
+
+Configurați numai pe server `REDI_GEOCODER_URL` (HTTPS, endpoint compatibil Nominatim), `REDI_GEOCODER_USER_AGENT` și, opțional, `REDI_GEOCODER_API_KEY`. Folosiți un furnizor aprobat de organizație sau un serviciu propriu. Nu există un furnizor implicit; endpointul public `nominatim.openstreetmap.org` este respins, în acord cu [politica serviciului public](https://operations.osmfoundation.org/policies/nominatim/).
+
+Căutarea pornește numai la cererea și cu acordul explicit al editorului, pentru o comunitate din teritoriul său. Nu există autocomplete sau transmitere în fundal. Rezultatele sunt constrânse la țară și atributele administrative disponibile; limita comună tuturor instanțelor este o cerere pe secundă. Alegerea unui rezultat completează formularul, iar coordonatele sunt salvate separat. Tipul rezultatului (adresă, stradă, localitate, regiune) descrie proveniența, nu o precizie metrică garantată. Fără aceste variabile, corecția GPS manuală rămâne disponibilă.

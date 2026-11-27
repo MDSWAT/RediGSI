@@ -1,12 +1,32 @@
+import { parseKML } from "./kml";
 import Papa from "papaparse";
 import * as XLSX from "xlsx";
 import type { Geometry } from "geojson";
-import type { CollectionName, Community, CommunityStatus, CommunitySource, DB, Entrepreneur, Locality, PartnerClient } from "./types";
+import type {
+  CollectionName,
+  Community,
+  CommunityStatus,
+  CommunitySource,
+  DB,
+  Entrepreneur,
+  Locality,
+  PartnerClient,
+} from "./types";
 import { importedBoundary } from "./boundaries";
 
 import {
-  assignCommunity, buildLocalityIndex, center, enrich, kindForGeometry, norm, normCountry, normSiruta,
-  parseGeometry, parseLatLngPair, parseNum, validLatLng,
+  assignCommunity,
+  buildLocalityIndex,
+  center,
+  enrich,
+  kindForGeometry,
+  norm,
+  normCountry,
+  normSiruta,
+  parseGeometry,
+  parseLatLngPair,
+  parseNum,
+  validLatLng,
 } from "./geo";
 
 export type Row = Record<string, unknown>;
@@ -21,28 +41,76 @@ export interface ParsedFile {
   sheet?: string;
 }
 
-export async function parseFile(file: File, sheet?: string): Promise<ParsedFile> {
+export async function parseFile(
+  file: File,
+  sheet?: string,
+): Promise<ParsedFile> {
+  if (file.size > 25_000_000)
+    throw new Error("Fișierul depășește limita de 25 MB.");
   const lower = file.name.toLowerCase();
+  if (lower.endsWith(".kml")) {
+    const fc = parseKML(await file.text(), new DOMParser());
+    const rows = fc.features.map((f) => ({ ...f.properties }));
+    return {
+      name: file.name,
+      headers: headersOf(rows),
+      rows,
+      geometries: fc.features.map((f) => f.geometry),
+    };
+  }
 
   if (lower.endsWith(".geojson") || lower.endsWith(".json")) {
     const json = JSON.parse(await file.text());
     const features: { properties?: Row; geometry?: Geometry | null }[] =
-      json.type === "FeatureCollection" ? json.features : json.type === "Feature" ? [json] : Array.isArray(json) ? json.map((p: Row) => ({ properties: p })) : [];
+      json.type === "FeatureCollection"
+        ? json.features
+        : json.type === "Feature"
+          ? [json]
+          : Array.isArray(json)
+            ? json.map((p: Row) => ({ properties: p }))
+            : [];
     const rows = features.map((f) => ({ ...(f.properties ?? {}) }));
-    return { name: file.name, headers: headersOf(rows), rows, geometries: features.map((f) => f.geometry ?? null) };
+    return {
+      name: file.name,
+      headers: headersOf(rows),
+      rows,
+      geometries: features.map((f) => f.geometry ?? null),
+    };
   }
 
-  if (lower.endsWith(".xlsx") || lower.endsWith(".xls") || lower.endsWith(".ods")) {
+  if (
+    lower.endsWith(".xlsx") ||
+    lower.endsWith(".xls") ||
+    lower.endsWith(".ods")
+  ) {
     const wb = XLSX.read(await file.arrayBuffer(), { type: "array" });
-    const name = sheet && wb.SheetNames.includes(sheet) ? sheet : wb.SheetNames[0];
-    const rows = XLSX.utils.sheet_to_json<Row>(wb.Sheets[name], { defval: "", raw: false });
-    return { name: file.name, headers: headersOf(rows), rows, sheets: wb.SheetNames, sheet: name };
+    const name =
+      sheet && wb.SheetNames.includes(sheet) ? sheet : wb.SheetNames[0];
+    const rows = XLSX.utils.sheet_to_json<Row>(wb.Sheets[name], {
+      defval: "",
+      raw: false,
+    });
+    return {
+      name: file.name,
+      headers: headersOf(rows),
+      rows,
+      sheets: wb.SheetNames,
+      sheet: name,
+    };
   }
 
   // CSV / TXT (delimiter auto-detected: , ; tab)
   const text = await file.text();
-  const res = Papa.parse<Row>(text, { header: true, skipEmptyLines: "greedy", transformHeader: (h) => h.trim() });
-  return { name: file.name, headers: res.meta.fields ?? headersOf(res.data), rows: res.data };
+  const res = Papa.parse<Row>(text, {
+    header: true,
+    skipEmptyLines: "greedy",
+    transformHeader: (h) => h.trim(),
+  });
+  return {
+    name: file.name,
+    headers: res.meta.fields ?? headersOf(res.data),
+    rows: res.data,
+  };
 }
 
 function headersOf(rows: Row[]): string[] {
@@ -93,8 +161,16 @@ export function buildRecords(
 
   file.rows.forEach((row, i) => {
     const get = (k: string) => (mapping[k] ? row[mapping[k]] : undefined);
-    const extra: Record<string, string> = {};
-    for (const [k, v] of Object.entries(row)) if (!mapped.has(k) && k !== "contur_administrativ" && str(v) !== undefined) extra[k] = typeof v === "object" ? JSON.stringify(v) : String(v);
+    const extra: Record<string, string> = {
+      _importOriginal: JSON.stringify(row),
+    };
+    for (const [k, v] of Object.entries(row))
+      if (
+        !mapped.has(k) &&
+        k !== "contur_administrativ" &&
+        str(v) !== undefined
+      )
+        extra[k] = typeof v === "object" ? JSON.stringify(v) : String(v);
 
     let lat = parseNum(get("lat"));
     let lng = parseNum(get("lng"));
@@ -117,10 +193,22 @@ export function buildRecords(
       const name = str(get("name"));
       const siruta = base.siruta;
       if (!siruta || !name || base.lat === undefined) {
-        skipped.push({ row: i + 2, reason: "lipsește SIRUTA, denumirea sau coordonatele" });
+        skipped.push({
+          row: i + 2,
+          reason: "lipsește SIRUTA, denumirea sau coordonatele",
+        });
         return;
       }
-      items.push({ id: "", siruta, name, county: base.county, country: base.country, lat: base.lat, lng: base.lng!, extra: extraOrUndef });
+      items.push({
+        id: "",
+        siruta,
+        name,
+        county: base.county,
+        country: base.country,
+        lat: base.lat,
+        lng: base.lng!,
+        extra: extraOrUndef,
+      });
       return;
     }
 
@@ -130,33 +218,72 @@ export function buildRecords(
 
     if (collection === "communities") {
       let geometry = parseGeometry(get("geometry")) ?? fileGeom;
-      if (!geometry && validLatLng(e.lat, e.lng)) geometry = { type: "Point", coordinates: [e.lng!, e.lat!] };
-      if (!geometry) {
-        skipped.push({ row: i + 2, reason: "fără coordonate și localitate necunoscută (importați întâi nomenclatorul SIRUTA)" });
+      if (!geometry && validLatLng(e.lat, e.lng))
+        geometry = { type: "Point", coordinates: [e.lng!, e.lat!] };
+      if (!geometry && !str(get("name")) && !e.locality) {
+        skipped.push({
+          row: i + 2,
+          reason: "lipsește numele comunității și localitatea",
+        });
         return;
       }
-      if (approx && !parseGeometry(get("geometry")) && !fileGeom) placedAtLocality++;
+      if (approx && !parseGeometry(get("geometry")) && !fileGeom)
+        placedAtLocality++;
       const kindTxt = norm(str(get("kind")));
       const statusTxt = norm(str(get("status")));
       const boundary = importedBoundary(row.contur_administrativ);
       items.push({
         id: "",
         name: str(get("name")) ?? e.locality ?? `Comunitate ${i + 1}`,
-        kind: kindTxt.includes("strad") ? "strada" : kindTxt.includes("cartier") ? "cartier" : kindTxt.includes("zon") ? "zona" : kindTxt.includes("punct") ? "punct" : kindForGeometry(geometry),
-        status: statusTxt.includes("sub prag") || statusTxt === "sub_prag" ? "sub_prag"
-          : statusTxt.includes("de validat") || statusTxt === "de_validat" ? "de_validat"
-          : statusTxt.includes("prop") || statusTxt.includes("nevalid") || statusTxt === "nu" ? "propus"
-          : statusTxt.includes("confirm") || statusTxt.includes("valid") || statusTxt === "da" ? "validat" : opts.defaultStatus,
+        kind: kindTxt.includes("strad")
+          ? "strada"
+          : kindTxt.includes("cartier")
+            ? "cartier"
+            : kindTxt.includes("zon")
+              ? "zona"
+              : kindTxt.includes("punct")
+                ? "punct"
+                : geometry
+                  ? kindForGeometry(geometry)
+                  : "punct",
+        status:
+          statusTxt.includes("sub prag") || statusTxt === "sub_prag"
+            ? "sub_prag"
+            : statusTxt.includes("de validat") || statusTxt === "de_validat"
+              ? "de_validat"
+              : statusTxt.includes("prop") ||
+                  statusTxt.includes("nevalid") ||
+                  statusTxt === "nu"
+                ? "propus"
+                : statusTxt.includes("confirm") ||
+                    statusTxt.includes("valid") ||
+                    statusTxt === "da"
+                  ? "validat"
+                  : opts.defaultStatus,
         source: opts.source,
-        geometry,
+        geometry: geometry ?? null,
+        classification: str(get("classification")),
         boundary,
-        locationAccuracy: boundary || row.precizie === "administrative" ? "administrative" : undefined,
+        locationAccuracy:
+          boundary || row.precizie === "administrative"
+            ? "administrative"
+            : approx
+              ? "locality"
+              : !geometry
+                ? "unresolved"
+                : undefined,
         siruta: e.siruta,
         locality: e.locality,
         county: e.county,
         country: e.country,
         population: parseNum(get("population")),
-        notes: [str(get("notes")), approx ? "Poziționată la centrul localității" : undefined].filter(Boolean).join(" · ") || undefined,
+        notes:
+          [
+            str(get("notes")),
+            approx ? "Poziționată la centrul localității" : undefined,
+          ]
+            .filter(Boolean)
+            .join(" · ") || undefined,
         extra: extraOrUndef,
       });
       return;
@@ -194,6 +321,9 @@ export function buildRecords(
       partner: str(get("partner")) ?? (opts.partner.trim() || "Partener"),
       name: name!,
       amount: parseNum(get("amount")),
+      currency: /^[A-Z]{3}$/.test(str(get("currency"))?.toUpperCase() ?? "")
+        ? str(get("currency"))!.toUpperCase()
+        : undefined,
       year: str(get("year")),
       ...e,
       approx: approx || undefined,

@@ -23,6 +23,15 @@ test("governance enforces roles, geography, privacy, proposal transitions, audit
     const sql = migration("202611270001_governance.sql");
     await db.exec(sql);
     await db.exec(sql);
+    const editingSQL = migration("202611270002_geometry_editing.sql");
+    await db.exec(editingSQL);
+    await db.exec(editingSQL);
+    const managementSQL = migration("202611270003_data_management.sql");
+    await db.exec(managementSQL);
+    await db.exec(managementSQL);
+    const exportPrivacySQL = migration("202611270004_export_privacy.sql");
+    await db.exec(exportPrivacySQL);
+    await db.exec(exportPrivacySQL);
     await db.query(
       `insert into public.redi_memberships(user_id,role,scopes,can_review) values ($1,'administrator','[]',true),($2,'gis_editor','[{"country":"RO","county":"Cluj"}]',true),($3,'authorized_viewer','[{"country":"RO"}]',false)`,
       [ADMIN, EDITOR, VIEWER],
@@ -506,6 +515,333 @@ test("governance enforces roles, geography, privacy, proposal transitions, audit
             (c) => c.id === "ro",
           ).name,
           "ro",
+        );
+      },
+    );
+    await t.test(
+      "geometry edits require editor scope, explicit valid coordinates and the exact previous version",
+      async () => {
+        await actor(ADMIN);
+        await rpc("redi_set_member", [
+          EDITOR,
+          "gis_editor",
+          '[{"country":"RO","county":"Cluj"}]',
+          true,
+          true,
+          true,
+        ]);
+        const original = { type: "Point", coordinates: [23, 46] },
+          changed = { type: "Point", coordinates: [23.5, 46.5] };
+        await actor(null);
+        await assert.rejects(
+          rpc("redi_update_geometry", [
+            "ro",
+            JSON.stringify(changed),
+            JSON.stringify(original),
+          ]),
+          /permission denied/,
+        );
+        await actor(VIEWER);
+        await assert.rejects(
+          rpc("redi_update_geometry", [
+            "ro",
+            JSON.stringify(changed),
+            JSON.stringify(original),
+          ]),
+          /GIS editor/,
+        );
+        await actor(EDITOR);
+        await assert.rejects(
+          rpc("redi_update_geometry", [
+            "md",
+            JSON.stringify(changed),
+            JSON.stringify(original),
+          ]),
+          /Outside geographic scope/,
+        );
+        await assert.rejects(
+          rpc("redi_update_geometry", [
+            "ro",
+            JSON.stringify({ type: "Point", coordinates: [999, 46] }),
+            JSON.stringify(original),
+          ]),
+          /Invalid geometry/,
+        );
+        await assert.rejects(
+          rpc("redi_mutate_records", [
+            "communities",
+            "update",
+            JSON.stringify([{ id: "ro", geometry: changed }]),
+            [],
+            false,
+          ]),
+          /version-checked geometry editor/,
+        );
+        const saved = await rpc("redi_update_geometry", [
+          "ro",
+          JSON.stringify(changed),
+          JSON.stringify(original),
+        ]);
+        assert.deepEqual(saved.geometry, changed);
+        assert.equal(saved.geometrySource, "manual_correction");
+        assert.equal(saved.notes, "private");
+        await assert.rejects(
+          rpc("redi_update_geometry", [
+            "ro",
+            JSON.stringify(original),
+            JSON.stringify(original),
+          ]),
+          /Geometry changed/,
+        );
+        await assert.rejects(
+          rpc("redi_mutate_records", [
+            "communities",
+            "update",
+            JSON.stringify([{ id: "ro", geometry: original }]),
+            [],
+            false,
+          ]),
+          /version-checked geometry editor/,
+        );
+        await actor(ADMIN);
+        const history = await rpc("redi_record_history", ["communities", "ro"]);
+        assert.ok(
+          history.some(
+            (e) =>
+              e.before_data?.geometry?.coordinates?.[0] === 23 &&
+              e.after_data?.geometry?.coordinates?.[0] === 23.5,
+          ),
+        );
+      },
+    );
+    await t.test(
+      "public records remain frozen across editor changes until explicit administrator republication",
+      async () => {
+        const recordId = "proposal-" + id;
+        await actor(EDITOR);
+        const before = (await rpc("redi_workspace_data")).communities.find(
+          (c) => c.id === recordId,
+        );
+        await rpc("redi_mutate_records", [
+          "communities",
+          "update",
+          JSON.stringify([{ id: recordId, name: "Pending editor change" }]),
+          [],
+          false,
+        ]);
+        await actor(null);
+        assert.equal(
+          (await rpc("redi_workspace_data")).communities.find(
+            (c) => c.id === recordId,
+          ).name,
+          "Proposal",
+        );
+        await actor(EDITOR);
+        await assert.rejects(
+          rpc("redi_mutate_records", [
+            "communities",
+            "update",
+            JSON.stringify([
+              { id: recordId, publicRecord: { id: recordId, name: "bypass" } },
+            ]),
+            [],
+            false,
+          ]),
+          /reviewed publication workflow/,
+        );
+        await assert.rejects(
+          rpc("redi_publish_community_assessed", [
+            recordId,
+            JSON.stringify(before),
+            true,
+            false,
+            JSON.stringify({ level: "low", factors: [] }),
+          ]),
+          /permission denied|Administrator required/,
+        );
+        await actor(ADMIN);
+        await assert.rejects(
+          rpc("redi_publish_community_assessed", [
+            recordId,
+            JSON.stringify(before),
+            true,
+            false,
+            JSON.stringify({ level: "low", factors: [] }),
+          ]),
+          /Record changed/,
+        );
+        const current = (await rpc("redi_workspace_data")).communities.find(
+          (c) => c.id === recordId,
+        );
+        await assert.rejects(
+          rpc("redi_publish_community_assessed", [
+            recordId,
+            JSON.stringify(current),
+            true,
+            false,
+            "{}",
+          ]),
+          /Privacy assessment required/,
+        );
+        await assert.rejects(
+          rpc("redi_publish_community", [
+            recordId,
+            JSON.stringify(current),
+            true,
+            false,
+            true,
+          ]),
+          /permission denied/,
+        );
+        const stored = await rpc("redi_publish_community_assessed", [
+          recordId,
+          JSON.stringify(current),
+          true,
+          false,
+          JSON.stringify({ level: "low", factors: [] }),
+        ]);
+        assert.equal(stored.privacyAssessment.level, "low");
+        assert.equal(stored.privacyAssessment.assessedBy, ADMIN);
+        await actor(null);
+        const published = (await rpc("redi_workspace_data")).communities.find(
+          (c) => c.id === recordId,
+        );
+        assert.equal(published.name, "Pending editor change");
+        assert.equal(published.geometry, null);
+        assert.equal(published.notes, undefined);
+        assert.equal(published.geocoding, undefined);
+      },
+    );
+    await t.test(
+      "classification administration is versioned, public names are reduced and archival preserves legacy values",
+      async () => {
+        await actor(EDITOR);
+        await assert.rejects(
+          rpc("redi_classification_save", [
+            null,
+            "Rural",
+            "internal description",
+            true,
+            null,
+          ]),
+          /Administrator required/,
+        );
+        await actor(ADMIN);
+        const category = await rpc("redi_classification_save", [
+          null,
+          "Rural",
+          "internal description",
+          true,
+          null,
+        ]);
+        await actor(null);
+        const publicList = await rpc("redi_classification_list");
+        assert.equal(publicList[0].name, "Rural");
+        assert.equal(publicList[0].description, undefined);
+        await actor(ADMIN);
+        const archived = await rpc("redi_classification_save", [
+          category.id,
+          "Rural",
+          "internal description",
+          false,
+          category.updated_at,
+        ]);
+        await assert.rejects(
+          rpc("redi_classification_save", [
+            category.id,
+            "New name",
+            "",
+            true,
+            category.updated_at,
+          ]),
+          /Classification changed/,
+        );
+        assert.equal(archived.active, false);
+        assert.ok(
+          (await rpc("redi_record_history", ["classification", category.id]))
+            .length >= 2,
+        );
+        await actor(null);
+        assert.deepEqual(await rpc("redi_classification_list"), []);
+      },
+    );
+    await t.test(
+      "export field groups are granted per member and audited; exact-geometry publication needs a justified risk assessment",
+      async () => {
+        await db.exec("reset role");
+        await db.query(
+          "insert into public.redi_records(collection,id,data) values('clients','fin',$1),('communities','privacy-pt',$2)",
+          [
+            JSON.stringify({ id: "fin", partner: "Partner", amount: 100, currency: "RON", year: "2025", lat: 46, lng: 23, country: "RO", county: "Cluj" }),
+            JSON.stringify({ id: "privacy-pt", name: "Point", kind: "punct", status: "validat", country: "RO", county: "Cluj", geometry: { type: "Point", coordinates: [23, 46] } }),
+          ],
+        );
+        await actor(ADMIN);
+        await rpc("redi_set_member", [VIEWER, "authorized_viewer", '[{"country":"RO"}]', true, false, true]);
+        await actor(VIEWER);
+        assert.deepEqual((await rpc("redi_access_profile")).exportGroups, []);
+        let row = (await rpc("redi_export_data", ["clients"])).find((r) => r.id === "fin");
+        assert.equal(row.year, "2025");
+        for (const field of ["amount", "currency", "partner", "lat", "lng"])
+          assert.equal(row[field], undefined);
+        await assert.rejects(rpc("redi_set_export_groups", [VIEWER, ["financial"]]), /Administrator required/);
+        await actor(ADMIN);
+        await assert.rejects(rpc("redi_set_export_groups", [VIEWER, ["everything"]]), /Invalid export groups/);
+        await rpc("redi_set_export_groups", [VIEWER, ["financial"]]);
+        assert.deepEqual((await rpc("redi_export_groups_overview"))[VIEWER], ["financial"]);
+        await actor(VIEWER);
+        row = (await rpc("redi_export_data", ["clients"])).find((r) => r.id === "fin");
+        assert.equal(row.amount, 100);
+        assert.equal(row.currency, "RON");
+        assert.equal(row.partner, undefined);
+        assert.equal(row.lat, undefined);
+        await actor(ADMIN);
+        const audit = (await rpc("redi_admin_overview")).audit;
+        assert.ok(audit.some((a) => a.action === "export_fields_changed" && a.entity_id === VIEWER));
+        const current = (await rpc("redi_workspace_data")).communities.find((c) => c.id === "privacy-pt");
+        await assert.rejects(
+          rpc("redi_publish_community_assessed", ["privacy-pt", JSON.stringify(current), true, true, JSON.stringify({ level: "low", factors: [] })]),
+          /Privacy justification required/,
+        );
+        const published = await rpc("redi_publish_community_assessed", [
+          "privacy-pt",
+          JSON.stringify(current),
+          true,
+          true,
+          JSON.stringify({ level: "low", factors: ["exact_point"], justification: "Community consented to a public marker." }),
+        ]);
+        assert.equal(published.privacyAssessment.level, "high");
+        assert.equal(published.privacyAssessment.sharedGeometry, true);
+        await actor(EDITOR);
+        await assert.rejects(
+          rpc("redi_mutate_records", ["communities", "update", JSON.stringify([{ id: "privacy-pt", privacyAssessment: { level: "low" } }]), [], false]),
+          /reviewed publication workflow/,
+        );
+      },
+    );
+    await t.test(
+      "geocoding requires an editable in-scope record and enforces an application-wide request budget",
+      async () => {
+        await actor(VIEWER);
+        await assert.rejects(rpc("redi_geocode_permit"), /GIS editor/);
+        await actor(EDITOR);
+        await assert.rejects(
+          rpc("redi_geocode_target", ["md"]),
+          /Outside geographic scope/,
+        );
+        const area = await rpc("redi_geocode_target", ["ro"]);
+        assert.equal(area.country, "RO");
+        assert.equal(area.county, "Cluj");
+        assert.equal(area.name, undefined);
+        await rpc("redi_geocode_permit");
+        await assert.rejects(
+          rpc("redi_geocode_permit"),
+          /Geocoder request limit/,
+        );
+        await actor(ADMIN);
+        await assert.rejects(
+          rpc("redi_geocode_permit"),
+          /Geocoder request limit/,
         );
       },
     );

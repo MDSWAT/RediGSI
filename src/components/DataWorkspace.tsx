@@ -1,37 +1,39 @@
 "use client";
+import WorkspaceFilterPanel from "./WorkspaceFilterPanel";
+import { filterWorkspace, type WorkspaceFilters } from "@/lib/workspaceFilters";
 import { recordsToGeoJSON } from "@/lib/exportFeatures";
 import { useState } from "react";
+import { COLLECTION_LABELS, type CollectionName, type DB } from "@/lib/types";
 import {
-  COLLECTION_LABELS,
-  COUNTRY_LABELS,
-  type CollectionName,
-  type DB,
-} from "@/lib/types";
-import { canEdit, canExport, isAdmin, type AccessProfile } from "@/lib/access";
+  canEdit,
+  canExport,
+  EXPORT_GROUP_LABELS,
+  EXPORT_GROUPS,
+  isAdmin,
+  type AccessProfile,
+} from "@/lib/access";
 import { exportCSV, exportXLSX } from "@/lib/export";
 export default function DataWorkspace({
   access,
-  db,
+  db: sourceDB,
+  filters,
+  onFiltersChange,
   onImport,
   onManual,
   onChanged,
 }: {
   access: AccessProfile;
   db: DB;
+  filters: WorkspaceFilters;
+  onFiltersChange: (f: WorkspaceFilters) => void;
   onImport: (c: CollectionName) => void;
   onManual: () => void;
   onChanged: () => void;
 }) {
-  const [country, setCountry] = useState("");
+  const db = filterWorkspace(sourceDB, filters);
+  const country = filters.country;
   const [busy, setBusy] = useState("");
   const [error, setError] = useState("");
-  const countries = [
-    ...new Set(
-      Object.values(db).flatMap((rows) =>
-        rows.map((r: { country: string }) => r.country),
-      ),
-    ),
-  ].sort();
   const archive = async (c: CollectionName) => {
     const ids = db[c]
       .filter((r) => !country || r.country === country)
@@ -64,6 +66,36 @@ export default function DataWorkspace({
       onChanged();
     }
   };
+  const datasets = new Map<
+    string,
+    {
+      name: string;
+      counts: number;
+      collections: Set<string>;
+      createdAt: string;
+    }
+  >();
+  Object.entries(db).forEach(([collection, rows]) =>
+    rows.forEach(
+      (row: {
+        datasetId?: string;
+        datasetName?: string;
+        country: string;
+        createdAt?: string;
+      }) => {
+        if (!row.datasetId || (country && row.country !== country)) return;
+        const d = datasets.get(row.datasetId) ?? {
+          name: row.datasetName ?? "Import fără nume",
+          counts: 0,
+          collections: new Set<string>(),
+          createdAt: row.createdAt ?? "",
+        };
+        d.counts++;
+        d.collections.add(collection);
+        datasets.set(row.datasetId, d);
+      },
+    ),
+  );
   const download = async (
     collection: CollectionName,
     format: "csv" | "xlsx" | "geojson",
@@ -72,7 +104,7 @@ export default function DataWorkspace({
     setError("");
     try {
       const r = await fetch(
-        `/api/export?collection=${collection}&country=${encodeURIComponent(country)}`,
+        `/api/export?${new URLSearchParams({ collection, ...filters })}`,
       );
       const data = await r.json();
       if (!r.ok) throw new Error(data.error);
@@ -111,19 +143,12 @@ export default function DataWorkspace({
           </button>
         )}
       </div>
-      <div className="module-filter">
-        <label>
-          Țară pentru export
-          <select value={country} onChange={(e) => setCountry(e.target.value)}>
-            <option value="">Toate țările accesibile</option>
-            {countries.map((c) => (
-              <option key={c} value={c}>
-                {COUNTRY_LABELS[c] ?? c}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
+      <WorkspaceFilterPanel
+        db={sourceDB}
+        filters={filters}
+        onChange={onFiltersChange}
+        expanded
+      />
       {error && (
         <p className="error" role="alert">
           {error}
@@ -195,12 +220,60 @@ export default function DataWorkspace({
             })}
           </tbody>
         </table>
+        {canExport(access) && (
+          <p className="muted small export-scope">
+            Exportul include câmpurile de bază
+            {EXPORT_GROUPS.filter((g) => access.exportGroups?.includes(g))
+              .map((g) => ` · ${EXPORT_GROUP_LABELS[g]}`)
+              .join("")}
+            . Alte câmpuri sensibile se acordă de un administrator.
+          </p>
+        )}
       </div>
+      {!!datasets.size && (
+        <section className="territory-section">
+          <h3>Importuri accesibile</h3>
+          <p className="muted small">
+            Loturi identificate în înregistrările accesibile. Numărul reflectă
+            selecția de țară; sursele originale din registru sunt păstrate.
+          </p>
+          <div className="table-wrap">
+            <table className="workspace-table">
+              <thead>
+                <tr>
+                  <th>Fișier sursă</th>
+                  <th>Colecții</th>
+                  <th>Înregistrări</th>
+                  <th>Importat la</th>
+                </tr>
+              </thead>
+              <tbody>
+                {[...datasets].map(([id, d]) => (
+                  <tr key={id}>
+                    <th>{d.name}</th>
+                    <td>
+                      {[...d.collections]
+                        .map((c) => COLLECTION_LABELS[c as CollectionName])
+                        .join(", ")}
+                    </td>
+                    <td>{d.counts}</td>
+                    <td>
+                      {d.createdAt
+                        ? new Date(d.createdAt).toLocaleString("ro-RO")
+                        : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      )}
       <div className="data-guidance">
         <section>
           <h3>Import cu verificare</h3>
           <p className="muted small">
-            CSV, Excel și GeoJSON folosesc previzualizarea și potrivirea
+            CSV, Excel, GeoJSON și KML folosesc previzualizarea și potrivirea
             coloanelor existente. Importurile în afara teritoriilor alocate sunt
             respinse de baza de date.
           </p>

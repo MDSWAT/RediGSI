@@ -1,4 +1,3 @@
-import type { CollectionName } from "./types";
 
 export type Role =
   "public_viewer" | "authorized_viewer" | "gis_editor" | "administrator";
@@ -17,7 +16,16 @@ export interface AccessProfile {
   scopes: GeographicScope[];
   canReview: boolean;
   canExport: boolean;
+  exportGroups?: ExportGroup[];
 }
+/** Sensitive export fields, granted per member. Mirrors redi_export_data in the database. */
+export type ExportGroup = "precise_location" | "financial" | "business_identity";
+export const EXPORT_GROUP_LABELS: Record<ExportGroup, string> = {
+  precise_location: "Locație exactă (coordonate, geometrii)",
+  financial: "Date financiare (sume, monedă)",
+  business_identity: "Denumiri de afaceri și parteneri",
+};
+export const EXPORT_GROUPS = Object.keys(EXPORT_GROUP_LABELS) as ExportGroup[];
 export const PUBLIC_ACCESS: AccessProfile = {
   userId: null,
   email: null,
@@ -25,6 +33,7 @@ export const PUBLIC_ACCESS: AccessProfile = {
   scopes: [],
   canReview: false,
   canExport: false,
+  exportGroups: [],
 };
 export const ROLE_LABELS: Record<Role, string> = {
   public_viewer: "Vizitator public",
@@ -45,54 +54,6 @@ export const visibleModules = (a: AccessProfile): WorkspaceModule[] => [
   ...(a.role !== "public_viewer" ? ["data" as const] : []),
   ...(canReview(a) || isAdmin(a) ? ["administration" as const] : []),
 ];
-export const EXPORT_FIELDS: Record<CollectionName, string[]> = {
-  communities: [
-    "id",
-    "name",
-    "kind",
-    "status",
-    "classification",
-    "country",
-    "region",
-    "county",
-    "locality",
-    "siruta",
-    "population",
-    "geometry",
-    "locationAccuracy",
-    "boundary",
-  ],
-  entrepreneurs: [
-    "id",
-    "business",
-    "sector",
-    "country",
-    "region",
-    "county",
-    "locality",
-    "siruta",
-    "communityId",
-    "lat",
-    "lng",
-    "approx",
-  ],
-  clients: [
-    "id",
-    "partner",
-    "country",
-    "region",
-    "county",
-    "locality",
-    "siruta",
-    "communityId",
-    "amount",
-    "year",
-    "lat",
-    "lng",
-    "approx",
-  ],
-  localities: ["id", "siruta", "name", "country", "county", "lat", "lng"],
-};
 export const PROPOSAL_LABELS = {
   submitted: "Trimisă",
   pending_review: "În așteptarea revizuirii",

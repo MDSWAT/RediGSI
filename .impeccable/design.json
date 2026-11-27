@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-27T07:41:54.771453+00:00",
+  "generatedAt": "2026-11-27T08:40:27.771550+00:00",
   "title": "Design System: Roma Community Map",
   "extensions": {
     "colorMeta": {
@@ -618,7 +618,7 @@
       {
         "name": "mobile",
         "value": "760px",
-        "purpose": "56px rail/header; map drawer; wide modules retain no aside; KPI strip becomes two columns and module/detail/scope layouts stack."
+        "purpose": "56px rail/header; map drawer; wide modules retain no aside; KPI strip becomes two columns and module/detail/scope layouts stack. Shared filter grids stack to one column."
       },
       {
         "name": "short-screen",
@@ -702,9 +702,30 @@
     {
       "name": "Territorial Metric Strip",
       "kind": "custom",
-      "description": "Baseline accessible-data totals; em dashes represent loading, never invented counts.",
+      "description": "Accessible-data metrics under shared filters; em dashes represent loading, never invented counts.",
       "html": "<dl class=\"ds-metrics\"><div><dt>Comunități vizibile</dt><dd>—</dd></div><div><dt>Zone distincte</dt><dd>—</dd></div><div><dt>De verificat</dt><dd>—</dd></div><div><dt>Fără geometrie</dt><dd>—</dd></div></dl>",
       "css": ".ds-metrics{font-family:var(--font-host-grotesk),sans-serif;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:24px;margin:0 0 32px;padding-bottom:28px;border-bottom:1px solid var(--border,#e5e9ed);font-variant-numeric:tabular-nums;color:var(--text,#202b33)}.ds-metrics dt{font-size:12px;color:var(--muted,#64717d);margin-bottom:8px}.ds-metrics dd{margin:0;font-size:32px;font-weight:550;letter-spacing:-.03em;line-height:1.3}@media(max-width:760px){.ds-metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:24px 12px}.ds-metrics dd{font-size:28px}}"
+    },
+    {
+      "name": "Shared Workspace Filters",
+      "kind": "custom",
+      "description": "Native disclosure: collapsed in Map, expanded in Analytics/Data; shared geography/entity filters with active count and explicit reset.",
+      "html": "<details class=\"ds-filters\" open><summary>Filtre geografice și de date · 1 active</summary><div class=\"ds-filter-grid\"><label>Țară<select><option>România</option></select></label><label>Județ / regiune<select><option>Toate</option></select></label><label>Localitate<select><option>Toate</option></select></label></div><p>Anul și partenerul filtrează clienții; domeniul filtrează antreprenorii. Comunitățile respectă selecția geografică.</p><button>Resetează filtrele comune</button></details>",
+      "css": ".ds-filters{font-family:var(--font-host-grotesk),sans-serif;color:var(--text,#202b33);border-bottom:1px solid var(--border,#e5e9ed);padding-bottom:16px;margin-bottom:8px}.ds-filters summary{cursor:pointer;font-size:12px;font-weight:500;padding-block:8px}.ds-filter-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-block:12px}.ds-filter-grid label{display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted,#64717d)}.ds-filter-grid select{font-family:inherit;padding:9px 29px 9px 11px;border:1px solid var(--control-border,#d5dce2);border-radius:8px;background:var(--panel,#fff);color:var(--text,#202b33);font-size:13px}.ds-filters p{font-size:11px;color:var(--muted,#64717d)}.ds-filters button{font-family:inherit;min-height:38px;padding:8px 12px;border:1px solid var(--control-border,#d5dce2);border-radius:var(--radius,8px);background:var(--panel,#fff);color:var(--text,#202b33);font-size:12px;cursor:pointer;margin-top:10px;min-height:30px;font-size:11px}.ds-filters button:hover{background:var(--hover,#f1f5f6)}.ds-filters summary:focus-visible{outline:2px solid var(--primary,#107c70);outline-offset:3px;}.ds-filters button:focus-visible{outline:2px solid var(--primary,#107c70);outline-offset:3px;}.ds-filter-grid select:focus-visible{outline:2px solid var(--primary,#107c70);outline-offset:3px;}@media(max-width:760px){.ds-filter-grid{grid-template-columns:minmax(0,1fr);gap:12px}}"
+    },
+    {
+      "name": "Cluster Member List",
+      "kind": "custom",
+      "description": "All source members remain individually accessible in pages of 20, with selected-record detail and return-to-group states.",
+      "html": "<div class=\"ds-cluster-members\"><b>Înregistrări în grup</b><button>Vezi înregistrarea</button><div class=\"ds-cluster-pages\"><button disabled>Înapoi</button><span>1 / 1</span><button disabled>Înainte</button></div></div>",
+      "css": ".ds-cluster-members{font-family:var(--font-host-grotesk),sans-serif;color:var(--text,#202b33);display:flex;flex-direction:column;gap:8px;min-width:190px;max-height:320px;overflow-y:auto;font-size:13px}.ds-cluster-members button{font-family:inherit;min-height:38px;padding:8px 12px;border:1px solid var(--control-border,#d5dce2);border-radius:var(--radius,8px);background:var(--panel,#fff);color:var(--text,#202b33);font-size:12px;cursor:pointer;}.ds-cluster-members>button{justify-content:flex-start;text-align:left;padding:7px 9px}.ds-cluster-pages{display:flex;gap:8px;align-items:center;justify-content:space-between;font-size:11px}.ds-cluster-members button:hover:not(:disabled){background:var(--hover,#f1f5f6)}.ds-cluster-members button:disabled{opacity:.55;cursor:default}.ds-cluster-members button:focus-visible{outline:2px solid var(--primary,#107c70);outline-offset:3px;}"
+    },
+    {
+      "name": "Geometry Draft Toolbar",
+      "kind": "custom",
+      "description": "Floating explicit-save draft controls; cancellation discards the draft, failures remain inline.",
+      "html": "<div class=\"ds-geometry-toolbar\"><b>Editare geometrie</b><span>Mută punctul sau vârfurile conturului. Salvarea este explicită.</span><button>Anulează</button><button class=\"ds-geometry-save\">Salvează</button></div>",
+      "css": ".ds-geometry-toolbar{font-family:var(--font-host-grotesk),sans-serif;color:var(--text,#202b33);display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:14px;background:var(--panel,#fff);box-shadow:var(--floating-shadow,0 4px 18px #24374714);border-radius:8px}.ds-geometry-toolbar>b{font-size:13px}.ds-geometry-toolbar>span{flex:1 1 200px;font-size:12px;color:var(--muted,#64717d)}.ds-geometry-toolbar button{font-family:inherit;min-height:38px;padding:8px 12px;border:1px solid var(--control-border,#d5dce2);border-radius:var(--radius,8px);background:var(--panel,#fff);color:var(--text,#202b33);font-size:12px;cursor:pointer;}.ds-geometry-toolbar .ds-geometry-save{background:var(--primary,#107c70);border-color:var(--primary,#107c70);color:var(--primary-text,#fff)}.ds-geometry-toolbar button:hover{background:var(--hover,#f1f5f6)}.ds-geometry-toolbar .ds-geometry-save:hover{background:var(--primary-hover,#096559);border-color:var(--primary-hover,#096559)}.ds-geometry-toolbar button:focus-visible{outline:2px solid var(--primary,#107c70);outline-offset:3px;}@media(max-width:760px){.ds-geometry-toolbar{padding:10px}.ds-geometry-toolbar>span{font-size:11px}.ds-geometry-toolbar button{padding:6px 8px;min-height:32px;font-size:11px}}"
     }
   ],
   "narrative": {

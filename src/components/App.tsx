@@ -1,4 +1,5 @@
 "use client";
+import type { GeocodingMetadata } from "@/lib/geocoding";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -9,12 +10,16 @@ import {
   KIND_LABELS,
   SOURCE_LABELS,
   STATUS_LABELS,
-  COUNTRY_LABELS,
 } from "@/lib/types";
 import { assignCommunity, boundsOf, norm, validLatLng } from "@/lib/geo";
 import { computeOverlap, type OverlapLevel } from "@/lib/overlap";
 import { exportCSV, exportXLSX, overlapRows } from "@/lib/export";
 import type { DrawShape, Focus } from "./MapView";
+import WorkspaceFilterPanel from "./WorkspaceFilterPanel";
+import { filterWorkspace, type WorkspaceFilters } from "@/lib/workspaceFilters";
+import PublicationDialog from "./PublicationDialog";
+import CoordinateDialog from "./CoordinateDialog";
+import type { GeometryEditRequest } from "./GeometryEditLayer";
 import CommunityForm from "./CommunityForm";
 import CommunityDetails from "./CommunityDetails";
 import { BOUNDARY_SCOPE_LABELS, groupBoundaryRecords } from "@/lib/boundaries";
@@ -160,6 +165,14 @@ export default function App({
   const [proposalDraft, setProposalDraft] = useState<ProposalFields>();
   const [proposalGeometry, setProposalGeometry] = useState<Geometry>();
   const [submissionDrawing, setSubmissionDrawing] = useState(false);
+  const [clusterPoints, setClusterPoints] = useState(true);
+  const [geometryEditRequest, setGeometryEditRequest] =
+    useState<GeometryEditRequest>();
+  const [editedGeometry, setEditedGeometry] = useState<Geometry>();
+  const [geometryBusy, setGeometryBusy] = useState(false);
+  const [geometryError, setGeometryError] = useState("");
+  const [publicationTarget, setPublicationTarget] = useState<Community>();
+  const [coordinateTarget, setCoordinateTarget] = useState<Community>();
   const [previewGeometry, setPreviewGeometry] = useState<Geometry>();
   useEffect(() => {
     let alive = true;
@@ -256,11 +269,50 @@ export default function App({
   const [manualTarget, setManualTarget] = useState<ManualTarget | null>(null);
   const [q, setQ] = useState("");
   const [statusFilter, setStatusFilter] = useState<"" | CommunityStatus>("");
-  const [countryFilter, setCountryFilter] = useState("");
+  const [countryFilter, setCountry] = useState("");
+  const [countyFilter, setCounty] = useState("");
+  const [municipalityFilter, setMunicipality] = useState("");
+  const [sectorFilter, setSector] = useState("");
+  const [yearFilter, setYear] = useState("");
+  const setCountryFilter = (country: string) => {
+    setCountry(country);
+    setCounty("");
+    setMunicipality("");
+  };
   const [unlocatedOnly, setUnlocatedOnly] = useState(false);
   const [healthOnly, setHealthOnly] = useState(false);
   const [level, setLevel] = useState<OverlapLevel>("locality");
   const [partner, setPartner] = useState("");
+  const sharedFilters = useMemo<WorkspaceFilters>(
+    () => ({
+      country: countryFilter,
+      county: countyFilter,
+      municipality: municipalityFilter,
+      sector: sectorFilter,
+      partner,
+      year: yearFilter,
+    }),
+    [
+      countryFilter,
+      countyFilter,
+      municipalityFilter,
+      sectorFilter,
+      partner,
+      yearFilter,
+    ],
+  );
+  const updateSharedFilters = (f: WorkspaceFilters) => {
+    setCountry(f.country);
+    setCounty(f.county);
+    setMunicipality(f.municipality);
+    setSector(f.sector);
+    setPartner(f.partner);
+    setYear(f.year);
+  };
+  const filteredDB = useMemo(
+    () => filterWorkspace(db, sharedFilters),
+    [db, sharedFilters],
+  );
   const [msg, setMsg] = useState<string | null>(null);
 
   const flash = (m: string) => {
@@ -290,33 +342,89 @@ export default function App({
     window.addEventListener("keydown", cancel);
     return () => window.removeEventListener("keydown", cancel);
   }, [submissionDrawing]);
+  const leaveGeometryEditor = () => {
+    if (
+      geometryEditRequest &&
+      editedGeometry &&
+      !confirm("Renunțați la modificările geometriei care nu au fost salvate?")
+    )
+      return false;
+    setGeometryEditRequest(undefined);
+    setEditedGeometry(undefined);
+    setGeometryError("");
+    return true;
+  };
+  useEffect(() => {
+    if (!editedGeometry) return;
+    const before = (e: BeforeUnloadEvent) => {
+      e.preventDefault();
+    };
+    window.addEventListener("beforeunload", before);
+    return () => window.removeEventListener("beforeunload", before);
+  }, [editedGeometry]);
+  const persistGeometry = async (
+    id: string,
+    geometry: Geometry,
+    expectedGeometry: Geometry | null,
+    geocoding?: GeocodingMetadata,
+  ) => {
+    const r = await fetch("/api/geometry", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, geometry, expectedGeometry, geocoding }),
+    });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error ?? "Poziția nu a fost salvată.");
+    await store.reload();
+  };
+  const saveEditedGeometry = async () => {
+    if (!geometryEditRequest || !editedGeometry) return;
+    setGeometryBusy(true);
+    setGeometryError("");
+    try {
+      await persistGeometry(
+        geometryEditRequest.id,
+        editedGeometry,
+        geometryEditRequest.geometry,
+      );
+      setGeometryEditRequest(undefined);
+      setEditedGeometry(undefined);
+      flash(
+        "Geometrie actualizată. Versiunea anterioară este păstrată în istoric.",
+      );
+    } catch (e) {
+      setGeometryError((e as Error).message);
+    } finally {
+      setGeometryBusy(false);
+    }
+  };
   const communityById = useMemo(
     () => new Map(db.communities.map((c) => [c.id, c])),
     [db.communities],
   );
   const partners = useMemo(() => {
     const m = new Map<string, { n: number; amount: number }>();
-    db.clients.forEach((c) => {
+    filteredDB.clients.forEach((c) => {
       const p = m.get(c.partner) ?? { n: 0, amount: 0 };
       p.n++;
       p.amount += c.amount ?? 0;
       m.set(c.partner, p);
     });
     return [...m.entries()].sort((a, b) => b[1].n - a[1].n);
-  }, [db.clients]);
+  }, [filteredDB.clients]);
 
   const overlap = useMemo(
     () =>
       tab === "overlap"
-        ? computeOverlap(db, level, partner || undefined)
+        ? computeOverlap(filteredDB, level, partner || undefined)
         : undefined,
-    [db, level, partner, tab],
+    [filteredDB, level, partner, tab],
   );
 
   const nq = norm(q);
   const communities = useMemo(
     () =>
-      db.communities.filter(
+      filteredDB.communities.filter(
         (c) =>
           (!statusFilter || c.status === statusFilter) &&
           (!countryFilter || c.country === countryFilter) &&
@@ -331,7 +439,7 @@ export default function App({
             )),
       ),
     [
-      db.communities,
+      filteredDB.communities,
       statusFilter,
       countryFilter,
       unlocatedOnly,
@@ -341,18 +449,19 @@ export default function App({
   );
   const entrepreneurs = useMemo(
     () =>
-      db.entrepreneurs.filter(
+      filteredDB.entrepreneurs.filter(
         (e) =>
           !nq ||
           norm(
             [e.name, e.business, e.sector, e.locality, e.county].join(" "),
           ).includes(nq),
       ),
-    [db.entrepreneurs, nq],
+    [filteredDB.entrepreneurs, nq],
   );
 
   const onCreateShape = useCallback(
     (g: Geometry) => {
+      setDrawRequest(undefined);
       if (submissionDrawing) {
         setProposalGeometry(g);
         setProposalOpen(true);
@@ -422,12 +531,14 @@ export default function App({
 
   const fitAll = () => {
     const pts: [number, number][] = [];
-    communities.forEach((c) => {
-      if (!c.geometry) return;
-      const [[s, w], [n, e]] = boundsOf(c.geometry);
-      pts.push([s, w], [n, e]);
-    });
-    db.entrepreneurs.forEach(
+    (tab === "communities" ? communities : filteredDB.communities).forEach(
+      (c) => {
+        if (!c.geometry) return;
+        const [[s, w], [n, e]] = boundsOf(c.geometry);
+        pts.push([s, w], [n, e]);
+      },
+    );
+    [...filteredDB.entrepreneurs, ...filteredDB.clients].forEach(
       (e) => validLatLng(e.lat, e.lng) && pts.push([e.lat!, e.lng!]),
     );
     if (!pts.length) {
@@ -489,6 +600,7 @@ export default function App({
                 className={module === m.id ? "active" : ""}
                 aria-current={module === m.id ? "page" : undefined}
                 onClick={() => {
+                  if (!leaveGeometryEditor()) return;
                   setModule(m.id);
                   setTab(m.tab);
                   setPanelOpen(false);
@@ -630,7 +742,9 @@ export default function App({
                   key={t.id}
                   className={tab === t.id ? "active" : ""}
                   aria-pressed={tab === t.id}
-                  onClick={() => setTab(t.id)}
+                  onClick={() => {
+                    if (leaveGeometryEditor()) setTab(t.id);
+                  }}
                 >
                   {t.short}
                 </button>
@@ -649,6 +763,13 @@ export default function App({
               <Icon name="plus" size={16} />
               Propune o comunitate
             </button>
+          )}
+          {module === "map" && (
+            <WorkspaceFilterPanel
+              db={db}
+              filters={sharedFilters}
+              onChange={updateSharedFilters}
+            />
           )}
           {store.error && (
             <div className="error" role="alert">
@@ -790,26 +911,6 @@ export default function App({
               </div>
               <div className="catalog-filters">
                 <label>
-                  Țară
-                  <select
-                    aria-label="Țară"
-                    value={countryFilter}
-                    onChange={(e) => setCountryFilter(e.target.value)}
-                  >
-                    <option value="">Toate țările ({countries.length})</option>
-                    {countries.map((code) => (
-                      <option key={code} value={code}>
-                        {COUNTRY_LABELS[code] ?? code} (
-                        {
-                          db.communities.filter((c) => c.country === code)
-                            .length
-                        }
-                        )
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label>
                   Status REDI
                   <select
                     aria-label="Status REDI"
@@ -899,8 +1000,31 @@ export default function App({
                           onClick={(e) => e.stopPropagation()}
                         >
                           <button onClick={() => setEditing(c)}>
-                            Editează
+                            Editează detaliile
                           </button>
+                          {c.geometry && (
+                            <button
+                              disabled={geometryBusy}
+                              onClick={() => {
+                                if (!leaveGeometryEditor()) return;
+                                setDrawRequest(undefined);
+                                setGeometryEditRequest({
+                                  id: c.id,
+                                  geometry: c.geometry!,
+                                  nonce: nextNonce(),
+                                });
+                                setPanelOpen(false);
+                                focusGeom(c.geometry);
+                              }}
+                            >
+                              Editează geometria
+                            </button>
+                          )}
+                          {(!c.geometry || c.geometry.type === "Point") && (
+                            <button onClick={() => setCoordinateTarget(c)}>
+                              Corectează GPS
+                            </button>
+                          )}
                           <button
                             onClick={() =>
                               store.update("communities", [
@@ -918,6 +1042,11 @@ export default function App({
                               ? "Marchează propusă"
                               : "Validează"}
                           </button>
+                          {isAdmin(access) && (
+                            <button onClick={() => setPublicationTarget(c)}>
+                              Revizuiește publicarea
+                            </button>
+                          )}
                           {isAdmin(access) && (
                             <button
                               className="danger"
@@ -1087,12 +1216,7 @@ export default function App({
                   <li key={p}>
                     <div className="li-main">
                       <b>{p}</b>
-                      <span className="muted">
-                        {s.n} clienți
-                        {s.amount
-                          ? ` · ${s.amount.toLocaleString("ro-RO")}`
-                          : ""}
-                      </span>
+                      <span className="muted">{s.n} clienți</span>
                     </div>
                     <div className="li-actions">
                       <button
@@ -1177,18 +1301,23 @@ export default function App({
                   <b>{overlap.summary.clientsInsideCommunityShapes}</b>
                   <span>clienți chiar în perimetrul unei comunități</span>
                 </div>
-                {overlap.summary.amountTotal > 0 && (
-                  <div>
-                    <b>
-                      {Math.round(
-                        (100 * overlap.summary.amountInCommunityAreas) /
-                          overlap.summary.amountTotal,
-                      )}
-                      %
-                    </b>
-                    <span>din suma finanțată ajunge în zone cu comunități</span>
-                  </div>
-                )}
+                {overlap.summary.amountTotal > 0 &&
+                  filteredDB.clients.every((c) => !!c.currency) &&
+                  new Set(filteredDB.clients.map((c) => c.currency)).size ===
+                    1 && (
+                    <div>
+                      <b>
+                        {Math.round(
+                          (100 * overlap.summary.amountInCommunityAreas) /
+                            overlap.summary.amountTotal,
+                        )}
+                        %
+                      </b>
+                      <span>
+                        din suma finanțată ajunge în zone cu comunități
+                      </span>
+                    </div>
+                  )}
               </div>
               {overlap.summary.clientsWithoutLocation > 0 && (
                 <p className="warn small">
@@ -1280,16 +1409,27 @@ export default function App({
         {tab === "dashboard" ? (
           <AnalyticsWorkspace
             db={db}
-            country={countryFilter}
-            onCountry={setCountryFilter}
+            filters={sharedFilters}
+            onFiltersChange={updateSharedFilters}
             onExplore={(code) => {
               setQ("");
               setStatusFilter("");
               setHealthOnly(false);
               setUnlocatedOnly(false);
-              setCountryFilter(code);
+              setCountry(code);
               setModule("map");
               setTab("communities");
+              setPanelOpen(true);
+            }}
+            onNetworkExplore={(kind, value) => {
+              setQ("");
+              setStatusFilter("");
+              setUnlocatedOnly(false);
+              setHealthOnly(false);
+              if (kind === "entrepreneurs") setSector(value);
+              else setPartner(value);
+              setModule("map");
+              setTab(kind);
               setPanelOpen(true);
             }}
             onSummary={
@@ -1304,6 +1444,8 @@ export default function App({
           <DataWorkspace
             access={access}
             db={db}
+            filters={sharedFilters}
+            onFiltersChange={updateSharedFilters}
             onImport={setImportTarget}
             onManual={() => setManualTarget("communities")}
             onChanged={() => void refreshWorkspace()}
@@ -1335,11 +1477,47 @@ export default function App({
                   : groupBoundaryRecords(communities).length}{" "}
                 forme
               </span>
-              <button onClick={fitAll}>
-                <Icon name="fit" size={17} />
-                Vezi tot
-              </button>
+              <div className="map-toolbar-actions">
+                <button
+                  aria-pressed={clusterPoints}
+                  title="Grupează punctele apropiate"
+                  onClick={() => setClusterPoints((v) => !v)}
+                >
+                  <Icon name="overlap" size={16} />
+                  <span>Grupare</span>
+                </button>
+                <button onClick={fitAll}>
+                  <Icon name="fit" size={17} />
+                  Vezi tot
+                </button>
+              </div>
             </div>
+            {geometryEditRequest && (
+              <div className="geometry-edit-toolbar">
+                <b>Editare geometrie</b>
+                <span>
+                  Mută punctul sau vârfurile conturului. Salvarea este
+                  explicită.
+                </span>
+                {geometryError && (
+                  <p className="error" role="alert">
+                    {geometryError}
+                  </p>
+                )}
+                <div className="btn-row">
+                  <button disabled={geometryBusy} onClick={leaveGeometryEditor}>
+                    Anulează
+                  </button>
+                  <button
+                    className="primary"
+                    disabled={geometryBusy || !editedGeometry}
+                    onClick={() => void saveEditedGeometry()}
+                  >
+                    {geometryBusy ? "Se salvează…" : "Salvează"}
+                  </button>
+                </div>
+              </div>
+            )}
             {submissionDrawing && (
               <div className="map-mode-notice" role="status">
                 Desenează limita propusă · Esc pentru anulare
@@ -1354,10 +1532,19 @@ export default function App({
               </button>
             )}
             <MapView
+              clusterPoints={clusterPoints}
+              editRequest={canEdit(access) ? geometryEditRequest : undefined}
+              onGeometryChange={setEditedGeometry}
               canDraw={canEdit(access) || submissionDrawing}
               proposalMode={submissionDrawing}
               previewGeometry={previewGeometry}
-              db={tab === "communities" ? { ...db, communities } : db}
+              db={
+                tab === "communities"
+                  ? { ...filteredDB, communities }
+                  : tab === "entrepreneurs"
+                    ? { ...filteredDB, entrepreneurs }
+                    : filteredDB
+              }
               version={store.version}
               selectedId={selectedId}
               focus={focus}
@@ -1461,6 +1648,27 @@ export default function App({
             }
             flash("Înregistrare salvată în baza de date.");
           }}
+        />
+      )}
+      {isAdmin(access) && publicationTarget && (
+        <PublicationDialog
+          community={publicationTarget}
+          onClose={() => setPublicationTarget(undefined)}
+          onSaved={() => void store.reload()}
+        />
+      )}
+      {canEdit(access) && coordinateTarget && (
+        <CoordinateDialog
+          community={coordinateTarget}
+          onClose={() => setCoordinateTarget(undefined)}
+          onSave={(lat, lng, geocoding) =>
+            persistGeometry(
+              coordinateTarget.id,
+              { type: "Point", coordinates: [lng, lat] },
+              coordinateTarget.geometry,
+              geocoding,
+            )
+          }
         />
       )}
       {authOpen && (

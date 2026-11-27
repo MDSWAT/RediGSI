@@ -1,5 +1,5 @@
 import { accessProfile } from "@/lib/workspaceServer";
-import { isAdmin } from "@/lib/access";
+import { EXPORT_GROUPS, isAdmin, type ExportGroup } from "@/lib/access";
 import { ensureBoundaries } from "@/lib/boundaryImport";
 import {
   workspaceClient,
@@ -19,14 +19,23 @@ export async function GET(request: Request) {
     const id = url.searchParams.get("id");
     if (entity && (!id || entity.length > 100 || id.length > 200))
       throw new AccessError("Referință invalidă.", 400);
-    const { data, error } = await (
-      await workspaceClient()
-    ).rpc(
+    const client = await workspaceClient();
+    const { data, error } = await client.rpc(
       entity ? "redi_record_history" : "redi_admin_overview",
       entity ? { p_type: entity, p_id: id } : {},
     );
     if (error) throw rpcError(error);
-    return privateJSON(data);
+    if (entity) return privateJSON(data);
+    const groups = await client.rpc("redi_export_groups_overview");
+    if (groups.error) throw rpcError(groups.error);
+    const byUser = (groups.data ?? {}) as Record<string, string[]>;
+    return privateJSON({
+      ...data,
+      members: (data.members ?? []).map((m: { userId: string }) => ({
+        ...m,
+        exportGroups: byUser[m.userId] ?? [],
+      })),
+    });
   } catch (e) {
     return apiError(e);
   }
@@ -69,6 +78,17 @@ export async function POST(request: Request) {
       p_export: body.canExport === true,
     });
     if (error) throw rpcError(error);
+    if (Array.isArray(body.exportGroups)) {
+      const groups = body.exportGroups.filter(
+        (g: unknown): g is ExportGroup =>
+          typeof g === "string" && (EXPORT_GROUPS as string[]).includes(g),
+      );
+      const saved = await client.rpc("redi_set_export_groups", {
+        p_user: body.userId,
+        p_groups: body.canExport === true ? groups : [],
+      });
+      if (saved.error) throw rpcError(saved.error);
+    }
     return privateJSON({ saved: true });
   } catch (e) {
     return apiError(e);

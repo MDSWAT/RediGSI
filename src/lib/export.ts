@@ -1,4 +1,3 @@
-import * as XLSX from "xlsx";
 import type { FeatureCollection, Geometry } from "geojson";
 import type { Community, DB, Entrepreneur, PartnerClient } from "./types";
 import type { OverlapRow } from "./overlap";
@@ -80,7 +79,8 @@ export function exportCSV(name: string, rows: Flat[]) {
   download(`${name}_${stamp()}.csv`, "﻿" + csv, "text/csv;charset=utf-8");
 }
 
-export function exportXLSX(name: string, rows: Flat[]) {
+export async function exportXLSX(name: string, rows: Flat[]) {
+  const XLSX = await import("xlsx");
   const ws = XLSX.utils.json_to_sheet(rows, { header: columnsOf(rows) });
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, name.slice(0, 31));

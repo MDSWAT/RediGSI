@@ -1,13 +1,11 @@
+import { sourceLoader } from "./helpers/load-typescript.mjs";
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import vm from 'node:vm';
-import ts from 'typescript';
 import { booleanValid, area, intersect, featureCollection, polygon } from '@turf/turf';
 const catalog=JSON.parse(fs.readFileSync(new URL('../src/data/catalog-2026.json',import.meta.url)));
 const manifest=JSON.parse(fs.readFileSync(new URL('../src/data/catalog-boundaries-2026.json',import.meta.url)));
-const compiled=ts.transpileModule(fs.readFileSync(new URL('../src/lib/boundaries.ts',import.meta.url),'utf8'),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022}}).outputText;
-const helpers={};vm.runInNewContext(compiled,{exports:helpers});
+const helpers=sourceLoader()(new URL('../src/lib/boundaries.ts',import.meta.url));
 const shapes=new Map(manifest.boundaries.map(b=>[b.id,b]));
 
 test('every supplied row has a real attributed polygon, with broader reference areas explicit',()=>{

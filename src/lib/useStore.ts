@@ -1,6 +1,6 @@
 "use client";
 import { importBatches } from "./importBatches";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { BaseRecord, CollectionName, DB } from "./types";
 import { createClient } from "@/utils/supabase/client";
 import { loadAllPages, WORKSPACE_PAGE_SIZE, type WorkspacePage } from "./workspacePages";
@@ -16,11 +16,13 @@ async function call<T>(
   url: string,
   method: string,
   body?: unknown,
+  signal?: AbortSignal,
 ): Promise<T> {
   const res = await fetch(url, {
     method,
     headers: body ? { "Content-Type": "application/json" } : undefined,
     body: body ? JSON.stringify(body) : undefined,
+    signal,
   });
   if (!res.ok)
     throw new Error(`${method} ${url}: ${res.status} ${await res.text()}`);
@@ -32,21 +34,22 @@ async function call<T>(
  * is decided by redi_workspace_page). Visitors without a session get the shared CDN copy of the
  * public map. Both are loaded in pages, since the full outline set is larger than one response may be.
  */
-async function loadWorkspace(): Promise<DB> {
+async function loadWorkspace(onProgress: (db: DB) => void, signal: AbortSignal): Promise<DB> {
   const supabase = createClient();
   const { data: auth } = await supabase.auth.getSession();
   if (!auth.session)
     return loadAllPages((offset) =>
-      call<WorkspacePage>(`/api/public-map?page=${offset / WORKSPACE_PAGE_SIZE}`, "GET"),
+      call<WorkspacePage>(`/api/public-map?page=${offset / WORKSPACE_PAGE_SIZE}`, "GET", undefined, signal),
+      onProgress,
     );
   return loadAllPages(async (offset) => {
     const { data, error } = await supabase.rpc("redi_workspace_page", {
       p_offset: offset,
       p_limit: WORKSPACE_PAGE_SIZE,
-    });
+    }).abortSignal(signal);
     if (error) throw new Error(`Datele nu au putut fi încărcate din baza de date: ${error.message}`);
     return data as WorkspacePage;
-  });
+  }, onProgress);
 }
 
 /** Client-side mirror of the server DB with optimistic-free, server-confirmed mutations. */
@@ -54,37 +57,45 @@ export function useStore() {
   const [db, setDb] = useState<DB>(empty);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  /** Bumped on every change; used as React key to refresh Leaflet GeoJSON layers. */
+  /** Monotonic workspace revision for consumers that need to track confirmed changes. */
   const [version, setVersion] = useState(0);
+  const activeLoad = useRef<AbortController | null>(null);
 
-  const reload = useCallback(async () => {
+  const startLoad = useCallback(async () => {
+    activeLoad.current?.abort();
+    const controller = new AbortController();
+    activeLoad.current = controller;
     try {
-      setDb(await loadWorkspace());
-      setVersion((v) => v + 1);
-      setError(null);
+      await loadWorkspace((snapshot) => {
+        if (!controller.signal.aborted) {
+          setDb(snapshot);
+          setVersion((v) => v + 1);
+        }
+      }, controller.signal);
     } catch (e) {
-      setDb(empty);
-      setError(String(e));
+      if (!controller.signal.aborted) {
+        setDb(empty);
+        setError(String(e));
+      }
     } finally {
-      setLoading(false);
+      if (!controller.signal.aborted) setLoading(false);
     }
   }, []);
 
+  const reload = useCallback(() => {
+    setLoading(true);
+    setDb(empty);
+    setError(null);
+    return startLoad();
+  }, [startLoad]);
+
   useEffect(() => {
-    let alive = true;
-    loadWorkspace()
-      .then((d) => {
-        if (alive) {
-          setDb(d);
-          setVersion((v) => v + 1);
-        }
-      })
-      .catch((e) => alive && setError(String(e)))
-      .finally(() => alive && setLoading(false));
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- state updates run only in asynchronous network callbacks.
+    void startLoad();
     return () => {
-      alive = false;
+      activeLoad.current?.abort();
     };
-  }, []);
+  }, [startLoad]);
 
   const apply = (
     c: CollectionName,

@@ -1,3 +1,4 @@
+import { sourceLoader } from "./helpers/load-typescript.mjs";
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -9,7 +10,7 @@ const read = file => fs.readFileSync(new URL(file,import.meta.url),'utf8');
 const catalog=JSON.parse(read('../src/data/catalog-2026.json'));
 const manifest=JSON.parse(read('../src/data/catalog-boundaries-2026.json'));
 const compile=file=>ts.transpileModule(read(file),{compilerOptions:{module:ts.ModuleKind.CommonJS,target:ts.ScriptTarget.ES2022,esModuleInterop:true}}).outputText;
-const helpers={};vm.runInNewContext(compile('../src/lib/boundaries.ts'),{exports:helpers});
+const helpers=sourceLoader()(new URL('../src/lib/boundaries.ts',import.meta.url));
 
 test('boundary database upgrade resumes safely, preserves edits/custom shapes/deletions and protects concurrent edits',async()=>{
  const db=new PGlite();

@@ -21,12 +21,14 @@ interface Props<T extends ClusterPoint> {
   onSelect?: (point: T) => void;
 }
 function ClusterMembers<T extends ClusterPoint>({
-  points,
+  count,
+  getPoints,
   label,
   popup,
   onSelect,
 }: {
-  points: T[];
+  count: number;
+  getPoints: (limit: number, offset: number) => T[];
   label: (p: T) => string;
   popup: (p: T) => ReactNode;
   onSelect?: (p: T) => void;
@@ -43,8 +45,8 @@ function ClusterMembers<T extends ClusterPoint>({
         </>
       ) : (
         <>
-          <b>{points.length} înregistrări în grup</b>
-          {points.slice(page * limit, (page + 1) * limit).map((p) => (
+          <b>{count} înregistrări în grup</b>
+          {getPoints(limit, page * limit).map((p) => (
             <button
               key={p.id}
               onClick={() => {
@@ -55,16 +57,16 @@ function ClusterMembers<T extends ClusterPoint>({
               {label(p)}
             </button>
           ))}
-          {points.length > limit && (
+          {count > limit && (
             <div className="btn-row">
               <button disabled={!page} onClick={() => setPage((p) => p - 1)}>
                 Înapoi
               </button>
               <span>
-                {page + 1} / {Math.ceil(points.length / limit)}
+                {page + 1} / {Math.ceil(count / limit)}
               </span>
               <button
-                disabled={(page + 1) * limit >= points.length}
+                disabled={(page + 1) * limit >= count}
                 onClick={() => setPage((p) => p + 1)}
               >
                 Înainte
@@ -75,6 +77,13 @@ function ClusterMembers<T extends ClusterPoint>({
       )}
     </div>
   );
+}
+
+// Popup portals otherwise build hidden details for every marker during every map render.
+function DeferredPopup({ children }: { children: () => ReactNode }) {
+  const [open, setOpen] = useState(false);
+  const events = useMemo(() => ({ add: () => setOpen(true), remove: () => setOpen(false) }), []);
+  return <Popup eventHandlers={events}>{open ? children() : null}</Popup>;
 }
 export default function PointClusterLayer<T extends ClusterPoint>({
   points,
@@ -95,11 +104,9 @@ export default function PointClusterLayer<T extends ClusterPoint>({
   useMapEvents({
     moveend: () =>
       setViewport({ zoom: map.getZoom(), bounds: map.getBounds() }),
-    zoomend: () =>
-      setViewport({ zoom: map.getZoom(), bounds: map.getBounds() }),
   });
   const byId = useMemo(() => new Map(points.map((p) => [p.id, p])), [points]);
-  const nodes = enabled
+  const nodes = useMemo(() => enabled
     ? index.getClusters(
         [
           viewport.bounds.getWest(),
@@ -109,21 +116,17 @@ export default function PointClusterLayer<T extends ClusterPoint>({
         ],
         Math.floor(viewport.zoom),
       )
-    : points.map((p) => ({
+    : points.filter((p) => viewport.bounds.contains([p.lat, p.lng])).map((p) => ({
         type: "Feature" as const,
         geometry: { type: "Point" as const, coordinates: [p.lng, p.lat] },
         properties: { id: p.id },
-      }));
+      })), [enabled, index, viewport, points]);
   return (
     <>
       {nodes.map((node) => {
         const properties = node.properties;
         if ("cluster" in properties && properties.cluster) {
           const c = properties as ClusterProperties;
-          const leaves = index
-            .getLeaves(c.cluster_id, Infinity)
-            .map((p) => byId.get(p.properties.id))
-            .filter((p): p is T => !!p);
           return (
             <CircleMarker
               key={`cluster-${c.cluster_id}`}
@@ -164,14 +167,16 @@ export default function PointClusterLayer<T extends ClusterPoint>({
               >
                 {c.point_count_abbreviated}
               </Tooltip>
-              <Popup>
+              <DeferredPopup>{() => (
                 <ClusterMembers
-                  points={leaves}
+                  count={c.point_count}
+                  getPoints={(limit, offset) => index.getLeaves(c.cluster_id, limit, offset)
+                    .map((p) => byId.get(p.properties.id)).filter((p): p is T => !!p)}
                   label={label}
                   popup={popup}
                   onSelect={onSelect}
                 />
-              </Popup>
+              )}</DeferredPopup>
             </CircleMarker>
           );
         }
@@ -190,7 +195,7 @@ export default function PointClusterLayer<T extends ClusterPoint>({
             }}
             eventHandlers={{ click: () => onSelect?.(p) }}
           >
-            <Popup>{popup(p)}</Popup>
+            <DeferredPopup>{() => popup(p)}</DeferredPopup>
           </CircleMarker>
         );
       })}

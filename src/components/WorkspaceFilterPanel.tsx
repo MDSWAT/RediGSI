@@ -1,4 +1,5 @@
 "use client";
+import { memo, useMemo } from "react";
 import type { DB } from "@/lib/types";
 import { COUNTRY_LABELS } from "@/lib/types";
 import {
@@ -6,7 +7,7 @@ import {
   FILTER_KEYS,
   type WorkspaceFilters,
 } from "@/lib/workspaceFilters";
-export default function WorkspaceFilterPanel({
+function WorkspaceFilterPanel({
   db,
   filters,
   onChange,
@@ -17,26 +18,28 @@ export default function WorkspaceFilterPanel({
   onChange: (f: WorkspaceFilters) => void;
   expanded?: boolean;
 }) {
-  const all = [...db.communities, ...db.entrepreneurs, ...db.clients];
-  const geo = all.filter(
-    (r) => !filters.country || r.country === filters.country,
-  );
-  const unique = (values: (string | undefined)[]) =>
-    [...new Set(values.filter((v): v is string => !!v))].sort((a, b) =>
-      a.localeCompare(b, "ro"),
+  const values = useMemo(() => {
+    const all = [...db.communities, ...db.entrepreneurs, ...db.clients];
+    const geo = all.filter(
+      (r) => !filters.country || r.country === filters.country,
     );
-  const values = {
-    country: unique(all.map((r) => r.country)),
-    county: unique(geo.map((r) => r.county)),
-    municipality: unique(
-      geo
-        .filter((r) => !filters.county || r.county === filters.county)
-        .map((r) => r.locality),
-    ),
-    sector: unique(db.entrepreneurs.map((r) => r.sector)),
-    partner: unique(db.clients.map((r) => r.partner)),
-    year: unique(db.clients.map((r) => r.year?.toString())).reverse(),
-  };
+    const unique = (values: (string | undefined)[]) =>
+      [...new Set(values.filter((v): v is string => !!v))].sort((a, b) =>
+        a.localeCompare(b, "ro"),
+      );
+    return {
+      country: unique(all.map((r) => r.country)),
+      county: unique(geo.map((r) => r.county)),
+      municipality: unique(
+        geo
+          .filter((r) => !filters.county || r.county === filters.county)
+          .map((r) => r.locality),
+      ),
+      sector: unique(db.entrepreneurs.map((r) => r.sector)),
+      partner: unique(db.clients.map((r) => r.partner)),
+      year: unique(db.clients.map((r) => r.year?.toString())).reverse(),
+    };
+  }, [db, filters.country, filters.county]);
   const names = {
     country: "Țară",
     county: "Județ / regiune",
@@ -93,3 +96,5 @@ export default function WorkspaceFilterPanel({
     </details>
   );
 }
+
+export default memo(WorkspaceFilterPanel);

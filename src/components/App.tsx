@@ -2,7 +2,7 @@
 import type { GeocodingMetadata } from "@/lib/geocoding";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useDeferredValue, useEffect, useMemo, useState } from "react";
 import type { Geometry } from "geojson";
 import { useStore } from "@/lib/useStore";
 import type { CollectionName, Community, CommunityStatus } from "@/lib/types";
@@ -17,15 +17,10 @@ import { exportCSV, exportXLSX, overlapRows } from "@/lib/export";
 import type { DrawShape, Focus } from "./MapView";
 import WorkspaceFilterPanel from "./WorkspaceFilterPanel";
 import { filterWorkspace, type WorkspaceFilters } from "@/lib/workspaceFilters";
-import PublicationDialog from "./PublicationDialog";
-import CoordinateDialog from "./CoordinateDialog";
 import type { GeometryEditRequest } from "./GeometryEditLayer";
-import CommunityForm from "./CommunityForm";
 import CommunityDetails from "./CommunityDetails";
 import { BOUNDARY_SCOPE_LABELS, groupBoundaryRecords } from "@/lib/boundaries";
-import ImportDialog from "./ImportDialog";
 import Icon, { type IconName } from "./Icon";
-import CountrySummaryView from "./CountrySummaryView";
 import type { ImportedCountrySummary } from "@/lib/countrySummary";
 import {
   PUBLIC_ACCESS,
@@ -38,12 +33,20 @@ import {
   type WorkspaceModule,
 } from "@/lib/access";
 import { createClient } from "@/utils/supabase/client";
-import AuthDialog from "./AuthDialog";
-import ProposalDialog, { type ProposalFields } from "./ProposalDialog";
-import AnalyticsWorkspace from "./AnalyticsWorkspace";
-import DataWorkspace from "./DataWorkspace";
-import AdministrationWorkspace from "./AdministrationWorkspace";
-import ManualEntryDialog, { type ManualTarget } from "./ManualEntryDialog";
+import type { ProposalFields } from "./ProposalDialog";
+import type { ManualTarget } from "./ManualEntryDialog";
+
+const PublicationDialog = dynamic(() => import("./PublicationDialog"));
+const CoordinateDialog = dynamic(() => import("./CoordinateDialog"));
+const CommunityForm = dynamic(() => import("./CommunityForm"));
+const ImportDialog = dynamic(() => import("./ImportDialog"));
+const CountrySummaryView = dynamic(() => import("./CountrySummaryView"));
+const AuthDialog = dynamic(() => import("./AuthDialog"));
+const ProposalDialog = dynamic(() => import("./ProposalDialog"));
+const AnalyticsWorkspace = dynamic(() => import("./AnalyticsWorkspace"));
+const DataWorkspace = dynamic(() => import("./DataWorkspace"));
+const AdministrationWorkspace = dynamic(() => import("./AdministrationWorkspace"));
+const ManualEntryDialog = dynamic(() => import("./ManualEntryDialog"));
 
 const MapView = dynamic(() => import("./MapView"), {
   ssr: false,
@@ -241,10 +244,14 @@ export default function App({
     }
   }, []);
   useEffect(() => {
+    if (tab !== "summary") return;
     let alive = true;
     fetchSummaries()
       .then((reports) => {
-        if (alive) setSummaries(reports);
+        if (alive) {
+          setSummaries(reports);
+          setSummaryError(null);
+        }
       })
       .catch((error: Error) => {
         if (alive) setSummaryError(error.message);
@@ -255,7 +262,7 @@ export default function App({
     return () => {
       alive = false;
     };
-  }, []);
+  }, [tab]);
   const selectedSummary =
     summaries.find((report) => report.id === summaryId) ?? summaries.at(-1);
   const [selectedId, setSelectedId] = useState<string>();
@@ -302,14 +309,14 @@ export default function App({
       yearFilter,
     ],
   );
-  const updateSharedFilters = (f: WorkspaceFilters) => {
+  const updateSharedFilters = useCallback((f: WorkspaceFilters) => {
     setCountry(f.country);
     setCounty(f.county);
     setMunicipality(f.municipality);
     setSector(f.sector);
     setPartner(f.partner);
     setYear(f.year);
-  };
+  }, []);
   const filteredDB = useMemo(
     () => filterWorkspace(db, sharedFilters),
     [db, sharedFilters],
@@ -422,7 +429,7 @@ export default function App({
     [filteredDB, level, partner, tab],
   );
 
-  const nq = norm(q);
+  const nq = norm(useDeferredValue(q));
   const communities = useMemo(
     () =>
       filteredDB.communities.filter(
@@ -459,6 +466,32 @@ export default function App({
       ),
     [filteredDB.entrepreneurs, nq],
   );
+  const mapDB = useMemo(
+    () => tab === "communities" ? { ...filteredDB, communities }
+      : tab === "entrepreneurs" ? { ...filteredDB, entrepreneurs } : filteredDB,
+    [tab, filteredDB, communities, entrepreneurs],
+  );
+  const shapeCount = useMemo(() => groupBoundaryRecords(communities).length, [communities]);
+  const totalShapeCount = useMemo(() => groupBoundaryRecords(db.communities).length, [db.communities]);
+  const entrepreneurCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const e of db.entrepreneurs) {
+      if (e.communityId) counts.set(e.communityId, (counts.get(e.communityId) ?? 0) + 1);
+    }
+    return counts;
+  }, [db.entrepreneurs]);
+  // Bound the sidebar DOM while retaining access to every result and map selection.
+  const [communityPage, setCommunityPage] = useState(0);
+  const pageSize = 50;
+  const selectedIndex = communities.findIndex((c) => c.id === selectedId);
+  const [previousCommunities, setPreviousCommunities] = useState(communities);
+  const [previousSelection, setPreviousSelection] = useState(selectedId);
+  if (previousCommunities !== communities || previousSelection !== selectedId) {
+    setPreviousCommunities(communities);
+    setPreviousSelection(selectedId);
+    setCommunityPage(selectedIndex < 0 ? 0 : Math.floor(selectedIndex / pageSize));
+  }
+  const visibleCommunities = communities.slice(communityPage * pageSize, (communityPage + 1) * pageSize);
 
   const onCreateShape = useCallback(
     (g: Geometry) => {
@@ -654,7 +687,7 @@ export default function App({
             <b>
               {store.loading || store.error
                 ? "—"
-                : groupBoundaryRecords(db.communities).length}
+                : totalShapeCount}
             </b>{" "}
             zone
           </span>
@@ -948,14 +981,12 @@ export default function App({
               {!!db.communities.length && (
                 <p className="results-label">
                   {communities.length} înregistrări ·{" "}
-                  {groupBoundaryRecords(communities).length} forme pe hartă
+                  {shapeCount} forme pe hartă
                 </p>
               )}
               <ul className="list">
-                {communities.map((c) => {
-                  const n = db.entrepreneurs.filter(
-                    (e) => e.communityId === c.id,
-                  ).length;
+                {visibleCommunities.map((c) => {
+                  const n = entrepreneurCounts.get(c.id) ?? 0;
                   return (
                     <li
                       key={c.id}
@@ -1062,6 +1093,13 @@ export default function App({
                   );
                 })}
               </ul>
+              {communities.length > pageSize && (
+                <div className="btn-row" aria-label="Paginare comunități">
+                  <button disabled={communityPage === 0} onClick={() => setCommunityPage((p) => p - 1)}>Înapoi</button>
+                  <span aria-live="polite">{communityPage * pageSize + 1}–{Math.min((communityPage + 1) * pageSize, communities.length)} / {communities.length}</span>
+                  <button disabled={(communityPage + 1) * pageSize >= communities.length} onClick={() => setCommunityPage((p) => p + 1)}>Înainte</button>
+                </div>
+              )}
 
               {!store.loading && !store.error && !db.communities.length && (
                 <div className="empty">
@@ -1475,7 +1513,7 @@ export default function App({
                 Hartă ·{" "}
                 {store.error
                   ? "—"
-                  : groupBoundaryRecords(communities).length}{" "}
+                  : shapeCount}{" "}
                 forme
               </span>
               <div className="map-toolbar-actions">
@@ -1548,14 +1586,7 @@ export default function App({
               canDraw={canEdit(access) || submissionDrawing}
               proposalMode={submissionDrawing}
               previewGeometry={previewGeometry}
-              db={
-                tab === "communities"
-                  ? { ...filteredDB, communities }
-                  : tab === "entrepreneurs"
-                    ? { ...filteredDB, entrepreneurs }
-                    : filteredDB
-              }
-              version={store.version}
+              db={mapDB}
               selectedId={selectedId}
               focus={focus}
               drawRequest={drawRequest}

@@ -2,6 +2,8 @@
 import { useEffect, useRef } from "react";
 import { useMap } from "react-leaflet";
 import L from "leaflet";
+import "@geoman-io/leaflet-geoman-free";
+import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 import type { Feature, FeatureCollection, Geometry } from "geojson";
 export interface GeometryEditRequest {
   id: string;
@@ -21,6 +23,7 @@ export default function GeometryEditLayer({
     callback.current = onChange;
   }, [onChange]);
   useEffect(() => {
+    L.PM.reInitLayer(map as unknown as L.Layer);
     map.pm.disableDraw();
     const group = L.geoJSON(
       {

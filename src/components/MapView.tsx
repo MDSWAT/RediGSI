@@ -1,9 +1,8 @@
 "use client";
 import PointClusterLayer from "./PointClusterLayer";
-import GeometryEditLayer, {
-  type GeometryEditRequest,
-} from "./GeometryEditLayer";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { GeometryEditRequest } from "./GeometryEditLayer";
+import dynamic from "next/dynamic";
+import { memo, useCallback, useEffect, useMemo, useRef, useState, type ComponentProps } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -18,8 +17,9 @@ import {
 import L from "leaflet";
 import type { Feature, FeatureCollection, Geometry } from "geojson";
 import "leaflet/dist/leaflet.css";
-import "@geoman-io/leaflet-geoman-free";
-import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
+import type {} from "@geoman-io/leaflet-geoman-free";
+import { geometryBounds } from "@/lib/geometryBounds";
+
 import type { Community, DB } from "@/lib/types";
 import {
   COUNTRY_LABELS,
@@ -30,6 +30,8 @@ import {
 import type { OverlapRow } from "@/lib/overlap";
 import { validLatLng } from "@/lib/geo";
 import { groupBoundaryRecords, BOUNDARY_SCOPE_LABELS } from "@/lib/boundaries";
+const DrawControl = dynamic(() => import("./MapDrawControl"), { ssr: false });
+const GeometryEditLayer = dynamic(() => import("./GeometryEditLayer"), { ssr: false });
 /** CARTO raster basemaps require a key since 2026; without one the Esri map stays the default. */
 const CARTO_KEY = process.env.NEXT_PUBLIC_CARTO_BASEMAP_KEY ?? "";
 
@@ -52,7 +54,6 @@ interface Props {
   proposalMode?: boolean;
   previewGeometry?: Geometry;
   db: DB;
-  version: number;
   selectedId?: string;
   focus?: Focus;
   drawRequest?: { shape: DrawShape; nonce: number };
@@ -84,68 +85,6 @@ const COLORS = {
   communitiesOnly: "#64748b",
 };
 
-function DrawControl({
-  onCreate,
-  request,
-  proposalMode,
-}: {
-  onCreate: (g: Geometry) => void;
-  request?: Props["drawRequest"];
-  proposalMode?: boolean;
-}) {
-  const map = useMap();
-  const cb = useRef(onCreate);
-  useEffect(() => {
-    cb.current = onCreate;
-  }, [onCreate]);
-
-  useEffect(() => {
-    map.pm.addControls({
-      position: "topleft",
-      drawMarker: false,
-      drawCircle: false,
-      drawText: false,
-      drawCircleMarker: true,
-      drawPolyline: !proposalMode,
-      drawPolygon: true,
-      drawRectangle: true,
-      editMode: false,
-      dragMode: false,
-      cutPolygon: false,
-      removalMode: false,
-      rotateMode: false,
-    });
-    try {
-      map.pm.setLang("ro");
-    } catch {
-      /* language pack missing – keep English */
-    }
-    map.pm.setGlobalOptions({
-      templineStyle: { color: COLORS.propus },
-      hintlineStyle: { color: COLORS.propus, dashArray: "5,5" },
-      pathOptions: { color: COLORS.propus },
-    });
-
-    const handler = (e: { layer: L.Layer }) => {
-      const gj = (e.layer as L.Polyline).toGeoJSON() as Feature;
-      map.removeLayer(e.layer);
-      cb.current(gj.geometry);
-    };
-    map.on("pm:create", handler);
-    return () => {
-      map.off("pm:create", handler);
-      map.pm.disableDraw();
-      map.pm.removeControls();
-    };
-  }, [map, proposalMode]);
-
-  useEffect(() => {
-    if (request) map.pm.enableDraw(request.shape, { continueDrawing: false });
-  }, [map, request]);
-
-  return null;
-}
-
 function FocusControl({ focus }: { focus?: Focus }) {
   const map = useMap();
   useEffect(() => {
@@ -165,23 +104,30 @@ function FocusControl({ focus }: { focus?: Focus }) {
 function DataExtent({ communities }: { communities: Community[] }) {
   const map = useMap();
   useEffect(() => {
-    const features = communities
-      .filter((c) => c.geometry)
-      .map((c) => ({
-        type: "Feature" as const,
-        geometry: c.geometry!,
-        properties: {},
-      }));
-    if (features.length)
-      map.fitBounds(
-        L.geoJSON({
-          type: "FeatureCollection",
-          features,
-        } as FeatureCollection).getBounds(),
-        { padding: [35, 35], maxZoom: 11, animate: false },
-      );
+    const bounds = L.latLngBounds([]);
+    for (const community of communities) {
+      if (!community.geometry) continue;
+      const extent = geometryBounds(community.geometry);
+      if (extent) bounds.extend(extent);
+    }
+    if (bounds.isValid())
+      map.fitBounds(bounds, { padding: [35, 35], maxZoom: 11, animate: false });
   }, [map, communities]);
   return null;
+}
+
+// React Leaflet treats GeoJSON data as immutable. Replace its contents only when community
+// data changes; updates to clients/entrepreneurs must not recreate every administrative outline.
+function CommunityGeoJSON({ data, ...props }: ComponentProps<typeof GeoJSON>) {
+  const layer = useRef<L.GeoJSON>(null);
+  const previousData = useRef(data);
+  useEffect(() => {
+    if (!layer.current || previousData.current === data) return;
+    previousData.current = data;
+    Object.assign(layer.current.options, props);
+    layer.current.clearLayers().addData(data);
+  }, [data, props]);
+  return <GeoJSON {...props} ref={layer} data={data} />;
 }
 
 const TOOLTIP_FIELDS = [
@@ -309,8 +255,8 @@ function communityPopup(c: Community, entrepreneurs: number) {
   </div>`;
 }
 
-export default function MapView(props: Props) {
-  const { db, version, selectedId, overlap } = props;
+function MapView(props: Props) {
+  const { db, selectedId, overlap } = props;
   const hatched = props.hatched === true;
   const [zoom, setZoom] = useState(7);
   const stroke = strokeScale(zoom);
@@ -330,6 +276,10 @@ export default function MapView(props: Props) {
     );
     return m;
   }, [db.entrepreneurs]);
+  const entrepreneurCountRef = useRef(entrepreneurCount);
+  useEffect(() => {
+    entrepreneurCountRef.current = entrepreneurCount;
+  }, [entrepreneurCount]);
 
   const communityFC = useMemo<FeatureCollection>(
     () => ({
@@ -497,9 +447,9 @@ export default function MapView(props: Props) {
                 />
               )}
             />
-            <GeoJSON
-              key={`c-${version}-${db.communities.map((c) => c.id).join(",")}`}
+            <CommunityGeoJSON
               data={communityFC}
+              pmIgnore
               attribution='Contururi: <a href="https://www.geoboundaries.org/">geoBoundaries</a> · Localizări: <a href="https://www.geonames.org/">GeoNames CC BY 4.0</a>'
               // Restyled in place when the selection changes, without rebuilding every outline.
               style={communityStyle}
@@ -523,7 +473,7 @@ export default function MapView(props: Props) {
                 const c = records[0];
                 if (!c) return;
                 const label = c.boundary?.name ?? c.name;
-                layer.bindTooltip(() => communityTooltip(records, entrepreneurCount), {
+                layer.bindTooltip(() => communityTooltip(records, entrepreneurCountRef.current), {
                   sticky: true,
                   direction: "top",
                   offset: [0, -12],
@@ -545,7 +495,7 @@ export default function MapView(props: Props) {
                 }
                 if (records.length === 1) {
                   layer.bindPopup(() =>
-                    communityPopup(c, entrepreneurCount.get(c.id) ?? 0),
+                    communityPopup(c, entrepreneurCountRef.current.get(c.id) ?? 0),
                   );
                   layer.on("click", () => onSelect.current(c.id));
                 } else {
@@ -709,3 +659,5 @@ export default function MapView(props: Props) {
     </MapContainer>
   );
 }
+
+export default memo(MapView);

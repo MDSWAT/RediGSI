@@ -1,5 +1,16 @@
 import type { Community, AdministrativeBoundary } from "./types";
 import type { Polygon, MultiPolygon, Geometry } from "geojson";
+import { geometryBounds } from "./geometryBounds";
+
+const shapeKeys = new WeakMap<Geometry, string>();
+function shapeKey(geometry: Geometry) {
+  let key = shapeKeys.get(geometry);
+  if (!key) {
+    key = `shape:${JSON.stringify(geometry)}`;
+    shapeKeys.set(geometry, key);
+  }
+  return key;
+}
 
 export interface BoundaryShape extends Omit<AdministrativeBoundary, "scope" | "method" | "referencePoint"> {
   country: string;
@@ -49,7 +60,7 @@ export function groupBoundaryRecords(records: Community[]): Community[][] {
   for (const record of records) {
     if (!record.geometry) continue;
     // Public projections omit boundary metadata, so identical outlines are grouped by shape.
-    const key = record.boundary?.id ?? (record.geometry.type === "Point" ? record.id : `shape:${JSON.stringify(record.geometry)}`);
+    const key = record.boundary?.id ?? (record.geometry.type === "Point" ? record.id : shapeKey(record.geometry));
     const group = groups.get(key) ?? [];
     group.push(record); groups.set(key, group);
   }
@@ -61,14 +72,6 @@ export function groupBoundaryRecords(records: Community[]): Community[][] {
 }
 
 function extent(geometry: Geometry | null): number {
-  if (!geometry || !("coordinates" in geometry)) return 0;
-  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
-  const walk = (c: unknown): void => {
-    if (Array.isArray(c) && typeof c[0] === "number") {
-      const [x, y] = c as number[];
-      minX = Math.min(minX, x); maxX = Math.max(maxX, x); minY = Math.min(minY, y); maxY = Math.max(maxY, y);
-    } else if (Array.isArray(c)) c.forEach(walk);
-  };
-  walk(geometry.coordinates);
-  return maxX > minX ? (maxX - minX) * (maxY - minY) : 0;
+  const bounds = geometry && geometryBounds(geometry);
+  return bounds ? (bounds[1][1] - bounds[0][1]) * (bounds[1][0] - bounds[0][0]) : 0;
 }

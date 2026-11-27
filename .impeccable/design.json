@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-25T07:34:10.492Z",
+  "generatedAt": "2026-11-27T07:04:28.766456+00:00",
   "title": "Design System: Roma Community Map",
   "extensions": {
     "colorMeta": {
@@ -8,252 +8,378 @@
         "role": "neutral",
         "displayName": "Bg",
         "tonalRamp": [
-          "oklch(15% 0.0432 166.49)",
-          "oklch(26% 0.0432 166.49)",
-          "oklch(38% 0.0432 166.49)",
-          "oklch(49% 0.0432 166.49)",
-          "oklch(61% 0.0432 166.49)",
-          "oklch(72% 0.0432 166.49)",
-          "oklch(84% 0.0432 166.49)",
-          "oklch(95% 0.0432 166.49)"
+          "oklch(15% 0.0025 228.78)",
+          "oklch(26% 0.0025 228.78)",
+          "oklch(38% 0.0025 228.78)",
+          "oklch(49% 0.0025 228.78)",
+          "oklch(61% 0.0025 228.78)",
+          "oklch(72% 0.0025 228.78)",
+          "oklch(84% 0.0025 228.78)",
+          "oklch(95% 0.0025 228.78)"
         ]
       },
       "panel": {
         "role": "neutral",
         "displayName": "Panel",
         "tonalRamp": [
-          "oklch(15% 0.0439 165.15)",
-          "oklch(26% 0.0439 165.15)",
-          "oklch(38% 0.0439 165.15)",
-          "oklch(49% 0.0439 165.15)",
-          "oklch(61% 0.0439 165.15)",
-          "oklch(72% 0.0439 165.15)",
-          "oklch(84% 0.0439 165.15)",
-          "oklch(95% 0.0439 165.15)"
+          "oklch(15% 0.0000 89.88)",
+          "oklch(26% 0.0000 89.88)",
+          "oklch(38% 0.0000 89.88)",
+          "oklch(49% 0.0000 89.88)",
+          "oklch(61% 0.0000 89.88)",
+          "oklch(72% 0.0000 89.88)",
+          "oklch(84% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
         ]
       },
       "text": {
         "role": "neutral",
         "displayName": "Text",
         "tonalRamp": [
-          "oklch(15% 0.0017 325.59)",
-          "oklch(26% 0.0017 325.59)",
-          "oklch(38% 0.0017 325.59)",
-          "oklch(49% 0.0017 325.59)",
-          "oklch(61% 0.0017 325.59)",
-          "oklch(72% 0.0017 325.59)",
-          "oklch(84% 0.0017 325.59)",
-          "oklch(95% 0.0017 325.59)"
+          "oklch(15% 0.0212 240.06)",
+          "oklch(26% 0.0212 240.06)",
+          "oklch(38% 0.0212 240.06)",
+          "oklch(49% 0.0212 240.06)",
+          "oklch(61% 0.0212 240.06)",
+          "oklch(72% 0.0212 240.06)",
+          "oklch(84% 0.0212 240.06)",
+          "oklch(95% 0.0212 240.06)"
         ]
       },
       "muted": {
         "role": "neutral",
         "displayName": "Muted",
         "tonalRamp": [
-          "oklch(15% 0.0013 106.43)",
-          "oklch(26% 0.0013 106.43)",
-          "oklch(38% 0.0013 106.43)",
-          "oklch(49% 0.0013 106.43)",
-          "oklch(61% 0.0013 106.43)",
-          "oklch(72% 0.0013 106.43)",
-          "oklch(84% 0.0013 106.43)",
-          "oklch(95% 0.0013 106.43)"
+          "oklch(15% 0.0245 246.12)",
+          "oklch(26% 0.0245 246.12)",
+          "oklch(38% 0.0245 246.12)",
+          "oklch(49% 0.0245 246.12)",
+          "oklch(61% 0.0245 246.12)",
+          "oklch(72% 0.0245 246.12)",
+          "oklch(84% 0.0245 246.12)",
+          "oklch(95% 0.0245 246.12)"
         ]
       },
       "border": {
         "role": "neutral",
         "displayName": "Border",
         "tonalRamp": [
-          "oklch(15% 0.0421 167.97)",
-          "oklch(26% 0.0421 167.97)",
-          "oklch(38% 0.0421 167.97)",
-          "oklch(49% 0.0421 167.97)",
-          "oklch(61% 0.0421 167.97)",
-          "oklch(72% 0.0421 167.97)",
-          "oklch(84% 0.0421 167.97)",
-          "oklch(95% 0.0421 167.97)"
+          "oklch(15% 0.0069 247.90)",
+          "oklch(26% 0.0069 247.90)",
+          "oklch(38% 0.0069 247.90)",
+          "oklch(49% 0.0069 247.90)",
+          "oklch(61% 0.0069 247.90)",
+          "oklch(72% 0.0069 247.90)",
+          "oklch(84% 0.0069 247.90)",
+          "oklch(95% 0.0069 247.90)"
+        ]
+      },
+      "control-border": {
+        "role": "neutral",
+        "displayName": "Control Border",
+        "tonalRamp": [
+          "oklch(15% 0.0112 243.67)",
+          "oklch(26% 0.0112 243.67)",
+          "oklch(38% 0.0112 243.67)",
+          "oklch(49% 0.0112 243.67)",
+          "oklch(61% 0.0112 243.67)",
+          "oklch(72% 0.0112 243.67)",
+          "oklch(84% 0.0112 243.67)",
+          "oklch(95% 0.0112 243.67)"
+        ]
+      },
+      "state-border": {
+        "role": "neutral",
+        "displayName": "State Border",
+        "tonalRamp": [
+          "oklch(15% 0.0238 239.63)",
+          "oklch(26% 0.0238 239.63)",
+          "oklch(38% 0.0238 239.63)",
+          "oklch(49% 0.0238 239.63)",
+          "oklch(61% 0.0238 239.63)",
+          "oklch(72% 0.0238 239.63)",
+          "oklch(84% 0.0238 239.63)",
+          "oklch(95% 0.0238 239.63)"
         ]
       },
       "primary": {
         "role": "primary",
         "displayName": "Primary",
         "tonalRamp": [
-          "oklch(15% 0.1151 95.75)",
-          "oklch(26% 0.1151 95.75)",
-          "oklch(38% 0.1151 95.75)",
-          "oklch(49% 0.1151 95.75)",
-          "oklch(61% 0.1151 95.75)",
-          "oklch(72% 0.1151 95.75)",
-          "oklch(84% 0.1151 95.75)",
-          "oklch(95% 0.1151 95.75)"
+          "oklch(15% 0.0906 182.88)",
+          "oklch(26% 0.0906 182.88)",
+          "oklch(38% 0.0906 182.88)",
+          "oklch(49% 0.0906 182.88)",
+          "oklch(61% 0.0906 182.88)",
+          "oklch(72% 0.0906 182.88)",
+          "oklch(84% 0.0906 182.88)",
+          "oklch(95% 0.0906 182.88)"
+        ]
+      },
+      "primary-hover": {
+        "role": "primary",
+        "displayName": "Primary Hover",
+        "tonalRamp": [
+          "oklch(15% 0.0797 180.70)",
+          "oklch(26% 0.0797 180.70)",
+          "oklch(38% 0.0797 180.70)",
+          "oklch(49% 0.0797 180.70)",
+          "oklch(61% 0.0797 180.70)",
+          "oklch(72% 0.0797 180.70)",
+          "oklch(84% 0.0797 180.70)",
+          "oklch(95% 0.0797 180.70)"
         ]
       },
       "primary-text": {
         "role": "neutral",
         "displayName": "Primary Text",
         "tonalRamp": [
-          "oklch(15% 0.0000 0.00)",
-          "oklch(26% 0.0000 0.00)",
-          "oklch(38% 0.0000 0.00)",
-          "oklch(49% 0.0000 0.00)",
-          "oklch(61% 0.0000 0.00)",
-          "oklch(72% 0.0000 0.00)",
-          "oklch(84% 0.0000 0.00)",
-          "oklch(95% 0.0000 0.00)"
-        ]
-      },
-      "hover": {
-        "role": "neutral",
-        "displayName": "Hover",
-        "tonalRamp": [
-          "oklch(15% 0.0501 163.95)",
-          "oklch(26% 0.0501 163.95)",
-          "oklch(38% 0.0501 163.95)",
-          "oklch(49% 0.0501 163.95)",
-          "oklch(61% 0.0501 163.95)",
-          "oklch(72% 0.0501 163.95)",
-          "oklch(84% 0.0501 163.95)",
-          "oklch(95% 0.0501 163.95)"
-        ]
-      },
-      "selected": {
-        "role": "neutral",
-        "displayName": "Selected",
-        "tonalRamp": [
-          "oklch(15% 0.0566 162.72)",
-          "oklch(26% 0.0566 162.72)",
-          "oklch(38% 0.0566 162.72)",
-          "oklch(49% 0.0566 162.72)",
-          "oklch(61% 0.0566 162.72)",
-          "oklch(72% 0.0566 162.72)",
-          "oklch(84% 0.0566 162.72)",
-          "oklch(95% 0.0566 162.72)"
-        ]
-      },
-      "rail": {
-        "role": "neutral",
-        "displayName": "Rail",
-        "tonalRamp": [
-          "oklch(15% 0.0432 166.49)",
-          "oklch(26% 0.0432 166.49)",
-          "oklch(38% 0.0432 166.49)",
-          "oklch(49% 0.0432 166.49)",
-          "oklch(61% 0.0432 166.49)",
-          "oklch(72% 0.0432 166.49)",
-          "oklch(84% 0.0432 166.49)",
-          "oklch(95% 0.0432 166.49)"
+          "oklch(15% 0.0000 89.88)",
+          "oklch(26% 0.0000 89.88)",
+          "oklch(38% 0.0000 89.88)",
+          "oklch(49% 0.0000 89.88)",
+          "oklch(61% 0.0000 89.88)",
+          "oklch(72% 0.0000 89.88)",
+          "oklch(84% 0.0000 89.88)",
+          "oklch(95% 0.0000 89.88)"
         ]
       },
       "accent": {
         "role": "primary",
         "displayName": "Accent",
         "tonalRamp": [
-          "oklch(15% 0.1151 95.75)",
-          "oklch(26% 0.1151 95.75)",
-          "oklch(38% 0.1151 95.75)",
-          "oklch(49% 0.1151 95.75)",
-          "oklch(61% 0.1151 95.75)",
-          "oklch(72% 0.1151 95.75)",
-          "oklch(84% 0.1151 95.75)",
-          "oklch(95% 0.1151 95.75)"
+          "oklch(15% 0.0906 182.88)",
+          "oklch(26% 0.0906 182.88)",
+          "oklch(38% 0.0906 182.88)",
+          "oklch(49% 0.0906 182.88)",
+          "oklch(61% 0.0906 182.88)",
+          "oklch(72% 0.0906 182.88)",
+          "oklch(84% 0.0906 182.88)",
+          "oklch(95% 0.0906 182.88)"
         ]
       },
       "danger": {
-        "role": "neutral",
+        "role": "secondary",
         "displayName": "Danger",
         "tonalRamp": [
-          "oklch(15% 0.0301 12.61)",
-          "oklch(26% 0.0301 12.61)",
-          "oklch(38% 0.0301 12.61)",
-          "oklch(49% 0.0301 12.61)",
-          "oklch(61% 0.0301 12.61)",
-          "oklch(72% 0.0301 12.61)",
-          "oklch(84% 0.0301 12.61)",
-          "oklch(95% 0.0301 12.61)"
+          "oklch(15% 0.1605 19.43)",
+          "oklch(26% 0.1605 19.43)",
+          "oklch(38% 0.1605 19.43)",
+          "oklch(49% 0.1605 19.43)",
+          "oklch(61% 0.1605 19.43)",
+          "oklch(72% 0.1605 19.43)",
+          "oklch(84% 0.1605 19.43)",
+          "oklch(95% 0.1605 19.43)"
+        ]
+      },
+      "ok": {
+        "role": "secondary",
+        "displayName": "Ok",
+        "tonalRamp": [
+          "oklch(15% 0.0873 166.72)",
+          "oklch(26% 0.0873 166.72)",
+          "oklch(38% 0.0873 166.72)",
+          "oklch(49% 0.0873 166.72)",
+          "oklch(61% 0.0873 166.72)",
+          "oklch(72% 0.0873 166.72)",
+          "oklch(84% 0.0873 166.72)",
+          "oklch(95% 0.0873 166.72)"
         ]
       },
       "warn": {
-        "role": "neutral",
+        "role": "secondary",
         "displayName": "Warn",
         "tonalRamp": [
-          "oklch(15% 0.0013 106.42)",
-          "oklch(26% 0.0013 106.42)",
-          "oklch(38% 0.0013 106.42)",
-          "oklch(49% 0.0013 106.42)",
-          "oklch(61% 0.0013 106.42)",
-          "oklch(72% 0.0013 106.42)",
-          "oklch(84% 0.0013 106.42)",
-          "oklch(95% 0.0013 106.42)"
+          "oklch(15% 0.1063 70.23)",
+          "oklch(26% 0.1063 70.23)",
+          "oklch(38% 0.1063 70.23)",
+          "oklch(49% 0.1063 70.23)",
+          "oklch(61% 0.1063 70.23)",
+          "oklch(72% 0.1063 70.23)",
+          "oklch(84% 0.1063 70.23)",
+          "oklch(95% 0.1063 70.23)"
+        ]
+      },
+      "hover": {
+        "role": "neutral",
+        "displayName": "Hover",
+        "tonalRamp": [
+          "oklch(15% 0.0045 214.33)",
+          "oklch(26% 0.0045 214.33)",
+          "oklch(38% 0.0045 214.33)",
+          "oklch(49% 0.0045 214.33)",
+          "oklch(61% 0.0045 214.33)",
+          "oklch(72% 0.0045 214.33)",
+          "oklch(84% 0.0045 214.33)",
+          "oklch(95% 0.0045 214.33)"
+        ]
+      },
+      "selected": {
+        "role": "neutral",
+        "displayName": "Selected",
+        "tonalRamp": [
+          "oklch(15% 0.0128 172.37)",
+          "oklch(26% 0.0128 172.37)",
+          "oklch(38% 0.0128 172.37)",
+          "oklch(49% 0.0128 172.37)",
+          "oklch(61% 0.0128 172.37)",
+          "oklch(72% 0.0128 172.37)",
+          "oklch(84% 0.0128 172.37)",
+          "oklch(95% 0.0128 172.37)"
+        ]
+      },
+      "rail": {
+        "role": "neutral",
+        "displayName": "Rail",
+        "tonalRamp": [
+          "oklch(15% 0.0025 228.78)",
+          "oklch(26% 0.0025 228.78)",
+          "oklch(38% 0.0025 228.78)",
+          "oklch(49% 0.0025 228.78)",
+          "oklch(61% 0.0025 228.78)",
+          "oklch(72% 0.0025 228.78)",
+          "oklch(84% 0.0025 228.78)",
+          "oklch(95% 0.0025 228.78)"
         ]
       },
       "nav-active": {
         "role": "neutral",
         "displayName": "Nav Active",
         "tonalRamp": [
-          "oklch(15% 0.0439 165.15)",
-          "oklch(26% 0.0439 165.15)",
-          "oklch(38% 0.0439 165.15)",
-          "oklch(49% 0.0439 165.15)",
-          "oklch(61% 0.0439 165.15)",
-          "oklch(72% 0.0439 165.15)",
-          "oklch(84% 0.0439 165.15)",
-          "oklch(95% 0.0439 165.15)"
+          "oklch(15% 0.0128 172.36)",
+          "oklch(26% 0.0128 172.36)",
+          "oklch(38% 0.0128 172.36)",
+          "oklch(49% 0.0128 172.36)",
+          "oklch(61% 0.0128 172.36)",
+          "oklch(72% 0.0128 172.36)",
+          "oklch(84% 0.0128 172.36)",
+          "oklch(95% 0.0128 172.36)"
+        ]
+      },
+      "nav-active-text": {
+        "role": "neutral",
+        "displayName": "Nav Active Text",
+        "tonalRamp": [
+          "oklch(15% 0.0798 180.88)",
+          "oklch(26% 0.0798 180.88)",
+          "oklch(38% 0.0798 180.88)",
+          "oklch(49% 0.0798 180.88)",
+          "oklch(61% 0.0798 180.88)",
+          "oklch(72% 0.0798 180.88)",
+          "oklch(84% 0.0798 180.88)",
+          "oklch(95% 0.0798 180.88)"
         ]
       },
       "badge-valid": {
         "role": "secondary",
         "displayName": "Badge Valid",
         "tonalRamp": [
-          "oklch(15% 0.0113 167.80)",
-          "oklch(26% 0.0113 167.80)",
-          "oklch(38% 0.0113 167.80)",
-          "oklch(49% 0.0113 167.80)",
-          "oklch(61% 0.0113 167.80)",
-          "oklch(72% 0.0113 167.80)",
-          "oklch(84% 0.0113 167.80)",
-          "oklch(95% 0.0113 167.80)"
+          "oklch(15% 0.0207 161.47)",
+          "oklch(26% 0.0207 161.47)",
+          "oklch(38% 0.0207 161.47)",
+          "oklch(49% 0.0207 161.47)",
+          "oklch(61% 0.0207 161.47)",
+          "oklch(72% 0.0207 161.47)",
+          "oklch(84% 0.0207 161.47)",
+          "oklch(95% 0.0207 161.47)"
         ]
       },
       "badge-valid-text": {
         "role": "secondary",
         "displayName": "Badge Valid Text",
         "tonalRamp": [
-          "oklch(15% 0.0350 155.91)",
-          "oklch(26% 0.0350 155.91)",
-          "oklch(38% 0.0350 155.91)",
-          "oklch(49% 0.0350 155.91)",
-          "oklch(61% 0.0350 155.91)",
-          "oklch(72% 0.0350 155.91)",
-          "oklch(84% 0.0350 155.91)",
-          "oklch(95% 0.0350 155.91)"
+          "oklch(15% 0.0790 159.53)",
+          "oklch(26% 0.0790 159.53)",
+          "oklch(38% 0.0790 159.53)",
+          "oklch(49% 0.0790 159.53)",
+          "oklch(61% 0.0790 159.53)",
+          "oklch(72% 0.0790 159.53)",
+          "oklch(84% 0.0790 159.53)",
+          "oklch(95% 0.0790 159.53)"
         ]
       },
       "badge-proposed": {
         "role": "secondary",
         "displayName": "Badge Proposed",
         "tonalRamp": [
-          "oklch(15% 0.0116 84.58)",
-          "oklch(26% 0.0116 84.58)",
-          "oklch(38% 0.0116 84.58)",
-          "oklch(49% 0.0116 84.58)",
-          "oklch(61% 0.0116 84.58)",
-          "oklch(72% 0.0116 84.58)",
-          "oklch(84% 0.0116 84.58)",
-          "oklch(95% 0.0116 84.58)"
+          "oklch(15% 0.0328 83.71)",
+          "oklch(26% 0.0328 83.71)",
+          "oklch(38% 0.0328 83.71)",
+          "oklch(49% 0.0328 83.71)",
+          "oklch(61% 0.0328 83.71)",
+          "oklch(72% 0.0328 83.71)",
+          "oklch(84% 0.0328 83.71)",
+          "oklch(95% 0.0328 83.71)"
         ]
       },
       "badge-proposed-text": {
         "role": "secondary",
         "displayName": "Badge Proposed Text",
         "tonalRamp": [
-          "oklch(15% 0.0287 84.59)",
-          "oklch(26% 0.0287 84.59)",
-          "oklch(38% 0.0287 84.59)",
-          "oklch(49% 0.0287 84.59)",
-          "oklch(61% 0.0287 84.59)",
-          "oklch(72% 0.0287 84.59)",
-          "oklch(84% 0.0287 84.59)",
-          "oklch(95% 0.0287 84.59)"
+          "oklch(15% 0.1024 73.80)",
+          "oklch(26% 0.1024 73.80)",
+          "oklch(38% 0.1024 73.80)",
+          "oklch(49% 0.1024 73.80)",
+          "oklch(61% 0.1024 73.80)",
+          "oklch(72% 0.1024 73.80)",
+          "oklch(84% 0.1024 73.80)",
+          "oklch(95% 0.1024 73.80)"
+        ]
+      },
+      "badge-pending": {
+        "role": "secondary",
+        "displayName": "Badge Pending",
+        "tonalRamp": [
+          "oklch(15% 0.0222 302.93)",
+          "oklch(26% 0.0222 302.93)",
+          "oklch(38% 0.0222 302.93)",
+          "oklch(49% 0.0222 302.93)",
+          "oklch(61% 0.0222 302.93)",
+          "oklch(72% 0.0222 302.93)",
+          "oklch(84% 0.0222 302.93)",
+          "oklch(95% 0.0222 302.93)"
+        ]
+      },
+      "badge-pending-text": {
+        "role": "secondary",
+        "displayName": "Badge Pending Text",
+        "tonalRamp": [
+          "oklch(15% 0.1180 303.81)",
+          "oklch(26% 0.1180 303.81)",
+          "oklch(38% 0.1180 303.81)",
+          "oklch(49% 0.1180 303.81)",
+          "oklch(61% 0.1180 303.81)",
+          "oklch(72% 0.1180 303.81)",
+          "oklch(84% 0.1180 303.81)",
+          "oklch(95% 0.1180 303.81)"
+        ]
+      },
+      "badge-below": {
+        "role": "secondary",
+        "displayName": "Badge Below",
+        "tonalRamp": [
+          "oklch(15% 0.0069 247.90)",
+          "oklch(26% 0.0069 247.90)",
+          "oklch(38% 0.0069 247.90)",
+          "oklch(49% 0.0069 247.90)",
+          "oklch(61% 0.0069 247.90)",
+          "oklch(72% 0.0069 247.90)",
+          "oklch(84% 0.0069 247.90)",
+          "oklch(95% 0.0069 247.90)"
+        ]
+      },
+      "badge-below-text": {
+        "role": "secondary",
+        "displayName": "Badge Below Text",
+        "tonalRamp": [
+          "oklch(15% 0.0388 251.30)",
+          "oklch(26% 0.0388 251.30)",
+          "oklch(38% 0.0388 251.30)",
+          "oklch(49% 0.0388 251.30)",
+          "oklch(61% 0.0388 251.30)",
+          "oklch(72% 0.0388 251.30)",
+          "oklch(84% 0.0388 251.30)",
+          "oklch(95% 0.0388 251.30)"
         ]
       },
       "map-validated": {
@@ -284,6 +410,34 @@
           "oklch(95% 0.1194 72.90)"
         ]
       },
+      "map-pending": {
+        "role": "secondary",
+        "displayName": "Map Pending",
+        "tonalRamp": [
+          "oklch(15% 0.1180 297.42)",
+          "oklch(26% 0.1180 297.42)",
+          "oklch(38% 0.1180 297.42)",
+          "oklch(49% 0.1180 297.42)",
+          "oklch(61% 0.1180 297.42)",
+          "oklch(72% 0.1180 297.42)",
+          "oklch(84% 0.1180 297.42)",
+          "oklch(95% 0.1180 297.42)"
+        ]
+      },
+      "map-below": {
+        "role": "secondary",
+        "displayName": "Map Below",
+        "tonalRamp": [
+          "oklch(15% 0.0407 257.42)",
+          "oklch(26% 0.0407 257.42)",
+          "oklch(38% 0.0407 257.42)",
+          "oklch(49% 0.0407 257.42)",
+          "oklch(61% 0.0407 257.42)",
+          "oklch(72% 0.0407 257.42)",
+          "oklch(84% 0.0407 257.42)",
+          "oklch(95% 0.0407 257.42)"
+        ]
+      },
       "map-selected": {
         "role": "secondary",
         "displayName": "Map Selected",
@@ -296,6 +450,20 @@
           "oklch(72% 0.0434 176.51)",
           "oklch(84% 0.0434 176.51)",
           "oklch(95% 0.0434 176.51)"
+        ]
+      },
+      "map-mixed": {
+        "role": "secondary",
+        "displayName": "Map Mixed",
+        "tonalRamp": [
+          "oklch(15% 0.0145 286.02)",
+          "oklch(26% 0.0145 286.02)",
+          "oklch(38% 0.0145 286.02)",
+          "oklch(49% 0.0145 286.02)",
+          "oklch(61% 0.0145 286.02)",
+          "oklch(72% 0.0145 286.02)",
+          "oklch(84% 0.0145 286.02)",
+          "oklch(95% 0.0145 286.02)"
         ]
       },
       "entrepreneur": {
@@ -367,338 +535,172 @@
           "oklch(84% 0.0407 257.42)",
           "oklch(95% 0.0407 257.42)"
         ]
-      },
-      "control-border": {
-        "role": "neutral",
-        "displayName": "Control Border",
-        "tonalRamp": [
-          "oklch(15% 0.0330 158.68)",
-          "oklch(26% 0.0330 158.68)",
-          "oklch(38% 0.0330 158.68)",
-          "oklch(49% 0.0330 158.68)",
-          "oklch(61% 0.0330 158.68)",
-          "oklch(72% 0.0330 158.68)",
-          "oklch(84% 0.0330 158.68)",
-          "oklch(95% 0.0330 158.68)"
-        ]
-      },
-      "state-border": {
-        "role": "neutral",
-        "displayName": "State Border",
-        "tonalRamp": [
-          "oklch(15% 0.0145 286.02)",
-          "oklch(26% 0.0145 286.02)",
-          "oklch(38% 0.0145 286.02)",
-          "oklch(49% 0.0145 286.02)",
-          "oklch(61% 0.0145 286.02)",
-          "oklch(72% 0.0145 286.02)",
-          "oklch(84% 0.0145 286.02)",
-          "oklch(95% 0.0145 286.02)"
-        ]
-      },
-      "map-pending": {
-        "role": "secondary",
-        "displayName": "Map Pending",
-        "tonalRamp": [
-          "oklch(15% 0.1180 297.42)",
-          "oklch(26% 0.1180 297.42)",
-          "oklch(38% 0.1180 297.42)",
-          "oklch(49% 0.1180 297.42)",
-          "oklch(61% 0.1180 297.42)",
-          "oklch(72% 0.1180 297.42)",
-          "oklch(84% 0.1180 297.42)",
-          "oklch(95% 0.1180 297.42)"
-        ]
-      },
-      "badge-pending": {
-        "role": "secondary",
-        "displayName": "Badge Pending",
-        "tonalRamp": [
-          "oklch(15% 0.0320 300.46)",
-          "oklch(26% 0.0320 300.46)",
-          "oklch(38% 0.0320 300.46)",
-          "oklch(49% 0.0320 300.46)",
-          "oklch(61% 0.0320 300.46)",
-          "oklch(72% 0.0320 300.46)",
-          "oklch(84% 0.0320 300.46)",
-          "oklch(95% 0.0320 300.46)"
-        ]
-      },
-      "badge-pending-text": {
-        "role": "secondary",
-        "displayName": "Badge Pending Text",
-        "tonalRamp": [
-          "oklch(15% 0.0455 303.88)",
-          "oklch(26% 0.0455 303.88)",
-          "oklch(38% 0.0455 303.88)",
-          "oklch(49% 0.0455 303.88)",
-          "oklch(61% 0.0455 303.88)",
-          "oklch(72% 0.0455 303.88)",
-          "oklch(84% 0.0455 303.88)",
-          "oklch(95% 0.0455 303.88)"
-        ]
-      },
-      "badge-below": {
-        "role": "secondary",
-        "displayName": "Badge Below",
-        "tonalRamp": [
-          "oklch(15% 0.0187 258.37)",
-          "oklch(26% 0.0187 258.37)",
-          "oklch(38% 0.0187 258.37)",
-          "oklch(49% 0.0187 258.37)",
-          "oklch(61% 0.0187 258.37)",
-          "oklch(72% 0.0187 258.37)",
-          "oklch(84% 0.0187 258.37)",
-          "oklch(95% 0.0187 258.37)"
-        ]
-      },
-      "badge-below-text": {
-        "role": "secondary",
-        "displayName": "Badge Below Text",
-        "tonalRamp": [
-          "oklch(15% 0.0150 251.17)",
-          "oklch(26% 0.0150 251.17)",
-          "oklch(38% 0.0150 251.17)",
-          "oklch(49% 0.0150 251.17)",
-          "oklch(61% 0.0150 251.17)",
-          "oklch(72% 0.0150 251.17)",
-          "oklch(84% 0.0150 251.17)",
-          "oklch(95% 0.0150 251.17)"
-        ]
-      },
-      "secondary": {
-        "role": "neutral",
-        "displayName": "Secondary",
-        "tonalRamp": [
-          "oklch(15% 0.0013 106.42)",
-          "oklch(26% 0.0013 106.42)",
-          "oklch(38% 0.0013 106.42)",
-          "oklch(49% 0.0013 106.42)",
-          "oklch(61% 0.0013 106.42)",
-          "oklch(72% 0.0013 106.42)",
-          "oklch(84% 0.0013 106.42)",
-          "oklch(95% 0.0013 106.42)"
-        ]
-      },
-      "primary-hover": {
-        "role": "primary",
-        "displayName": "Primary Hover",
-        "tonalRamp": [
-          "oklch(15% 0.1347 93.42)",
-          "oklch(26% 0.1347 93.42)",
-          "oklch(38% 0.1347 93.42)",
-          "oklch(49% 0.1347 93.42)",
-          "oklch(61% 0.1347 93.42)",
-          "oklch(72% 0.1347 93.42)",
-          "oklch(84% 0.1347 93.42)",
-          "oklch(95% 0.1347 93.42)"
-        ]
       }
     },
     "typographyMeta": {
       "headline": {
-        "displayName": "headline",
-        "purpose": "Compact tool-panel headings; reports and dialogs retain their local sizes."
+        "displayName": "Task Headline",
+        "purpose": "Task-panel headings."
       },
       "title": {
-        "displayName": "title",
-        "purpose": "Compact topbar product identity."
+        "displayName": "Dataset Title",
+        "purpose": "Compact header title."
       },
       "body": {
-        "displayName": "body",
-        "purpose": "Host Grotesk operational text."
+        "displayName": "Workspace Body",
+        "purpose": "Shared sans-serif foundation for UI and prose."
       },
       "label": {
-        "displayName": "label",
-        "purpose": "Form labels and compact UI."
-      },
-      "reading": {
-        "displayName": "reading",
-        "purpose": "EB Garamond explanatory and source prose."
+        "displayName": "Field Label",
+        "purpose": "Compact operational labels."
       }
     },
     "shadows": [
       {
-        "name": "filter",
-        "value": "0 2px 5px #00000033",
-        "purpose": "Selected filter segment."
+        "name": "floating-shadow",
+        "value": "0 4px 18px #24374714",
+        "purpose": "Floating map instruments, popups and toast."
       },
       {
-        "name": "map-tool",
-        "value": "0 3px 14px #00000066",
-        "purpose": "Floating toolbar and Leaflet controls."
-      },
-      {
-        "name": "map-legend",
-        "value": "0 3px 14px #00000033",
-        "purpose": "Map legend."
-      },
-      {
-        "name": "tools-drawer",
-        "value": "6px 0 20px #00000033",
-        "purpose": "Mobile tools and source-details drawer."
+        "name": "mobile-drawer",
+        "value": "6px 0 20px #24374714",
+        "purpose": "Mobile tools drawer."
       },
       {
         "name": "dialog",
-        "value": "0 24px 70px #00000066",
-        "purpose": "Modal panel."
-      },
-      {
-        "name": "toast",
-        "value": "0 6px 20px #00000066",
-        "purpose": "Transient status message."
+        "value": "0 24px 70px #182c3c26",
+        "purpose": "Native modal surface."
       }
     ],
     "motion": [
       {
-        "name": "control-transition",
+        "name": "state-transition",
         "value": "background-color 160ms, border-color 160ms, color 160ms",
-        "purpose": "Button feedback; disabled under prefers-reduced-motion: reduce."
+        "purpose": "Button state feedback; removed under prefers-reduced-motion."
       },
       {
-        "name": "disclosure-icon",
+        "name": "disclosure-transition",
         "value": "transform 160ms",
-        "purpose": "Drawing plus icon rotates 45deg when open; reduced motion disables the transition."
+        "purpose": "Drawing disclosure plus rotates 45deg when open; removed under prefers-reduced-motion."
       }
     ],
     "breakpoints": [
       {
         "name": "compact-desktop",
-        "value": "1100px"
+        "value": "1200px"
       },
       {
-        "name": "hide-header-facts",
-        "value": "900px"
+        "name": "compact-rail",
+        "value": "1000px"
       },
       {
         "name": "mobile",
         "value": "760px"
       },
       {
-        "name": "short-height",
-        "value": "600px"
+        "name": "short-screen",
+        "value": "600px",
+        "axis": "height"
       }
     ]
   },
   "components": [
     {
-      "name": "Secondary Button",
-      "kind": "button",
-      "refersTo": "button-secondary",
-      "description": "Implemented action variant.",
-      "html": "<button class=\"ds-button-secondary\">Export CSV</button>",
-      "css": ".ds-button-secondary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 12px;border:1px solid var(--border,#345347);background:var(--panel,#224134);color:var(--text,#fffeff);border-radius:0;cursor:pointer;font:550 14px/1.4 var(--font-host-grotesk,'Host Grotesk'),sans-serif;transition:background-color 160ms,border-color 160ms,color 160ms;}.ds-button-secondary:hover:not(:disabled){background:var(--hover,#2d5141);border-color:#a0b6a6;}.ds-button-secondary:focus-visible{outline:2px solid #fffeff;outline-offset:3px;}.ds-button-secondary:disabled{opacity:.55;cursor:default;}@media(prefers-reduced-motion:reduce){.ds-button-secondary{transition:none;}}"
-    },
-    {
       "name": "Primary Button",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Implemented action variant.",
-      "html": "<button class=\"ds-button-primary\">Importă catalogul</button>",
-      "css": ".ds-button-primary{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 12px;border:1px solid var(--border,#345347);background:var(--panel,#224134);color:var(--text,#fffeff);border-radius:0;cursor:pointer;font:550 14px/1.4 var(--font-host-grotesk,'Host Grotesk'),sans-serif;transition:background-color 160ms,border-color 160ms,color 160ms;background:var(--primary,#fde68a);color:var(--primary-text,#040404);border-color:var(--primary,#fde68a);}.ds-button-primary:hover:not(:disabled){background:#f9d96a;border-color:#f9d96a;}.ds-button-primary:focus-visible{outline:2px solid #fffeff;outline-offset:3px;}.ds-button-primary:disabled{opacity:.55;cursor:default;}@media(prefers-reduced-motion:reduce){.ds-button-primary{transition:none;}}"
+      "description": "Implemented primary action treatment.",
+      "html": "<button class=\"ds-btn-primary\">Importă date</button>",
+      "css": ".ds-btn-primary{font-family:var(--font-host-grotesk),sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 12px;border:1px solid var(--control-border,#d5dce2);border-radius:var(--radius,8px);font-size:14px;font-weight:550;line-height:1.4;cursor:pointer;transition:background-color 160ms,border-color 160ms,color 160ms;background:var(--primary,#107c70);color:var(--primary-text,#fff);border-color:var(--primary,#107c70);}.ds-btn-primary:hover:not(:disabled){background:var(--primary-hover,#096559);border-color:var(--primary-hover,#096559);}.ds-btn-primary:focus-visible{outline:2px solid var(--primary,#107c70);outline-offset:3px;}.ds-btn-primary:disabled{opacity:.55;cursor:default;}@media(prefers-reduced-motion:reduce){.ds-btn-primary{transition:none;}}"
     },
     {
-      "name": "Destructive Button",
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Implemented secondary action treatment.",
+      "html": "<button class=\"ds-btn-secondary\">Exportă</button>",
+      "css": ".ds-btn-secondary{font-family:var(--font-host-grotesk),sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 12px;border:1px solid var(--control-border,#d5dce2);border-radius:var(--radius,8px);font-size:14px;font-weight:550;line-height:1.4;cursor:pointer;transition:background-color 160ms,border-color 160ms,color 160ms;background:var(--panel,#fff);color:var(--text,#202b33);}.ds-btn-secondary:hover:not(:disabled){background:var(--hover,#f1f5f6);border-color:#a7b8bd;}.ds-btn-secondary:focus-visible{outline:2px solid var(--primary,#107c70);outline-offset:3px;}.ds-btn-secondary:disabled{opacity:.55;cursor:default;}@media(prefers-reduced-motion:reduce){.ds-btn-secondary{transition:none;}}"
+    },
+    {
+      "name": "Danger Button",
       "kind": "button",
       "refersTo": "button-danger",
-      "description": "Implemented action variant.",
-      "html": "<button class=\"ds-button-danger\">Șterge</button>",
-      "css": ".ds-button-danger{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 12px;border:1px solid var(--border,#345347);background:var(--panel,#224134);color:var(--text,#fffeff);border-radius:0;cursor:pointer;font:550 14px/1.4 var(--font-host-grotesk,'Host Grotesk'),sans-serif;transition:background-color 160ms,border-color 160ms,color 160ms;color:var(--danger,#f4d9db);}.ds-button-danger:hover:not(:disabled){background:var(--hover,#2d5141);border-color:#a0b6a6;}.ds-button-danger:focus-visible{outline:2px solid #fffeff;outline-offset:3px;}.ds-button-danger:disabled{opacity:.55;cursor:default;}@media(prefers-reduced-motion:reduce){.ds-button-danger{transition:none;}}"
+      "description": "Implemented danger action treatment.",
+      "html": "<button class=\"ds-btn-danger\">Șterge</button>",
+      "css": ".ds-btn-danger{font-family:var(--font-host-grotesk),sans-serif;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:38px;padding:8px 12px;border:1px solid var(--control-border,#d5dce2);border-radius:var(--radius,8px);font-size:14px;font-weight:550;line-height:1.4;cursor:pointer;transition:background-color 160ms,border-color 160ms,color 160ms;background:var(--panel,#fff);color:var(--danger,#b33642);}.ds-btn-danger:hover:not(:disabled){background:var(--hover,#f1f5f6);border-color:#a7b8bd;}.ds-btn-danger:focus-visible{outline:2px solid var(--primary,#107c70);outline-offset:3px;}.ds-btn-danger:disabled{opacity:.55;cursor:default;}@media(prefers-reduced-motion:reduce){.ds-btn-danger{transition:none;}}"
     },
     {
-      "name": "Community Search",
+      "name": "Text Field",
       "kind": "input",
       "refersTo": "input",
-      "description": "Compact record search with inset stroke icon.",
-      "html": "<div class=\"ds-search-group\"><label for=\"ds-community-search\">Caută în registru</label><div class=\"ds-search\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m21 21-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z\"/></svg><input id=\"ds-community-search\" placeholder=\"Nume, localitate sau SIRUTA\"></div></div>",
-      "css": ".ds-search-group{display:flex;flex-direction:column;gap:6px;}.ds-search-group>label{font:12px/1.5 var(--font-host-grotesk,'Host Grotesk'),sans-serif;color:var(--muted,#e0e0df);}.ds-search{position:relative;display:flex;align-items:center;color:var(--muted,#e0e0df);}.ds-search>svg{position:absolute;left:13px;pointer-events:none;}.ds-search input{width:100%;min-width:0;height:42px;padding:9px 11px 9px 40px;border:1px solid var(--control-border,#879e90);border-radius:0;background:var(--panel,#224134);color:var(--text,#fffeff);font:12px var(--font-host-grotesk,'Host Grotesk'),sans-serif;caret-color:var(--primary,#fde68a);}.ds-search input::placeholder{color:#d3dfd5;opacity:1;}.ds-search input:focus-visible{outline:2px solid #fffeff;outline-offset:3px;}"
+      "description": "Labeled operational field.",
+      "html": "<label class=\"ds-field\">Localitate<input placeholder=\"Caută o localitate\" /></label>",
+      "css": ".ds-field{font-family:var(--font-host-grotesk),sans-serif;display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--muted,#64717d);}.ds-field input{font-family:var(--font-host-grotesk),sans-serif;padding:9px 11px;border:1px solid var(--control-border,#d5dce2);border-radius:var(--radius,8px);background:var(--panel,#fff);color:var(--text,#202b33);font-size:13px;}.ds-field input:focus-visible{outline:2px solid var(--primary,#107c70);outline-offset:3px;}"
     },
     {
-      "name": "Navigation",
+      "name": "Active Navigation",
       "kind": "nav",
       "refersTo": "nav-active",
-      "description": "Persistent left dataset rail with yellow active labels.",
-      "html": "<nav class=\"ds-nav\" aria-label=\"Secțiuni\"><button class=\"ds-route\" aria-current=\"page\"><svg width=\"21\" height=\"21\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15\"/></svg><span>Comunități</span></button><button class=\"ds-route\"><svg width=\"21\" height=\"21\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15\"/></svg><span>Date</span></button></nav>",
-      "css": ".ds-nav{display:flex;flex-direction:column;align-items:center;gap:6px;width:64px;background:var(--bg,#1b3a2e);}.ds-route{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-height:60px;width:100%;padding:9px 2px;border:0;background:transparent;color:var(--muted,#e0e0df);border-radius:0;font:500 9px/1.4 var(--font-host-grotesk,'Host Grotesk'),sans-serif;cursor:pointer;transition:background-color 160ms,color 160ms;}.ds-route:hover{color:white;background:#224134;}.ds-route[aria-current=page],.ds-route[aria-current=page]:hover{background:var(--panel,#224134);color:var(--primary,#fde68a);}.ds-route:focus-visible{outline:2px solid #fffeff;outline-offset:3px;}@media(max-width:1100px){.ds-route{font-size:8px;}}@media(max-width:760px){.ds-nav{width:48px;}.ds-route{min-height:52px;padding:8px 0;font-size:10px;gap:5px;}.ds-route svg{width:20px;height:20px;}}@media(max-height:600px){.ds-nav{gap:3px;}.ds-route{min-height:44px;padding-block:5px;gap:3px;}.ds-route svg{width:18px;height:18px;}}@media(prefers-reduced-motion:reduce){.ds-route{transition:none;}}"
+      "description": "Active desktop dataset destination.",
+      "html": "<button class=\"ds-nav\" aria-current=\"page\"><svg width=\"18\" height=\"18\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3V6Zm6-3v15m6-12v15\"/></svg>Comunități<span></span></button>",
+      "css": ".ds-nav{font-family:var(--font-host-grotesk),sans-serif;display:flex;align-items:center;gap:11px;min-height:42px;min-width:176px;padding:10px 12px;border:0;border-radius:8px;background:#e5f0ec;color:#11695d;font-size:13px;font-weight:500;cursor:pointer;}.ds-nav span{width:5px;height:5px;border-radius:50%;background:currentColor;margin-left:auto;}.ds-nav:hover{background:#e5f0ec;color:#11695d;}.ds-nav:focus-visible{outline:2px solid var(--primary,#107c70);outline-offset:3px;}"
     },
     {
-      "name": "Status validată",
+      "name": "Validated Status",
       "kind": "chip",
       "refersTo": "badge-valid",
-      "description": "Noninteractive community status label.",
-      "html": "<span class=\"ds-badge-valid\">validată</span>",
-      "css": ".ds-badge-valid{font:10px/1.5 var(--font-host-grotesk,'Host Grotesk'),sans-serif;padding:2px 7px;border-radius:0;background:#232a27;color:#cde6d5;}"
+      "description": "Explicit semantic status; color supplements text.",
+      "html": "<span class=\"ds-status\">Validat</span>",
+      "css": ".ds-status{font-family:var(--font-host-grotesk),sans-serif;display:inline-flex;font-size:10px;padding:2px 6px;border-radius:4px;background:#e3f3ea;color:#256144;font-weight:450;}"
     },
     {
-      "name": "Status propusă",
-      "kind": "chip",
-      "refersTo": "badge-proposed",
-      "description": "Noninteractive community status label.",
-      "html": "<span class=\"ds-badge-proposed\">propusă</span>",
-      "css": ".ds-badge-proposed{font:10px/1.5 var(--font-host-grotesk,'Host Grotesk'),sans-serif;padding:2px 7px;border-radius:0;background:#2a2721;color:#eee4d0;}"
-    },
-    {
-      "name": "Data Section",
+      "name": "Source Section",
       "kind": "card",
       "refersTo": "card",
-      "description": "Flat data grouping separated by a divider.",
-      "html": "<section class=\"ds-card\"><b>Export comunități</b><p>Coordonate, SIRUTA, WKT</p></section>",
-      "css": ".ds-card{padding:0 0 22px;border-bottom:1px solid var(--border,#345347);color:var(--text,#fffeff);font:14px/1.5 var(--font-host-grotesk,'Host Grotesk'),sans-serif;}.ds-card>b{font-size:14px;font-weight:650;}.ds-card p{margin:12px 0 0;color:var(--muted,#e0e0df);font:18px/1.5 var(--font-eb-garamond,'EB Garamond'),serif;}"
+      "description": "Flat source content separated by a quiet divider.",
+      "html": "<section class=\"ds-card\"><b>Sursa datelor</b><p>Verifică sursa și aria administrativă.</p><a href=\"#source\">Vezi sursa</a></section>",
+      "css": ".ds-card{font-family:var(--font-host-grotesk),sans-serif;padding:0 0 22px;border-bottom:1px solid var(--border,#e5e9ed);color:var(--text,#202b33);}.ds-card b{font-size:13px;font-weight:600;}.ds-card p{margin-top:12px;line-height:1.75;font-size:13px;}.ds-card a{color:var(--primary,#107c70);font-size:12px;text-underline-offset:3px;}.ds-card a:hover{text-decoration-thickness:2px;}.ds-card a:focus-visible{outline:2px solid var(--primary,#107c70);outline-offset:3px;}"
     },
     {
-      "name": "Status De validat",
-      "kind": "chip",
-      "refersTo": "badge-pending",
-      "description": "Noninteractive community status label.",
-      "html": "<span class=\"ds-badge-pending\">De validat</span>",
-      "css": ".ds-badge-pending{font:10px/1.5 var(--font-host-grotesk,'Host Grotesk'),sans-serif;padding:2px 7px;border-radius:0;background:#292334;color:#e0d3f3;}"
-    },
-    {
-      "name": "Status Sub prag",
-      "kind": "chip",
-      "refersTo": "badge-below",
-      "description": "Noninteractive community status label.",
-      "html": "<span class=\"ds-badge-below\">Sub prag</span>",
-      "css": ".ds-badge-below{font:10px/1.5 var(--font-host-grotesk,'Host Grotesk'),sans-serif;padding:2px 7px;border-radius:0;background:#242a33;color:#d9e1ea;}"
+      "name": "Map Legend",
+      "kind": "custom",
+      "description": "Floating, initially collapsed map key.",
+      "html": "<details class=\"ds-key\"><summary>Legendă</summary><div><i></i>Comunitate validată</div></details>",
+      "css": ".ds-key{font-family:var(--font-host-grotesk),sans-serif;background:var(--panel,#fff);color:var(--text,#202b33);border-radius:8px;box-shadow:var(--floating-shadow,0 4px 18px #24374714);font-size:11px;}.ds-key summary{padding:10px 13px;cursor:pointer;}.ds-key summary:hover{background:var(--hover,#f1f5f6);border-radius:8px;}.ds-key summary:focus-visible{outline:2px solid var(--primary,#107c70);outline-offset:3px;}.ds-key div{display:flex;gap:6px;align-items:center;padding:4px 13px 14px;}.ds-key i{width:8px;height:8px;border-radius:50%;background:#206457;}"
     }
   ],
   "narrative": {
-    "northStar": "Forest Field Guide",
-    "overview": "Forest-green ground and surfaces frame a compact working atlas, with warm yellow marking actions, links and the active dataset. Host Grotesk gives headings and operational controls a precise voice; EB Garamond supports explanatory text and source material.\n\nThe interface owns the viewport: a persistent left menu, compact topbar and independently scrolling task tools leave the map or report as the main surface. Square forms and restrained depth preserve the field-guide identity while semantic dataset colors retain their established meanings.",
+    "northStar": "The Focused GIS Workspace",
+    "overview": "White task surfaces, cool gray navigation and restrained teal actions form a compact GIS workspace inspired by Linear. Host Grotesk carries headings, controls, source prose and data in one clear sans-serif voice. The map remains the main working surface, with a light Esri basemap by default.\n\nThe interface owns the viewport: persistent navigation, a quiet header and independently scrolling tools frame the map or report. Thin dividers and gently rounded controls establish hierarchy; established dataset colors retain their geographic meaning.",
     "keyCharacteristics": [
-      "Forest-green layers and warm-yellow action emphasis.",
-      "Host Grotesk display and UI paired with EB Garamond prose.",
-      "Square controls and a dominant working map.",
-      "Labeled status colors, scope dashes and visible source provenance."
+      "White panels and cool gray navigation with restrained teal emphasis.",
+      "One compact Host Grotesk typographic system.",
+      "Gently rounded controls and a dominant light working map.",
+      "Labeled dataset colors, scope dashes and visible source provenance."
     ],
     "rules": [
       {
-        "name": "The Yellow Emphasis Rule",
-        "body": "Use warm yellow for primary actions, links, identity and active navigation; keep reading surfaces green.",
-        "section": "colors"
-      },
-      {
         "name": "The Geographic Continuity Rule",
-        "body": "Preserve map dataset colors independently of interface action colors.",
+        "body": "Preserve semantic map colors independently of interface action colors.",
         "section": "colors"
       },
       {
         "name": "The Working Surface Rule",
-        "body": "Separate ordinary records with borders and tonal changes; reserve shadows for floating tools, tool drawers and dialogs.",
+        "body": "Separate ordinary records with borders and tonal changes; reserve shadows for floating map instruments, drawers and dialogs.",
         "section": "elevation"
       }
     ],
     "dos": [
-      "Do use Host Grotesk for display, controls and data; use EB Garamond for reading text.",
-      "Do pair yellow primary actions with their black label color.",
-      "Do keep controls square, keyboard focus visible and numeric columns tabular.",
-      "Do preserve labeled map colors and Romanian diacritics.",
-      "Do show administrative scope, source year and license beside imported outlines."
+      "Do use Host Grotesk for headings, controls, data and source prose.",
+      "Do pair teal primary actions with white labels and retain visible keyboard focus.",
+      "Do preserve labeled map colors, Romanian diacritics and tabular numeric columns.",
+      "Do show administrative scope, source year and license beside imported outlines.",
+      "Do keep task panels, reports and wide tables scrolling inside the viewport."
     ],
     "donts": [
-      "Don't add a decorative glow behind the workspace.",
-      "Don't replace the geographic status palette with brand yellow.",
-      "Don't turn source records into rounded floating cards.",
+      "Don't restore the superseded forest/yellow identity or serif reading typography.",
+      "Don't replace dataset colors with the interface accent.",
+      "Don't add a landing introduction, footer or decorative glow to the working shell.",
       "Don't animate controls when reduced motion is requested.",
       "Don't present administrative reference areas as Roma settlement boundaries."
     ]

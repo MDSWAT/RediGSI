@@ -134,7 +134,13 @@ export default function MapView(props: Props) {
   return (
     <MapContainer center={[45.9432, 24.9668]} zoom={7} preferCanvas className="map" zoomControl>
       <LayersControl position="topright">
-        <LayersControl.BaseLayer checked name="Hartă (OpenStreetMap)">
+        <LayersControl.BaseLayer checked name="Hartă deschisă (Esri)">
+          <LayerGroup>
+            <TileLayer attribution='Tiles &copy; Esri &mdash; Esri, HERE, Garmin, OpenStreetMap contributors' url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={16} maxZoom={19} />
+            <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Reference/MapServer/tile/{z}/{y}/{x}" maxNativeZoom={16} maxZoom={19} />
+          </LayerGroup>
+        </LayersControl.BaseLayer>
+        <LayersControl.BaseLayer name="Hartă (OpenStreetMap)">
           <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" maxZoom={19} />
         </LayersControl.BaseLayer>
         <LayersControl.BaseLayer name="Satelit (Esri)">

@@ -182,13 +182,13 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
   return (
     <div className={`app${tab === "summary" ? " summary-mode" : ""}${panelOpen ? " is-panel-open" : ""}`}>
       <nav id="workspace-navigation" className="navigation" aria-label="Navigare principală">
-        <Link className="rail-brand" href="/" aria-label="Roma Community Map — acasă"><Icon name="map" size={30} /></Link>
+        <Link className="rail-brand" href="/" aria-label="Roma Community Map — acasă"><span className="brand-mark"><Icon name="map" size={22} /></span><span className="rail-wordmark">RediGSI</span></Link>
         <div className="nav-items">{TABS.map((t) => <button key={t.id} className={tab === t.id ? "active" : ""} aria-current={tab === t.id ? "page" : undefined} onClick={() => { setTab(t.id); setPanelOpen(t.id !== "summary"); }} title={t.label}><Icon name={t.icon} size={21} /><span className="nav-label">{t.short}</span><span className="nav-compact" aria-hidden="true">{COMPACT_TAB_LABELS[t.id]}</span></button>)}</div>
-        <span className="rail-signature">RediGSI</span>
+        <div className="rail-signature"><span className="workspace-avatar">R</span><div><b>Roma Community Map</b><span>Spațiu de lucru</span></div></div>
       </nav>
       <header className="workspace-header">
         <button id="panel-toggle" className="panel-toggle" aria-label={panelOpen ? "Închide panoul" : "Deschide panoul"} aria-expanded={panelOpen} aria-controls="workspace-panel" onClick={() => setPanelOpen(!panelOpen)}><Icon name={panelOpen ? "close" : "menu"} /></button>
-        <div className="brand"><h1>Roma Community Map</h1></div>
+        <div className="brand"><span className="header-product">Roma Community Map</span><span className="header-divider" aria-hidden="true">/</span><h1>{currentTab.label}</h1></div>
         <div className="header-facts" aria-label="Acoperirea registrului"><span><b>{store.loading ? "—" : db.communities.length}</b> înregistrări</span><span><b>{store.loading ? "—" : groupBoundaryRecords(db.communities).length}</b> zone</span><span><b>{store.loading ? "—" : countries.length}</b> țări</span></div>
         <button className="primary header-import" aria-label="Importă date" onClick={() => { setPanelOpen(false); setImportTarget(tab === "entrepreneurs" ? "entrepreneurs" : tab === "clients" ? "clients" : "communities"); }}><Icon name="upload" size={16} /><span>Importă date</span></button>
       </header>
@@ -197,7 +197,7 @@ export default function App({ initialTab = "communities" }: { initialTab?: "comm
       <aside id="workspace-panel" aria-label={currentTab.label}>
         <div className="panel-heading"><h2>{currentTab.label}{tab === "communities" && <span className="count">{db.communities.length}</span>}</h2><p>{currentTab.description}</p><button className="panel-close" aria-label="Închide instrumentele" onClick={() => setPanelOpen(false)}><Icon name="close" size={18} /></button></div>
         <div className="panel">
-          {store.error && <p className="error">{store.error}</p>}
+          {store.error && <div className="error" role="alert"><b>Datele nu sunt disponibile</b><p>Registrul nu a putut fi încărcat.</p><button onClick={() => void store.reload()}>Reîncearcă</button><details><summary>Detalii tehnice</summary><p>{store.error}</p></details></div>}
           {store.loading && <p className="muted">Se încarcă datele…</p>}
           <button className="manual-action" onClick={() => setManualTarget(manualDefault)}><Icon name="plus" size={17} />Adaugă manual</button>
 

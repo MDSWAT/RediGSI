@@ -3,7 +3,7 @@ import PointClusterLayer from "./PointClusterLayer";
 import GeometryEditLayer, {
   type GeometryEditRequest,
 } from "./GeometryEditLayer";
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -323,6 +323,49 @@ export default function MapView(props: Props) {
   );
   const communityName = (id?: string) => (id ? byId.get(id)?.name : undefined);
 
+  const communityStyle = useCallback(
+    (f?: Feature) => {
+      const records = (f?.properties?.ids ?? [])
+        .map((id: string) => byId.get(id))
+        .filter(Boolean) as Community[];
+      const c =
+        records.find((c) => c.id === selectedId) ?? records[0];
+      const sel = records.some((c) => c.id === selectedId);
+      const mixed = new Set(records.map((c) => c.status)).size > 1;
+      const tone = sel
+        ? "selected"
+        : mixed
+          ? "mixed"
+          : (c?.status ?? "validat");
+      return {
+        color: COLORS[tone],
+        fillColor: hatched ? `url(#hatch-${tone})` : COLORS[tone],
+        weight: sel ? 3.5 : 1.5,
+        opacity: 0.95,
+        fillOpacity: sel
+          ? hatched
+            ? 0.9
+            : 0.28
+          : restFill(c?.boundary?.scope === "region"),
+        dashArray:
+          c?.boundary && c.boundary.scope !== "locality"
+            ? "12 6"
+            : c?.status === "propus"
+              ? "4 4"
+              : undefined,
+      };
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- restFill depends only on hatched
+    [byId, selectedId, hatched],
+  );
+  const styleRef = useRef(communityStyle);
+  useEffect(() => {
+    styleRef.current = communityStyle;
+  }, [communityStyle]);
+  const selectedRef = useRef(selectedId);
+  useEffect(() => {
+    selectedRef.current = selectedId;
+  }, [selectedId]);
   const communityPoints = useMemo(
     () =>
       db.communities
@@ -424,42 +467,13 @@ export default function MapView(props: Props) {
               )}
             />
             <GeoJSON
-              key={`c-${version}-${selectedId ?? ""}-${hatched ? "h" : "f"}-${db.communities.map((c) => c.id).join(",")}`}
+              key={`c-${version}-${hatched ? "h" : "f"}-${db.communities.map((c) => c.id).join(",")}`}
               data={communityFC}
               // Hatch patterns need SVG; Leaflet passes GeoJSON options on to each polygon.
               {...rendererOptions}
               attribution='Contururi: <a href="https://www.geoboundaries.org/">geoBoundaries</a> · Localizări: <a href="https://www.geonames.org/">GeoNames CC BY 4.0</a>'
-              style={(f) => {
-                const records = (f?.properties?.ids ?? [])
-                  .map((id: string) => byId.get(id))
-                  .filter(Boolean) as Community[];
-                const c =
-                  records.find((c) => c.id === selectedId) ?? records[0];
-                const sel = records.some((c) => c.id === selectedId);
-                const mixed = new Set(records.map((c) => c.status)).size > 1;
-                const tone = sel
-                  ? "selected"
-                  : mixed
-                    ? "mixed"
-                    : (c?.status ?? "validat");
-                return {
-                  color: COLORS[tone],
-                  fillColor: hatched ? `url(#hatch-${tone})` : COLORS[tone],
-                  weight: sel ? 3.5 : 1.5,
-                  opacity: 0.95,
-                  fillOpacity: sel
-                    ? hatched
-                      ? 0.9
-                      : 0.28
-                    : restFill(c?.boundary?.scope === "region"),
-                  dashArray:
-                    c?.boundary && c.boundary.scope !== "locality"
-                      ? "12 6"
-                      : c?.status === "propus"
-                        ? "4 4"
-                        : undefined,
-                };
-              }}
+              // Restyled in place when the selection changes, without rebuilding every outline.
+              style={communityStyle}
               pointToLayer={(f, latlng) => {
                 const c = byId.get(f.properties?.ids?.[0]);
                 const sel = c?.id === selectedId;
@@ -480,7 +494,7 @@ export default function MapView(props: Props) {
                 const c = records[0];
                 if (!c) return;
                 const label = c.boundary?.name ?? c.name;
-                layer.bindTooltip(communityTooltip(records, entrepreneurCount), {
+                layer.bindTooltip(() => communityTooltip(records, entrepreneurCount), {
                   sticky: true,
                   direction: "top",
                   offset: [0, -12],
@@ -488,21 +502,17 @@ export default function MapView(props: Props) {
                   className: "community-tooltip",
                 });
                 // Highlight the outline under the cursor; the selected one keeps its own style.
-                if (
-                  layer instanceof L.Path &&
-                  !records.some((r) => r.id === selectedId)
-                ) {
-                  const rest = {
-                    weight: 1.5,
-                    fillOpacity: restFill(c.boundary?.scope === "region"),
-                  };
-                  layer.on("mouseover", () =>
-                    layer.setStyle({ weight: 3, fillOpacity: hatched ? 0.9 : 0.3 }),
-                  );
-                  layer.on("mouseout", () => layer.setStyle(rest));
+                if (layer instanceof L.Path) {
+                  const selected = () =>
+                    records.some((r) => r.id === selectedRef.current);
+                  layer.on("mouseover", () => {
+                    if (!selected())
+                      layer.setStyle({ weight: 3, fillOpacity: hatched ? 0.9 : 0.3 });
+                  });
+                  layer.on("mouseout", () => layer.setStyle(styleRef.current(f)));
                 }
                 if (records.length === 1) {
-                  layer.bindPopup(
+                  layer.bindPopup(() =>
                     communityPopup(c, entrepreneurCount.get(c.id) ?? 0),
                   );
                   layer.on("click", () => onSelect.current(c.id));

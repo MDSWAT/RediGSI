@@ -55,9 +55,9 @@ export function groupBoundaryRecords(records: Community[]): Community[][] {
   }
   const order = { region: 0, parent: 1, locality: 2 };
   // Larger areas first, so smaller outlines are drawn on top and stay hoverable.
-  return [...groups.values()].sort((a, b) =>
-    (a[0].boundary ? order[a[0].boundary.scope] : 3) - (b[0].boundary ? order[b[0].boundary.scope] : 3) ||
-    extent(b[0].geometry) - extent(a[0].geometry));
+  // Extents are computed once per outline, not on every comparison.
+  const keyed = [...groups.values()].map((group) => ({ group, rank: group[0].boundary ? order[group[0].boundary.scope] : 3, size: extent(group[0].geometry) }));
+  return keyed.sort((a, b) => a.rank - b.rank || b.size - a.size).map((k) => k.group);
 }
 
 function extent(geometry: Geometry | null): number {

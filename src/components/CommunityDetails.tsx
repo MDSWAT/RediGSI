@@ -83,7 +83,7 @@ export default function CommunityDetails({
           </a>
         </div>
       )}
-      {c.population !== undefined && (
+      {c.population != null && (
         <p>Populație estimată: {c.population.toLocaleString("ro-RO")}</p>
       )}
       {c.notes && <p>{c.notes}</p>}

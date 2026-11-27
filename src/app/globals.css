@@ -2284,3 +2284,80 @@ tr.hit {
     padding-block: 12px;
   }
 }
+
+/* Community hover card on map outlines. */
+.leaflet-tooltip.community-tooltip {
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--floating-shadow);
+  white-space: normal;
+  color: var(--text);
+  font-family: inherit;
+}
+.community-tt {
+  width: 290px;
+  max-width: calc(100vw - 48px);
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.community-tt strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 2px;
+}
+.community-tt .tt-sub,
+.community-tt .tt-place {
+  color: var(--muted);
+}
+.community-tt .tt-place {
+  margin-bottom: 6px;
+}
+.community-tt .tt-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 2px 0;
+  border-top: 1px solid var(--border);
+}
+.community-tt .tt-row span {
+  color: var(--muted);
+  flex-shrink: 0;
+}
+.community-tt .tt-row b {
+  font-weight: 600;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+.community-tt ul {
+  margin: 6px 0;
+  padding: 0;
+  list-style: none;
+}
+.community-tt li {
+  padding: 2px 0;
+}
+.community-tt .tt-note,
+.community-tt .tt-hint {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 11px;
+}
+.community-tt .tt-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: 1px;
+}
+.tt-dot.status-validat { background: #206457; }
+.tt-dot.status-propus { background: #b07821; }
+.tt-dot.status-de_validat { background: #755ca8; }
+.tt-dot.status-sub_prag { background: #64748b; }
+@media (hover: none) {
+  .leaflet-tooltip.community-tooltip {
+    display: none;
+  }
+}

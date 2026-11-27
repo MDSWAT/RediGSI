@@ -48,12 +48,27 @@ export function groupBoundaryRecords(records: Community[]): Community[][] {
   const groups = new Map<string, Community[]>();
   for (const record of records) {
     if (!record.geometry) continue;
-    const key = record.boundary?.id ?? record.id;
+    // Public projections omit boundary metadata, so identical outlines are grouped by shape.
+    const key = record.boundary?.id ?? (record.geometry.type === "Point" ? record.id : `shape:${JSON.stringify(record.geometry)}`);
     const group = groups.get(key) ?? [];
     group.push(record); groups.set(key, group);
   }
-  return [...groups.values()].sort((a, b) => {
-    const order = { region: 0, parent: 1, locality: 2 };
-    return (a[0].boundary ? order[a[0].boundary.scope] : 3) - (b[0].boundary ? order[b[0].boundary.scope] : 3);
-  });
+  const order = { region: 0, parent: 1, locality: 2 };
+  // Larger areas first, so smaller outlines are drawn on top and stay hoverable.
+  return [...groups.values()].sort((a, b) =>
+    (a[0].boundary ? order[a[0].boundary.scope] : 3) - (b[0].boundary ? order[b[0].boundary.scope] : 3) ||
+    extent(b[0].geometry) - extent(a[0].geometry));
+}
+
+function extent(geometry: Geometry | null): number {
+  if (!geometry || !("coordinates" in geometry)) return 0;
+  let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  const walk = (c: unknown): void => {
+    if (Array.isArray(c) && typeof c[0] === "number") {
+      const [x, y] = c as number[];
+      minX = Math.min(minX, x); maxX = Math.max(maxX, x); minY = Math.min(minY, y); maxY = Math.max(maxY, y);
+    } else if (Array.isArray(c)) c.forEach(walk);
+  };
+  walk(geometry.coordinates);
+  return maxX > minX ? (maxX - minX) * (maxY - minY) : 0;
 }

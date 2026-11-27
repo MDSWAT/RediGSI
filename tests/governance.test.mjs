@@ -32,6 +32,9 @@ test("governance enforces roles, geography, privacy, proposal transitions, audit
     const exportPrivacySQL = migration("202611270004_export_privacy.sql");
     await db.exec(exportPrivacySQL);
     await db.exec(exportPrivacySQL);
+    const censusSQL = migration("202611270005_public_census_figures.sql");
+    await db.exec(censusSQL);
+    await db.exec(censusSQL);
     await db.query(
       `insert into public.redi_memberships(user_id,role,scopes,can_review) values ($1,'administrator','[]',true),($2,'gis_editor','[{"country":"RO","county":"Cluj"}]',true),($3,'authorized_viewer','[{"country":"RO"}]',false)`,
       [ADMIN, EDITOR, VIEWER],
@@ -773,7 +776,7 @@ test("governance enforces roles, geography, privacy, proposal transitions, audit
           "insert into public.redi_records(collection,id,data) values('clients','fin',$1),('communities','privacy-pt',$2)",
           [
             JSON.stringify({ id: "fin", partner: "Partner", amount: 100, currency: "RON", year: "2025", lat: 46, lng: 23, country: "RO", county: "Cluj" }),
-            JSON.stringify({ id: "privacy-pt", name: "Point", kind: "punct", status: "validat", country: "RO", county: "Cluj", geometry: { type: "Point", coordinates: [23, 46] } }),
+            JSON.stringify({ id: "privacy-pt", name: "Point", kind: "punct", status: "validat", country: "RO", county: "Cluj", population: 900, notes: "private", geometry: { type: "Point", coordinates: [23, 46] }, extra: { "Romi recens.": "1,236", "Prag REDI": "150", "Observatii / validare": "internal", contact: "private" } }),
           ],
         );
         await actor(ADMIN);
@@ -812,6 +815,14 @@ test("governance enforces roles, geography, privacy, proposal transitions, audit
         ]);
         assert.equal(published.privacyAssessment.level, "high");
         assert.equal(published.privacyAssessment.sharedGeometry, true);
+        await actor(null);
+        const visible = (await rpc("redi_workspace_data")).communities.find((c) => c.id === "privacy-pt");
+        assert.equal(visible.population, 900);
+        assert.equal(visible.extra["Romi recens."], "1,236");
+        assert.equal(visible.extra["Prag REDI"], "150");
+        assert.equal(visible.extra["Observatii / validare"], undefined);
+        assert.equal(visible.extra.contact, undefined);
+        assert.equal(visible.notes, undefined);
         await actor(EDITOR);
         await assert.rejects(
           rpc("redi_mutate_records", ["communities", "update", JSON.stringify([{ id: "privacy-pt", privacyAssessment: { level: "low" } }]), [], false]),

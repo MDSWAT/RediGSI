@@ -1,7 +1,7 @@
 // Publishes catalog communities whose geometry is an official administrative outline
 // (geoBoundaries), so the outlines are visible without signing in. Mirrors
-// redi_publish_community_assessed: public projection only (no notes, counts or extra
-// columns), privacy assessment stamped on every record, compare-and-swap per record,
+// redi_publish_community_assessed: public projection only (census figures; no notes,
+// observations or other imported columns), privacy assessment stamped on every record, compare-and-swap per record,
 // audit rows written by the redi_records trigger. High-risk records are skipped.
 //
 //   node --env-file=.env.local scripts/publish-boundaries.mjs [--dry-run]
@@ -12,12 +12,18 @@ const dryRun = process.argv.includes("--dry-run");
 const { assessPublicationRisk } = sourceLoader()(new URL("../src/lib/privacyRisk.ts", import.meta.url));
 const JUSTIFICATION =
   "Contur administrativ oficial (geoBoundaries) și date publice de recensământ; zona nu delimitează gospodării sau teritoriul comunității. Publicat la cererea proprietarului platformei.";
-// Same shape as public.redi_public_record(d) in migration 0003.
-const publicRecord = (d) => ({
-  id: d.id ?? null, name: d.name ?? null, country: d.country ?? null, county: d.county ?? null,
-  locality: d.locality ?? null, kind: d.kind ?? null, status: d.status ?? null,
-  classification: d.classification ?? null, source: d.source ?? null, geometry: d.publicGeometry ?? null,
-});
+// Same shape as public.redi_public_record(d) in migration 0005.
+const PUBLIC_EXTRA = ["Pop. totala", "Romi recens.", "Romi alte surse", "Prag REDI", "Status REDI", "campanie REDI health"];
+const publicRecord = (d) => {
+  const extra = Object.fromEntries(PUBLIC_EXTRA.filter((k) => d.extra?.[k]).map((k) => [k, String(d.extra[k])]));
+  return {
+    id: d.id ?? null, name: d.name ?? null, country: d.country ?? null, county: d.county ?? null,
+    locality: d.locality ?? null, kind: d.kind ?? null, status: d.status ?? null,
+    classification: d.classification ?? null, source: d.source ?? null, geometry: d.publicGeometry ?? null,
+    population: typeof d.population === "number" ? d.population : null,
+    extra: Object.keys(extra).length ? extra : null,
+  };
+};
 
 const client = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL, process.env.SUPABASE_SECRET_KEY, {
   auth: { persistSession: false, autoRefreshToken: false },

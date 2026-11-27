@@ -20,7 +20,12 @@ import "leaflet/dist/leaflet.css";
 import "@geoman-io/leaflet-geoman-free";
 import "@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css";
 import type { Community, DB } from "@/lib/types";
-import { KIND_LABELS, SOURCE_LABELS, STATUS_LABELS } from "@/lib/types";
+import {
+  COUNTRY_LABELS,
+  KIND_LABELS,
+  SOURCE_LABELS,
+  STATUS_LABELS,
+} from "@/lib/types";
 import type { OverlapRow } from "@/lib/overlap";
 import { validLatLng } from "@/lib/geo";
 import { groupBoundaryRecords, BOUNDARY_SCOPE_LABELS } from "@/lib/boundaries";
@@ -174,6 +179,56 @@ function DataExtent({ communities }: { communities: Community[] }) {
       );
   }, [map, communities]);
   return null;
+}
+
+const TOOLTIP_FIELDS = [
+  "Pop. totala",
+  "Romi recens.",
+  "Romi alte surse",
+  "Prag REDI",
+  "Status REDI",
+  "campanie REDI health",
+  "Observatii / validare",
+];
+const row = (label: string, value: unknown) =>
+  value === undefined || value === null || value === ""
+    ? ""
+    : `<div class="tt-row"><span>${esc(label)}</span><b>${esc(value)}</b></div>`;
+
+/** Hover card: everything this viewer is allowed to see about the record(s) under the cursor. */
+function communityTooltip(records: Community[], entrepreneurs: Map<string, number>) {
+  const c = records[0];
+  const place = [c.locality, c.county, COUNTRY_LABELS[c.country] ?? c.country]
+    .filter((v, i, all) => v && all.indexOf(v) === i)
+    .join(", ");
+  const boundary = c.boundary
+    ? `<div class="tt-note">${esc(BOUNDARY_SCOPE_LABELS[c.boundary.scope])}: ${esc(c.boundary.name)} · geoBoundaries ${esc(c.boundary.year)}. Limită administrativă, nu granița comunității.</div>`
+    : "";
+  if (records.length > 1)
+    return `<div class="community-tt">
+      <strong>${esc(c.boundary?.name ?? c.name)}</strong>
+      <div class="tt-sub">${records.length} comunități în acest contur</div>
+      <ul>${records
+        .slice(0, 8)
+        .map((r) => `<li><span class="tt-dot status-${esc(r.status)}"></span>${esc(r.name)} · ${esc(STATUS_LABELS[r.status])}${r.extra?.["Romi recens."] ? ` · ${esc(r.extra["Romi recens."])} romi` : ""}</li>`)
+        .join("")}${records.length > 8 ? `<li>… și încă ${records.length - 8}</li>` : ""}</ul>
+      ${boundary}
+      <div class="tt-hint">Click pentru a alege o localitate.</div>
+    </div>`;
+  const extras = TOOLTIP_FIELDS.map((k) => row(k, c.extra?.[k])).join("");
+  return `<div class="community-tt">
+    <strong>${esc(c.name)}</strong>
+    <div class="tt-sub"><span class="tt-dot status-${esc(c.status)}"></span>${esc(STATUS_LABELS[c.status])} · ${esc(KIND_LABELS[c.kind])}</div>
+    ${place ? `<div class="tt-place">${esc(place)}</div>` : ""}
+    ${row("Clasificare", c.classification)}
+    ${row("SIRUTA", c.siruta)}
+    ${row("Populație estimată", c.population)}
+    ${extras}
+    ${entrepreneurs.has(c.id) ? row("Antreprenori", entrepreneurs.get(c.id)) : ""}
+    ${row("Sursă", SOURCE_LABELS[c.source])}
+    ${c.extra?._sourceSheet ? row("Foaie sursă", `${c.extra._sourceSheet}${c.extra._sourceRow ? `, rând ${c.extra._sourceRow}` : ""}`) : ""}
+    ${boundary}
+  </div>`;
 }
 
 function communityPopup(c: Community, entrepreneurs: number) {
@@ -389,12 +444,27 @@ export default function MapView(props: Props) {
                 const c = records[0];
                 if (!c) return;
                 const label = c.boundary?.name ?? c.name;
-                layer.bindTooltip(
-                  esc(
-                    `${label}${records.length > 1 ? ` · ${records.length} înregistrări` : ""}`,
-                  ),
-                  { sticky: true },
-                );
+                layer.bindTooltip(communityTooltip(records, entrepreneurCount), {
+                  sticky: true,
+                  direction: "top",
+                  offset: [0, -12],
+                  opacity: 1,
+                  className: "community-tooltip",
+                });
+                // Highlight the outline under the cursor; the selected one keeps its own style.
+                if (
+                  layer instanceof L.Path &&
+                  !records.some((r) => r.id === selectedId)
+                ) {
+                  const rest = {
+                    weight: 1.5,
+                    fillOpacity: c.boundary?.scope === "region" ? 0.07 : 0.16,
+                  };
+                  layer.on("mouseover", () =>
+                    layer.setStyle({ weight: 3, fillOpacity: 0.3 }),
+                  );
+                  layer.on("mouseout", () => layer.setStyle(rest));
+                }
                 if (records.length === 1) {
                   layer.bindPopup(
                     communityPopup(c, entrepreneurCount.get(c.id) ?? 0),
